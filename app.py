@@ -1,7 +1,9 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db
+from models import connect_db, db, User
+from services import signup_user
+from forms import UserAddForm
 
 app = Flask(__name__)
 
@@ -47,3 +49,18 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
+@app.route('/signup', methods=["GET", "POST"])
+def signup():
+
+    form = UserAddForm()
+
+    if not form.validate_on_submit():
+        return render_template('users/signup.html', form=form)
+    
+    user = signup_user(form)
+    
+    if not user:
+        flash("Username already taken", 'danger')
+        return render_template('users/signup.html', form=form)
