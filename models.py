@@ -184,6 +184,11 @@ class ServiceRequest(db.Model):
         db.ForeignKey('services.id'), 
         nullable=False
         )
+    invoice_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('invoices.id'), 
+        nullable=False
+        )
     quantity = db.Column(
         db.Integer, 
         nullable=False
@@ -199,7 +204,7 @@ class ServiceRequest(db.Model):
         )
     deleted_date = db.Column(db.DateTime)
 
-    invoice = db.relationship("invoices")
+    invoice = db.relationship("Invoice", backref='service_request')
 
 class Service(db.Model):
     __tablename__ = "services"

@@ -65,4 +65,8 @@ def signup():
         flash("Username already taken", 'danger')
         return render_template('users/signup.html', form=form)
 
-    return "success!"
+    return redirect('/')
+
+@app.route('/')
+def home_page():
+    
