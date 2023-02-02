@@ -3,10 +3,11 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Warbler</title>
+  <title>Invoice App</title>
 
-  <link rel="stylesheet"
-        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
+  <!-- <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css"> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css" integrity="sha384-H4X+4tKc7b8s4GoMrylmy2ssQYpDHoqzPa9aKXbDwPoPUA3Ra8PA5dGzijN+ePnH" crossorigin="anonymous">
   <script src="https://unpkg.com/jquery"></script>
   <script src="https://unpkg.com/popper"></script>
   <script src="https://unpkg.com/bootstrap"></script>
@@ -18,28 +19,21 @@
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-<nav class="navbar navbar-expand">
+<nav class="navbar navbar-expand navbar-dark bg-dark">
   <div class="container-fluid">
     <div class="navbar-header">
       <a href="/" class="navbar-brand">
-        <img src="" alt="logo">
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/004/572/128/small/invoice-line-icon-logo-illustration-free-vector.jpg" width="30" height="30" alt="logo">
         <span>Invoice App</span>
       </a>
     </div>
     <ul class="nav navbar-nav navbar-right">
       {% if request.endpoint != None %}
-      <!-- <li>
-        <form class="navbar-form navbar-right" action="/users">
-          <input name="q" class="form-control" placeholder="Search Warbler" id="search">
-          <button class="btn btn-default">
-            <span class="fa fa-search"></span>
-          </button>
-        </form>
-      </li> -->
+
       {% endif %}
       {% if not g.user %}
-      <li><a href="/signup">Sign up</a></li>
-      <li><a href="/login">Log in</a></li>
+      <li><a class="m-2 text-light" href="/signup">Sign up</a></li>
+      <li><a class="m-2 text-light" href="/login">Log in</a></li>
       {% else %}
       <li>
         <a href="/users/{{ g.user.id }}">
