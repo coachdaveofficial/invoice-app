@@ -13,3 +13,8 @@ def signup_user(form_data):
 
     except IntegrityError:
         return None
+
+def login_user(form_data):
+    user = User.authenticate(form_data.username.data,
+                                form_data.password.data)
+    return user

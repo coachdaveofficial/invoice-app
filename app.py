@@ -2,8 +2,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user
-from forms import UserAddForm
+from services import signup_user, login_user
+from forms import UserAddForm, LoginForm
 
 app = Flask(__name__)
 
@@ -67,6 +67,28 @@ def signup():
 
     return redirect('/')
 
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    """Handle user login."""
+
+    form = LoginForm()
+
+    if not form.validate_on_submit():
+        return render_template('users/login.html', form=form)
+
+    user = login_user(form)
+
+    if user:
+        do_login(user)
+        flash(f"Hello, {user.username}!", "success")
+        return redirect("/")
+
+    flash("Invalid credentials.", 'danger')
+
 @app.route('/')
 def home_page():
-    
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/signup")
+
+    return render_template('home_page.html')

@@ -9,3 +9,17 @@ class UserAddForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
+class LoginForm(FlaskForm):
+    """Form for logging in users."""
+
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[Length(min=6)])
+
+class InvoiceAddForm(FlaskForm):
+    """Form for making invoices"""
+
+class ServiceAddForm(FlaskForm):
+    """Form for creating new services"""
+
+class CustomerAddForm(FlaskForm):
+    """Form for adding a new customer"""
