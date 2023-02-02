@@ -64,3 +64,5 @@ def signup():
     if not user:
         flash("Username already taken", 'danger')
         return render_template('users/signup.html', form=form)
+
+    return "success!"
