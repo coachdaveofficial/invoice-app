@@ -199,6 +199,8 @@ class ServiceRequest(db.Model):
         )
     deleted_date = db.Column(db.DateTime)
 
+    invoice = db.relationship("invoices")
+
 class Service(db.Model):
     __tablename__ = "services"
 
