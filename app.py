@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer, get_10_customers
+from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers
 from forms import UserAddForm, LoginForm, CustomerAddForm
 
 app = Flask(__name__)
@@ -84,7 +84,7 @@ def login():
         return redirect("/")
 
     flash("Invalid credentials.", 'danger')
-    return redirect('/signup')
+    return redirect('/login')
 
 @app.route('/')
 def home_page():
@@ -101,7 +101,7 @@ def home_page():
 def add_new_customer():
     if not g.user:
         flash("Access unauthorized.", "danger")
-        return redirect("/signup")
+        return redirect("/")
     
     form = CustomerAddForm()
 
@@ -115,3 +115,13 @@ def add_new_customer():
         return redirect('/customers/add')
 
     return redirect('/')
+
+@app.route('/customers', methods=["GET"])
+def show_all_customers():
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
+    
+    all_customers = get_all_customers()
+
+    return render_template('/customers/list_customers.html', customers=all_customers)

@@ -12,9 +12,7 @@
 
 	<div class="row">
         <div class="col-md-2 bg-info">
-            <a href="#" class="text-light">Invoices</a>
-            <a href="#">Services</a>
-            <a href="#">Customers</a>
+            <p class="text-light">Welcome to my shite</p>
         </div>
 		
 		<div class="col-md-4">
@@ -30,9 +28,7 @@
 						...
 					</p>
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-				</div> 
+				
 		</div>
 
 			<div class="list-group">
@@ -46,9 +42,7 @@
 						...
 					</p>
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-				</div> 
+				
 
 			</div> <a href="#" class="btn btn-block btn-primary" type="button">Button</a>
 		</div>
@@ -57,16 +51,16 @@
 				<h4 class="list-group-item-heading">
                     Customers
                 </h4>
+                {% for customer in customers %} 
 				<div class="list-group-item">
-					{% for customer in customers %} 
+					
                     <div class="list-item">
                         <a href="#">{{customer.full_name}}</a>
                     </div>
-                    {% endfor %}
+                    
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-                </div>
+                {% endfor %}
+				
 
 			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
 		</div>

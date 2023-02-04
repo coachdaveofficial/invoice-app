@@ -41,3 +41,10 @@ def get_10_customers():
                 .limit(10)
                 .all())
     return customers
+
+def get_all_customers():
+    customers = (Customer
+                .query
+                .order_by(Customer.created_date.desc())
+                .all())
+    return customers
