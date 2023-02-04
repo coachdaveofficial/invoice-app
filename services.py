@@ -33,3 +33,11 @@ def add_customer(form_data):
         return customer
     except IntegrityError:
         return None
+
+def get_10_customers():
+    customers = (Customer
+                .query
+                .order_by(Customer.created_date.desc())
+                .limit(10)
+                .all())
+    return customers

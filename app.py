@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer
+from services import signup_user, login_user, add_customer, get_10_customers
 from forms import UserAddForm, LoginForm, CustomerAddForm
 
 app = Flask(__name__)
@@ -92,7 +92,9 @@ def home_page():
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
 
-    return render_template('home_page.html')
+    ten_recent_customers = get_10_customers()
+
+    return render_template('home_page.html', customers=ten_recent_customers)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
