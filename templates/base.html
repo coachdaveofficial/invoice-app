@@ -27,20 +27,33 @@
         <span>Invoice App</span>
       </a>
     </div>
+    <ul class="nav justify-content-around">
+        {% if g.user %}
+        <li class="nav-item">
+            <a href="/invoices/add" class="text-light badge badge-pill badge-primary mx-2">New Invoice</a>
+        </li>
+        <li class="nav-item">
+            <a href="/customers" class="text-light badge badge-pill badge-primary mx-2">Customers</a>
+        </li>
+        <li class="nav-item">
+            <a href="/services" class="text-light badge badge-pill badge-primary mx-2">Services</a>
+        </li>
+        {% endif %}
+    </ul>
     <ul class="nav navbar-nav navbar-right">
       {% if request.endpoint != None %}
 
       {% endif %}
       {% if not g.user %}
-      <li><a class="m-2 text-light" href="/signup">Sign up</a></li>
-      <li><a class="m-2 text-light" href="/login">Log in</a></li>
+      <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/signup">Sign up</a></li>
+      <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/login">Log in</a></li>
       {% else %}
       <li>
         <a href="/users/{{ g.user.id }}">
           <!-- <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}"> -->
         </a>
       </li>
-      <li><a href="/logout">Log out</a></li>
+      <li><a href="/logout" class="text-light badge badge-pill badge-primary mx-2">Log out</a></li>
       {% endif %}
     </ul>
   </div>
