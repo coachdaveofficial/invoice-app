@@ -2,8 +2,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user
-from forms import UserAddForm, LoginForm
+from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers
+from forms import UserAddForm, LoginForm, CustomerAddForm
 
 app = Flask(__name__)
 
@@ -84,6 +84,7 @@ def login():
         return redirect("/")
 
     flash("Invalid credentials.", 'danger')
+    return redirect('/login')
 
 @app.route('/')
 def home_page():
@@ -91,4 +92,36 @@ def home_page():
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
 
-    return render_template('home_page.html')
+    ten_recent_customers = get_10_customers()
+
+    return render_template('home_page.html', customers=ten_recent_customers)
+
+
+@app.route('/customers/add', methods=["GET", "POST"])
+def add_new_customer():
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    form = CustomerAddForm()
+
+    if not form.validate_on_submit():
+        return render_template('/customers/add_customer.html', form=form)
+    
+    customer = add_customer(form)
+
+    if not customer:
+        flash("Customer with similar credentials already exists", "danger")
+        return redirect('/customers/add')
+
+    return redirect('/')
+
+@app.route('/customers', methods=["GET"])
+def show_all_customers():
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
+    
+    all_customers = get_all_customers()
+
+    return render_template('/customers/list_customers.html', customers=all_customers)

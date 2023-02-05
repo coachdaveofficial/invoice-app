@@ -4,10 +4,20 @@
 
 {% block content %}
 
+
+
+
 <div class="mt-4 container-fluid">
+
+
 	<div class="row">
+        <div class="col-md-2 bg-info">
+            <p class="text-light">Welcome to my shite</p>
+        </div>
+		
 		<div class="col-md-4">
-			<div class="list-group">
+
+            <div class="list-group">
                 <h4 class="list-group-item-heading">
                     Invoices
                 </h4>
@@ -18,13 +28,9 @@
 						...
 					</p>
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-				</div> 
-
-			</div> <a href="#" class="btn btn-block btn-primary" type="button">Button</a>
+				
 		</div>
-		<div class="col-md-4">
+
 			<div class="list-group">
 
 				<h4 class="list-group-item-heading">
@@ -36,9 +42,7 @@
 						...
 					</p>
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-				</div> 
+				
 
 			</div> <a href="#" class="btn btn-block btn-primary" type="button">Button</a>
 		</div>
@@ -47,17 +51,18 @@
 				<h4 class="list-group-item-heading">
                     Customers
                 </h4>
+                {% for customer in customers %} 
 				<div class="list-group-item">
 					
-					<p class="list-group-item-text">
-						...
-					</p>
+                    <div class="list-item">
+                        <a href="#">{{customer.full_name}}</a>
+                    </div>
+                    
 				</div>
-				<div class="list-group-item justify-content-between">
-					Help <span class="badge badge-secondary badge-pill">14</span>
-                </div>
+                {% endfor %}
+				
 
-			</div> <a href="#" class="btn btn-primary btn-block" type="button">Add New Customer</a>
+			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
 		</div>
 	</div>
 </div>

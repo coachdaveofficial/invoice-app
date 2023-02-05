@@ -114,7 +114,7 @@ class Customer(db.Model):
         db.Integer
         )
     phone = db.Column(
-        db.Integer, 
+        db.String, 
         nullable=False, 
         unique=True
         )
