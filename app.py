@@ -2,8 +2,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers
-from forms import UserAddForm, LoginForm, CustomerAddForm
+from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service, get_all_services
+from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm
 
 app = Flask(__name__)
 
@@ -125,3 +125,32 @@ def show_all_customers():
     all_customers = get_all_customers()
 
     return render_template('/customers/list_customers.html', customers=all_customers)
+
+@app.route('/services/add', methods=["GET", "POST"])
+def add_new_service():
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    form = ServiceAddForm()
+
+    if not form.validate_on_submit():
+        return render_template('/services/add_service.html', form=form)
+    
+    customer = add_service(form)
+
+    if not customer:
+        flash("Service with similar credentials already exists", "danger")
+        return redirect('/customers/add')
+
+    return redirect('/')
+
+@app.route('/services', methods=["GET"])
+def show_all_services():
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
+    
+    all_services = get_all_services()
+
+    return render_template('/services/list_services.html', services=all_services)

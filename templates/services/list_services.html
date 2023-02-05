@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block body_class %}bg-info{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-2">
+	<div class="row">
+		<div class="col-md-2">
+			<div class="list-group">
+				 <div class="list-group-item list-group-item-action active">Menu</div>
+				<div class="list-group-item">
+					<a href="/services/add">Add a service</a>
+				</div>
+				<div class="list-group-item">
+					<a href="/">Go Back</a>
+				</div>
+				<a href="/" class="list-group-item list-group-item-action active">Home</a>
+			</div>
+		</div>
+		<div class="col-md-2">
+		</div>
+		<div class="col-md-8">
+            {% for service in services %}
+			<div id="card-689092">
+				<div class="card">
+					<div class="card-header">
+						 <a class="card-link" data-toggle="collapse" data-parent="#card-689092" href="#card-element-168808">{{service.description}}</a>
+					</div>
+					<div id="card-element-168808" class="collapse show">
+						<div class="card-body">
+							<ul>
+                                <li>
+                                    {{service.price_per_unit}}
+                                </li>
+                                <li>
+                                    {{service.unit}}
+                                </li>
+                            </ul>
+						</div>
+					</div>
+				</div>
+			</div>
+            {% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
