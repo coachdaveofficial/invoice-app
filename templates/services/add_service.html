@@ -17,6 +17,7 @@
                         <span class="text-danger">{{ error }}</span>
                       {% endfor %}
                       {% if field.name == 'price_per_unit' %}
+                      
                       <label for="{{field.name}}">{{field.label.text}}</label>
                       {{ field(placeholder="20.00", class="form-control m-3") }}
 

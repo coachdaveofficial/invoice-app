@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service
+from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service, get_all_services
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm
 
 app = Flask(__name__)
@@ -144,3 +144,13 @@ def add_new_service():
         return redirect('/customers/add')
 
     return redirect('/')
+
+@app.route('/services', methods=["GET"])
+def show_all_services():
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
+    
+    all_services = get_all_services()
+
+    return render_template('/services/list_services.html', services=all_services)

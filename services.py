@@ -61,3 +61,9 @@ def add_service(form_data):
         return service
     except IntegrityError:
         return None
+
+def get_all_services():
+    services = (Service
+                .query
+                .all())
+    return services
