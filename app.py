@@ -62,8 +62,8 @@ def signup():
     user = signup_user(form)
     
     if not user:
-        flash("Username already taken", 'danger')
-        return render_template('users/signup.html', form=form)
+        flash("Username or Email already taken", 'danger')
+        return redirect('/signup')
 
     return redirect('/')
 
@@ -85,6 +85,15 @@ def login():
 
     flash("Invalid credentials.", 'danger')
     return redirect('/login')
+
+@app.route('/logout')
+def logout():
+    """Handle logout of user."""
+
+
+    do_logout()
+    flash(f"Successfully logged out!", "success")
+    return redirect("/login")
 
 @app.route('/')
 def home_page():
