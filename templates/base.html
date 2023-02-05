@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice App</title>
+
+  <!-- <link rel="stylesheet"
+        href="https://unpkg.com/bootstrap/dist/css/bootstrap.css"> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/minty/bootstrap.min.css" integrity="sha384-H4X+4tKc7b8s4GoMrylmy2ssQYpDHoqzPa9aKXbDwPoPUA3Ra8PA5dGzijN+ePnH" crossorigin="anonymous">
+  <script src="https://unpkg.com/jquery"></script>
+  <script src="https://unpkg.com/popper"></script>
+  <script src="https://unpkg.com/bootstrap"></script>
+
+  <link rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
+  <link rel="stylesheet" href="/static/stylesheets/style.css">
+  <link rel="shortcut icon" href="/static/favicon.ico">
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+<nav class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a href="/" class="navbar-brand">
+        <img src="https://static.vecteezy.com/system/resources/thumbnails/004/572/128/small/invoice-line-icon-logo-illustration-free-vector.jpg" width="30" height="30" alt="logo">
+        <span>Invoice App</span>
+      </a>
+    </div>
+    <ul class="nav justify-content-around">
+        {% if g.user %}
+        <li class="nav-item">
+            <a href="/invoices/add" class="text-light badge badge-pill badge-primary mx-2">New Invoice</a>
+        </li>
+        <li class="nav-item">
+            <a href="/customers" class="text-light badge badge-pill badge-primary mx-2">Customers</a>
+        </li>
+        <li class="nav-item">
+            <a href="/services" class="text-light badge badge-pill badge-primary mx-2">Services</a>
+        </li>
+        {% endif %}
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      {% if request.endpoint != None %}
+
+      {% endif %}
+      {% if not g.user %}
+      <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/signup">Sign up</a></li>
+      <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/login">Log in</a></li>
+      {% else %}
+      <li>
+        <a href="/users/{{ g.user.id }}">
+          <!-- <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}"> -->
+        </a>
+      </li>
+      <li><a href="/logout" class="text-light badge badge-pill badge-primary mx-2">Log out</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+<div class="container">
+  {% for category, message in get_flashed_messages(with_categories=True) %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+
+  {% block content %}
+  {% endblock %}
+
+</div>
+</body>
+</html>

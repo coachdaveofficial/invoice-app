@@ -9,6 +9,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 
+
 Base = declarative_base()
 
 bcrypt = Bcrypt()
@@ -56,7 +57,7 @@ class User(db.Model):
         return f"<User #{self.id}: {self.username}, {self.email}>"
 
     @classmethod
-    def signup(cls, username, email, password, image_url):
+    def signup(cls, username, email, password):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -67,8 +68,7 @@ class User(db.Model):
         user = User(
             username=username,
             email=email,
-            password=hashed_pwd,
-            image_url=image_url,
+            password=hashed_pwd
         )
 
         db.session.add(user)
@@ -184,6 +184,11 @@ class ServiceRequest(db.Model):
         db.ForeignKey('services.id'), 
         nullable=False
         )
+    invoice_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('invoices.id'), 
+        nullable=False
+        )
     quantity = db.Column(
         db.Integer, 
         nullable=False
@@ -198,6 +203,8 @@ class ServiceRequest(db.Model):
         onupdate=datetime.utcnow
         )
     deleted_date = db.Column(db.DateTime)
+
+    invoice = db.relationship("Invoice", backref='service_request')
 
 class Service(db.Model):
     __tablename__ = "services"
