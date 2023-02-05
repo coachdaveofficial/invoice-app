@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, FloatField, ValidationError
+from wtforms import StringField, PasswordField, TextAreaField, FloatField, ValidationError, SelectField
 from wtforms.validators import DataRequired, Email, Length
 import phonenumbers
 
@@ -39,6 +39,9 @@ class InvoiceAddForm(FlaskForm):
 
 class ServiceAddForm(FlaskForm):
     """Form for creating new services"""
+    description = StringField('Description', validators= [DataRequired()])
+    price_per_unit = FloatField("Price per unit", validators=[DataRequired()])
+    unit = SelectField('Unit', choices=[("per_hour", "Hourly"), ("per_sq_ft", "Square Feet")], validators=[DataRequired()])
 
 class CustomerAddForm(FlaskForm):
     """Form for adding a new customer"""
