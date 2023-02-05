@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service
+from models import User, db, Customer, Service, Invoice
 from sqlalchemy.exc import IntegrityError
 
 def signup_user(form_data):
@@ -67,3 +67,17 @@ def get_all_services():
                 .query
                 .all())
     return services
+
+def add_invoice(form_data):
+    
+    try: 
+        invoice = Invoice(
+                due_date=form_data.due_date.data,
+                cust_id=form_data.cust_id.data,
+                total_cost=form_data.total_cost.data
+        )
+        db.session.add(invoice)
+        db.session.commit()
+        return invoice
+    except IntegrityError:
+        return None

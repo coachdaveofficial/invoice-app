@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block body_class %}{% endblock %}
+
+{% block content %}
+
+
+<div class="container-fluid">		
+			<div class="mt-4 row justify-content-md-center">
+                <div class="col md-6">
+                    <div class="form-group">
+                        <h2 class="join-message">Create New Invoice</h2>
+                        <form method="POST" id="user_form">
+                          {{ form.hidden_tag() }}
+                    
+                          {% for field in form if field.widget.input_type != 'hidden' %}
+                            {% for error in field.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                            {% if field.name == cust_id %}
+      
+                            <label for="{{field.name}}">Customer</label>
+                            {{ field(placeholder="Customer", class="form-control m-3") }}
+      
+                            {% elif field.name == "total_cost" %}
+      
+                            <label for="{{field.name}}">Total Cost</label>
+                            {{ field(placeholder="0.00", class="form-control m-3") }}
+      
+                            {% else %}
+      
+                            <label for="{{field.name}}">{{field.label.text}}</label>
+                            {{ field(placeholder=field.label.text, class="form-control m-3") }}
+      
+                            {% endif %}
+                          {% endfor %}
+                    
+                          <button class="btn btn-primary btn-lg">Add Invoice</button>
+                        </form>
+                      </div>
+                </div>
+                
+              </div>
+		<div class="col-md-4">
+		</div>
+	</div>
+</div>
+
+{% endblock %}

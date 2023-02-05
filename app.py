@@ -2,8 +2,8 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service, get_all_services
-from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm
+from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service, get_all_services, add_invoice
+from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
 
@@ -146,16 +146,17 @@ def add_new_service():
     if not form.validate_on_submit():
         return render_template('/services/add_service.html', form=form)
     
-    customer = add_service(form)
+    service = add_service(form)
 
-    if not customer:
+    if not service:
         flash("Service with similar credentials already exists", "danger")
-        return redirect('/customers/add')
+        return redirect('/services/add')
 
     return redirect('/')
 
 @app.route('/services', methods=["GET"])
 def show_all_services():
+
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
@@ -163,3 +164,20 @@ def show_all_services():
     all_services = get_all_services()
 
     return render_template('/services/list_services.html', services=all_services)
+
+@app.route('/invoices/add', methods=["GET", "POST"])
+def add_new_invoice():
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    form = InvoiceAddForm()
+    customers = get_all_customers()
+    form.cust_id.choices = [(c.id, c.full_name) for c in customers]
+
+    if not form.validate_on_submit():
+        return render_template('/invoices/add_invoice.html', form=form)
+    
+    invoice = add_invoice(form)
+
+    return redirect('/')

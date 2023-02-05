@@ -152,8 +152,8 @@ class Invoice(db.Model):
         nullable=False
         )
     amount_paid = db.Column(
-        db.Float, 
-        nullable=False
+        db.Float,
+        default=0.00
         )
     total_cost = db.Column(
         db.Float, 
