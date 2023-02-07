@@ -55,9 +55,14 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
+    
+   
 
-    @classmethod
-    def signup(cls, username, email, password):
+
+    
+class UserService():
+    
+    def signup(self, username, email, password):
         """Sign up user.
 
         Hashes password and adds user to system.
@@ -74,8 +79,8 @@ class User(db.Model):
         db.session.add(user)
         return user
 
-    @classmethod
-    def authenticate(cls, username, password):
+
+    def authenticate(self, username, password):
         """Find user with `username` and `password`.
 
         This is a class method (call it on the class, not an individual user.)
@@ -85,7 +90,7 @@ class User(db.Model):
         If can't find matching user (or if password is wrong), returns False.
         """
 
-        user = cls.query.filter_by(username=username).first()
+        user = self.query.filter_by(username=username).first()
 
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
@@ -93,7 +98,6 @@ class User(db.Model):
                 return user
 
         return False
-
 
 
 class Customer(db.Model):
@@ -152,8 +156,8 @@ class Invoice(db.Model):
         nullable=False
         )
     amount_paid = db.Column(
-        db.Float, 
-        nullable=False
+        db.Float,
+        default=0.00
         )
     total_cost = db.Column(
         db.Float, 
