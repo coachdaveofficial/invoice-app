@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import signup_user, login_user, add_customer, get_10_customers, get_all_customers, add_service, get_all_services, add_invoice
+from services import ServiceService, UserService, CustomerService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -59,7 +59,12 @@ def signup():
     if not form.validate_on_submit():
         return render_template('users/signup.html', form=form)
     
-    user = signup_user(form)
+    u = UserService()
+    user = u.signup(
+        username=form.username.data,
+        email=form.email.data,
+        password=form.password.data
+        )
     
     if not user:
         flash("Username or Email already taken", 'danger')
@@ -76,7 +81,10 @@ def login():
     if not form.validate_on_submit():
         return render_template('users/login.html', form=form)
 
-    user = login_user(form)
+    user = UserService.authenticate(
+        username=form.username.data,
+        password=form.password.data
+        )
 
     if user:
         do_login(user)
@@ -101,7 +109,7 @@ def home_page():
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
 
-    ten_recent_customers = get_10_customers()
+    ten_recent_customers = CustomerService.get_10_customers()
 
     return render_template('home_page.html', customers=ten_recent_customers)
 
@@ -117,7 +125,7 @@ def add_new_customer():
     if not form.validate_on_submit():
         return render_template('/customers/add_customer.html', form=form)
     
-    customer = add_customer(form)
+    customer = CustomerService.add_customer(form)
 
     if not customer:
         flash("Customer with similar credentials already exists", "danger")
@@ -131,7 +139,7 @@ def show_all_customers():
         flash("Access unauthorized", "danger")
         return redirect('/')
     
-    all_customers = get_all_customers()
+    all_customers = CustomerService.get_all_customers()
 
     return render_template('/customers/list_customers.html', customers=all_customers)
 
@@ -146,7 +154,7 @@ def add_new_service():
     if not form.validate_on_submit():
         return render_template('/services/add_service.html', form=form)
     
-    service = add_service(form)
+    service = ServiceService.add_service(form)
 
     if not service:
         flash("Service with similar credentials already exists", "danger")
@@ -161,7 +169,7 @@ def show_all_services():
         flash("Access unauthorized", "danger")
         return redirect('/')
     
-    all_services = get_all_services()
+    all_services = ServiceService.get_all_services()
 
     return render_template('/services/list_services.html', services=all_services)
 
@@ -171,13 +179,4 @@ def add_new_invoice():
         flash("Access unauthorized.", "danger")
         return redirect("/")
     
-    form = InvoiceAddForm()
-    customers = get_all_customers()
-    form.cust_id.choices = [(c.id, c.full_name) for c in customers]
-
-    if not form.validate_on_submit():
-        return render_template('/invoices/add_invoice.html', form=form)
     
-    invoice = add_invoice(form)
-
-    return redirect('/')
