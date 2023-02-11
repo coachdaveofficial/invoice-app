@@ -1,9 +1,12 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, _app_ctx_stack
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User
+from models import User
 from services import ServiceService, UserService, CustomerService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
+from sqlalchemy.orm import scoped_session
+from database import SessionLocal, engine
+from greenlet import getcurrent as _get_ident
 
 app = Flask(__name__)
 
@@ -19,11 +22,13 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
+app.session = scoped_session(SessionLocal, scopefunc=_get_ident)
+
 app.app_context().push()
 
-connect_db(app)
+# connect_db(app)
 # db.drop_all()
-db.create_all()
+# db.create_all()
 
 CURR_USER_KEY = "curr_user"
 
@@ -32,7 +37,7 @@ def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
-        g.user = User.query.get(session[CURR_USER_KEY])
+        g.user = app.session.query(User).get(session[CURR_USER_KEY])
 
     else:
         g.user = None

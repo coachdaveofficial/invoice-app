@@ -1,8 +1,10 @@
-from models import User, db, Customer, Service, Invoice, UserService
+from models import User, Customer, Service, Invoice
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
+from database import SessionLocal
 
 bcrypt = Bcrypt()
+db = SessionLocal
 
 class UserService:
     '''Services for getting user info'''
@@ -23,8 +25,9 @@ class UserService:
                 password=hashed_pwd
             )
 
-            db.session.add(user)
-            db.session.commit()
+            db.add(user)
+            db.commit()
+            db.close()
             return user
         except IntegrityError:
             return None
@@ -61,8 +64,8 @@ class CustomerService:
                 phone=form_data.phone.data,
                 email=form_data.email.data
             )
-            db.session.add(customer)
-            db.session.commit()
+            db.add(customer)
+            db.commit()
             return customer
         except IntegrityError:
             return None
@@ -92,8 +95,9 @@ class ServiceService:
                         price_per_unit=form_data.price_per_unit.data,
                         unit=form_data.unit.data
                         )
-            db.session.add(service)
-            db.session.commit()
+            db.add(service)
+            db.commit()
+            
             return service
         except IntegrityError:
             return None
