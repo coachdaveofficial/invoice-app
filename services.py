@@ -1,8 +1,12 @@
-from models import User, db, Customer, Service, Invoice, UserService
+from models import User, Customer, Service, Invoice
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
+from database import SessionLocal
+
 
 bcrypt = Bcrypt()
+db = SessionLocal()
+
 
 class UserService:
     '''Services for getting user info'''
@@ -23,10 +27,12 @@ class UserService:
                 password=hashed_pwd
             )
 
-            db.session.add(user)
-            db.session.commit()
+            db.add(user)
+            db.commit()
+            db.close()
             return user
         except IntegrityError:
+            db.rollback()
             return None
     @classmethod
     def authenticate(cls, username, password):
@@ -39,20 +45,22 @@ class UserService:
         If can't find matching user (or if password is wrong), returns False.
         """
 
-        user = User.query.filter_by(username=username).first()
+        user = db.query(User).filter_by(username=username).first()
 
         if user:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
                 return user
-
+        db.rollback()
         return False
+
+   
     
 
 class CustomerService:
     '''Services for getting customer info'''
     @classmethod
-    def add_customer(form_data):
+    def add_customer(self, form_data):
         try:
             customer = Customer(
                 full_name=form_data.full_name.data,
@@ -61,15 +69,14 @@ class CustomerService:
                 phone=form_data.phone.data,
                 email=form_data.email.data
             )
-            db.session.add(customer)
-            db.session.commit()
+            db.add(customer)
+            db.commit()
             return customer
         except IntegrityError:
             return None
     @classmethod
     def get_10_customers(self):
-        customers = (Customer
-                    .query
+        customers = (db.query(Customer)
                     .order_by(Customer.created_date.desc())
                     .limit(10)
                     .all())
@@ -77,30 +84,29 @@ class CustomerService:
 
     @classmethod
     def get_all_customers(self):
-        customers = (Customer
-                    .query
+        customers = (db.query(Customer)
                     .order_by(Customer.created_date.desc())
                     .all())
         return customers
 
 class ServiceService:
     @classmethod
-    def add_service(form_data):
+    def add_service(self, form_data):
         try:
             service = Service(
                         description=form_data.description.data,
                         price_per_unit=form_data.price_per_unit.data,
                         unit=form_data.unit.data
                         )
-            db.session.add(service)
-            db.session.commit()
+            db.add(service)
+            db.commit()
+            
             return service
         except IntegrityError:
             return None
     @classmethod
     def get_all_services(self):
-        services = (Service
-                    .query
+        services = (db.query(Service)
                     .all())
         return services
 

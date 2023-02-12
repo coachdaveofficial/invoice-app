@@ -1,11 +1,13 @@
 """SQLAlchemy models for Invoice App."""
 
 from datetime import datetime
+import enum
 
 from flask_bcrypt import Bcrypt
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from sqlalchemy import Table, Integer, Column, ForeignKey, Text, DateTime, Date, MetaData, Float, String, Enum
+from sqlalchemy.orm import relationship, Session
 from sqlalchemy.ext.declarative import declarative_base
+
 
 
 
@@ -13,260 +15,239 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 bcrypt = Bcrypt()
-db = SQLAlchemy()
 
-def connect_db(app):
-    """Connect this database to provided Flask app."""
-
-    db.app = app
-    db.init_app(app)
+meta = MetaData()
 
 
-# class BaseModel(Base):
-#     __abstract__ = True
-#     created_date = db.Column(db.DateTime, default=datetime.utcnow)
-#     updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-#     deleted_date = db.Column(db.DateTime)
+class enPaymentType(enum.Enum):
+    credit_card = 1
+    check = 2
+    venmo = 3
+    paypal = 4
+    cashapp = 5
 
 
-class User(db.Model):
+class User(Base):
     """User in the system."""
 
     __tablename__ = 'users'
 
-    id = db.Column(
-        db.Integer,
+    id = Column(
+        Integer,
         primary_key=True,
     )
-    email = db.Column(
-        db.Text,
+    email = Column(
+        Text,
         nullable=False,
         unique=True,
     )
-    username = db.Column(
-        db.Text,
+    username = Column(
+        Text,
         nullable=False,
         unique=True,
     )
-    password = db.Column(
-        db.Text,
+    password = Column(
+        Text,
         nullable=False,
     )
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
     
-   
 
 
-    
-class UserService():
-    
-    def signup(self, username, email, password):
-        """Sign up user.
-
-        Hashes password and adds user to system.
-        """
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        user = User(
-            username=username,
-            email=email,
-            password=hashed_pwd
-        )
-
-        db.session.add(user)
-        return user
-
-
-    def authenticate(self, username, password):
-        """Find user with `username` and `password`.
-
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
-        user = self.query.filter_by(username=username).first()
-
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
-
-        return False
-
-
-class Customer(db.Model):
+class Customer(Base):
     __tablename__ = 'customers'
-    id = db.Column(
-                db.Integer, 
+    id = Column(
+                Integer, 
                 primary_key=True
                 )
-    full_name = db.Column(
-        db.String(255), 
+    full_name = Column(
+        String(255), 
         nullable=False
         )
-    address = db.Column(
-        db.String(255), 
+    address = Column(
+        String(255), 
         nullable=False
         )
-    tax_id = db.Column(
-        db.Integer
+    tax_id = Column(
+        Integer
         )
-    phone = db.Column(
-        db.String, 
+    phone = Column(
+        String, 
         nullable=False, 
         unique=True
         )
-    email = db.Column(
-        db.String(255), 
+    email = Column(
+        String(255), 
         nullable=False, 
         unique=True
         )
-    created_date = db.Column(
-        db.DateTime, 
+    created_date = Column(
+        DateTime, 
         default=datetime.utcnow
         )
-    updated_date = db.Column(
-        db.DateTime, 
+    updated_date = Column(
+        DateTime, 
         default=datetime.utcnow, 
         onupdate=datetime.utcnow
         )
-    deleted_date = db.Column(
-        db.DateTime
+    deleted_date = Column(
+        DateTime
         )
 
-class Invoice(db.Model):
+class Invoice(Base):
     __tablename__ = 'invoices'
-    id = db.Column(
-        db.Integer, 
+    id = Column(
+     Integer, 
         primary_key=True
         )
-    due_date = db.Column(
-        db.Date, 
+    due_date = Column(
+     Date, 
         nullable=False
         )
-    cust_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('customers.id'), 
+    cust_id = Column(
+     Integer, 
+     ForeignKey('customers.id'), 
         nullable=False
         )
-    amount_paid = db.Column(
-        db.Float,
-        default=0.00
-        )
-    total_cost = db.Column(
-        db.Float, 
+    total_cost = Column(
+     Float, 
         nullable=False
         )
-    created_date = db.Column(
-        db.DateTime, 
+    created_date = Column(
+     DateTime, 
         default=datetime.utcnow
         )
-    updated_date = db.Column(
-        db.DateTime, 
+    updated_date = Column(
+     DateTime, 
         default=datetime.utcnow, 
         onupdate=datetime.utcnow
         )
-    deleted_date = db.Column(db.DateTime)
+    deleted_date = Column( DateTime)
 
-    service_requests = db.relationship('ServiceRequest', backref="invoices")
+    service_requests =  relationship('ServiceRequest', backref="invoices")
 
-class ServiceRequest(db.Model):
+class Payments(Base):
+    __tablename__ = "payments"
+
+    id =  Column(
+         Integer, 
+        primary_key=True
+        )
+    invoice_id =  Column(
+         Integer, 
+         ForeignKey('invoices.id')
+        )
+    amount = Column(
+            Float,
+            nullable=False
+        )
+    payment_type = Column(
+        Enum(enPaymentType),
+        nullable=False
+        )
+    reference_num = Column(
+        String,
+        nullable=False
+        )
+    created_date = Column(
+        DateTime, 
+        default=datetime.utcnow
+        )
+
+
+class ServiceRequest(Base):
     __tablename__ = 'service_request'
 
-    id = db.Column(
-        db.Integer, 
+    id =  Column(
+         Integer, 
         primary_key=True
         )
-    service_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('services.id'), 
+    service_id =  Column(
+         Integer, 
+         ForeignKey('services.id'), 
         nullable=False
         )
-    invoice_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('invoices.id'), 
+    invoice_id =  Column(
+         Integer, 
+         ForeignKey('invoices.id'), 
         nullable=False
         )
-    quantity = db.Column(
-        db.Integer, 
+    quantity =  Column(
+         Integer, 
         nullable=False
         )
-    created_date = db.Column(
-        db.DateTime, 
+    created_date =  Column(
+         DateTime, 
         default=datetime.utcnow
         )
-    updated_date = db.Column(
-        db.DateTime, 
+    updated_date =  Column(
+         DateTime, 
         default=datetime.utcnow, 
         onupdate=datetime.utcnow
         )
-    deleted_date = db.Column(db.DateTime)
+    deleted_date =  Column( DateTime)
 
-    invoice = db.relationship("Invoice", backref='service_request')
+    invoice =  relationship("Invoice", backref='service_request')
 
-class Service(db.Model):
+class Service(Base):
     __tablename__ = "services"
 
-    id = db.Column(
-        db.Integer, 
+    id =  Column(
+         Integer, 
         primary_key=True
         )
-    description = db.Column(
-        db.Text, 
+    description =  Column(
+         Text, 
         nullable=False
         )
-    price_per_unit = db.Column(
-        db.Float, 
+    price_per_unit =  Column(
+         Float, 
         nullable=False
         )
-    unit = db.Column(
-        db.String(50), 
+    unit =  Column(
+         String(50), 
         nullable=False
         )
     
 
-class Discount(db.Model):
+class Discount(Base):
     __tablename__ = 'discounts'
-    id = db.Column(
-        db.Integer, 
+    id =  Column(
+         Integer, 
         primary_key=True
         )
-    cust_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('customers.id'), 
+    cust_id =  Column(
+         Integer, 
+         ForeignKey('customers.id'), 
         nullable=False
         )
-    service_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('services.id'), 
+    service_id =  Column(
+         Integer, 
+         ForeignKey('services.id'), 
         nullable=False
         )
-    rate = db.Column(
-        db.Float, 
+    rate =  Column(
+         Float, 
         nullable=False
         )
-    date_deleted = db.Column(db.Date)
+    date_deleted =  Column(Date)
 
-class ServiceRequestInvoice(db.Model):
+class ServiceRequestInvoice(Base):
     __tablename__ = 'service_request_invoice'
 
-    id = db.Column(
-        db.Integer, 
+    id =  Column(
+         Integer, 
         primary_key=True
         )
-    service_request_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('services.id')
+    service_request_id =  Column(
+         Integer, 
+         ForeignKey('services.id')
         )
-    invoice_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('invoices.id')
+    invoice_id =  Column(
+         Integer, 
+         ForeignKey('invoices.id')
         )
 
 
