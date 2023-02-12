@@ -32,6 +32,7 @@ class UserService:
             db.close()
             return user
         except IntegrityError:
+            db.rollback()
             return None
     @classmethod
     def authenticate(cls, username, password):
@@ -50,8 +51,10 @@ class UserService:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
                 return user
-
+        db.rollback()
         return False
+
+   
     
 
 class CustomerService:

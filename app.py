@@ -43,6 +43,20 @@ def add_user_to_g():
     else:
         g.user = None
 
+@app.before_request
+def add_demo_user():
+    """Add demo user to session"""
+
+    demo = db.query(User).filter_by(username="demo-user")
+    if not demo:
+        
+        UserService.signup(
+            email="demouser@test.com",
+            username="demo-user",
+            password="demo-user"
+        )
+    
+
 
 def do_login(user):
     """Log in user."""
@@ -55,6 +69,8 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
 
 
 @app.route('/signup', methods=["GET", "POST"])
