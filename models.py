@@ -1,9 +1,10 @@
 """SQLAlchemy models for Invoice App."""
 
 from datetime import datetime
+import enum
 
 from flask_bcrypt import Bcrypt
-from sqlalchemy import Table, Integer, Column, ForeignKey, Text, DateTime, Date, MetaData, Float, String
+from sqlalchemy import Table, Integer, Column, ForeignKey, Text, DateTime, Date, MetaData, Float, String, Enum
 from sqlalchemy.orm import relationship, Session
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -18,6 +19,12 @@ bcrypt = Bcrypt()
 meta = MetaData()
 
 
+class enPaymentType(enum.Enum):
+    credit_card = 1
+    check = 2
+    venmo = 3
+    paypal = 4
+    cashapp = 5
 
 
 class User(Base):
@@ -104,10 +111,6 @@ class Invoice(Base):
      ForeignKey('customers.id'), 
         nullable=False
         )
-    amount_paid = Column(
-     Float,
-        default=0.00
-        )
     total_cost = Column(
      Float, 
         nullable=False
@@ -124,6 +127,35 @@ class Invoice(Base):
     deleted_date = Column( DateTime)
 
     service_requests =  relationship('ServiceRequest', backref="invoices")
+
+class Payments(Base):
+    __tablename__ = "payments"
+
+    id =  Column(
+         Integer, 
+        primary_key=True
+        )
+    invoice_id =  Column(
+         Integer, 
+         ForeignKey('invoices.id')
+        )
+    amount = Column(
+            Float,
+            nullable=False
+        )
+    payment_type = Column(
+        Enum(enPaymentType),
+        nullable=False
+        )
+    reference_num = Column(
+        String,
+        nullable=False
+        )
+    created_date = Column(
+        DateTime, 
+        default=datetime.utcnow
+        )
+
 
 class ServiceRequest(Base):
     __tablename__ = 'service_request'
