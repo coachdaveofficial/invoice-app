@@ -23,6 +23,7 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
 
 app.session = scoped_session(SessionLocal, scopefunc=_get_ident)
+db = SessionLocal()
 
 app.app_context().push()
 
@@ -37,7 +38,7 @@ def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
 
     if CURR_USER_KEY in session:
-        g.user = app.session.query(User).get(session[CURR_USER_KEY])
+        g.user = db.query(User).get(session[CURR_USER_KEY])
 
     else:
         g.user = None
