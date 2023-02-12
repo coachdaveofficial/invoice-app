@@ -1,6 +1,7 @@
 """SQLAlchemy models for Invoice App."""
 
 from datetime import datetime
+import enum
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -22,6 +23,12 @@ def connect_db(app):
     db.init_app(app)
 
 
+class enPaymentType(enum.Enum):
+    credit_card = 1
+    check = 2
+    venmo = 3
+    paypal = 4
+    cashapp = 5
 
 
 
@@ -170,9 +177,38 @@ class Invoice(db.Model):
         )
     deleted_date = db.Column(db.DateTime)
 
-    service_requests = db.relationship('ServiceRequest', backref="invoices")
+    # service_requests = db.relationship('ServiceRequest', backref="invoices")
 
-class ServiceRequest(db.Model):
+class Payments(db.Model):
+    __tablename__ = "payments"
+
+    id =  db.Column(
+         db.Integer, 
+        primary_key=True
+        )
+    invoice_id =  db.Column(
+         db.Integer, 
+         db.ForeignKey('invoices.id')
+        )
+    amount = db.Column(
+            db.Float,
+            nullable=False
+        )
+    payment_type = db.Column(
+        db.Enum(enPaymentType),
+        nullable=False
+        )
+    reference_num = db.Column(
+        db.String,
+        nullable=False
+        )
+    created_date = db.Column(
+        db.DateTime, 
+        default=datetime.utcnow
+        )
+
+
+class ServiceRequest(Base):
     __tablename__ = 'service_request'
 
     id = db.Column(

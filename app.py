@@ -41,7 +41,7 @@ def add_user_to_g():
 def add_demo_user():
     """Add demo user to session"""
 
-    demo = db.query(User).filter_by(username="demo-user")
+    demo = User.query.filter_by(username="demo-user")
     if not demo:
         
         UserService.signup(
