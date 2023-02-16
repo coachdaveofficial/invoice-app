@@ -22,11 +22,7 @@ def connect_db(app):
     db.init_app(app)
 
 
-# class BaseModel(Base):
-#     __abstract__ = True
-#     created_date = db.Column(db.DateTime, default=datetime.utcnow)
-#     updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-#     deleted_date = db.Column(db.DateTime)
+
 
 
 class User(db.Model):
