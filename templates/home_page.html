@@ -28,26 +28,45 @@
                 <h4 class="list-group-item-heading">
                     Invoices
                 </h4>
+				{% for payment in payment_history %}
 				<div class="list-group-item">
-					
-					<p class="list-group-item-text">
-						...
-					</p>
+					<div class="row">
+						<div class="col">
+							<div class="badge bg-info">
+								Invoice #{{payment.id}}
+							</div>
+						</div>
+						<div class="col">
+							<div class="badge bg-secondary">
+								Total Cost: {{payment.total_cost}}
+							</div>
+						</div>
+						<div class="col">
+							<div class="badge bg-primary">
+								Amount paid: {{payment.total_cost - payment.amount_left}}
+							</div>
+						</div>
+					</div>
+					<p class="mt-2 mb-0">
+						{% for c in customers %}
+						{% if c.id == payment.customer_id %}
+						<div class="row">
+							<div class="col">
+								{{c.full_name}} has <span class="badge bg-danger">{{payment.amount_left}}</span> left to pay off.
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<u>Due date: {{payment.due_date}}.</u>
+							</div>
+						</div>
+						{% endif %}
+						{% endfor %}
+ 					</p>
 				</div>
+				{% endfor %}
 			</div>
-			<div class="list-group">
-
-				<h4 class="list-group-item-heading">
-                    Services
-                </h4>
-				<div class="list-group-item">
-					
-					<p class="list-group-item-text">
-						...
-					</p>
-				</div>
-			</div> 
-			<a href="#" class="btn btn-block btn-primary" type="button">Button</a>
+			<a href="#" class="badge bg-primary">View all outstanding invoices</a>
 		</div>
 
 		<div class="col-md-4">

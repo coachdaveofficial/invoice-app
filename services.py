@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, UserService
+from models import User, db, Customer, Service, Invoice, Payment
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 
@@ -106,4 +106,46 @@ class ServiceService:
                     .query
                     .all())
         return services
+
+class InvoiceService:
+    @classmethod
+    def get_invoice_payment_log(self):
+        invoice_payment_info = []
+        invoices = Invoice.query.all()
+        payments = Payment.query.all()
+        for invoice in invoices:
+            total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
+            amount_left = invoice.total_cost - total_payments
+            invoice_payment_info.append({
+                'id': invoice.id,
+                'due_date': invoice.due_date,
+                'total_cost': invoice.total_cost,
+                'amount_left': amount_left,
+                'customer_id': invoice.cust_id
+            }
+            )
+        return invoice_payment_info
+
+    @classmethod
+    def get_five_oldest_outstanding(self):
+        invoice_payment_info = []
+        invoices = (Invoice
+                    .query
+                    .order_by(Invoice.due_date.asc())
+                    .all())
+        payments = Payment.query.all()
+
+        for invoice in invoices:
+            total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
+            amount_left = invoice.total_cost - total_payments
+            if amount_left and len(invoice_payment_info) < 6:
+                invoice_payment_info.append({
+                    'id': invoice.id,
+                    'due_date': invoice.due_date,
+                    'total_cost': invoice.total_cost,
+                    'amount_left': amount_left,
+                    'customer_id': invoice.cust_id
+                }
+            )
+        return invoice_payment_info
 

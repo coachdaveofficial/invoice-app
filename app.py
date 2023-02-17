@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import ServiceService, UserService, CustomerService
+from services import ServiceService, UserService, CustomerService, InvoiceService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -126,8 +126,10 @@ def home_page():
         return redirect("/signup")
 
     ten_recent_customers = CustomerService.get_10_customers()
+    payment_history = InvoiceService.get_five_oldest_outstanding()
+    
 
-    return render_template('home_page.html', customers=ten_recent_customers)
+    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])

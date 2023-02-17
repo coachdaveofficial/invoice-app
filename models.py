@@ -58,49 +58,6 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
-    
-   
-
-
-    
-class UserService():
-    
-    def signup(self, username, email, password):
-        """Sign up user.
-
-        Hashes password and adds user to system.
-        """
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        user = User(
-            username=username,
-            email=email,
-            password=hashed_pwd
-        )
-
-        db.session.add(user)
-        return user
-
-
-    def authenticate(self, username, password):
-        """Find user with `username` and `password`.
-
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
-        user = self.query.filter_by(username=username).first()
-
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
-
-        return False
 
 
 class Customer(db.Model):
@@ -158,10 +115,6 @@ class Invoice(db.Model):
         db.ForeignKey('customers.id'), 
         nullable=False
         )
-    amount_paid = db.Column(
-        db.Float,
-        default=0.00
-        )
     total_cost = db.Column(
         db.Float, 
         nullable=False
@@ -179,7 +132,7 @@ class Invoice(db.Model):
 
     # service_requests = db.relationship('ServiceRequest', backref="invoices")
 
-class Payments(db.Model):
+class Payment(db.Model):
     __tablename__ = "payments"
 
     id =  db.Column(
@@ -207,6 +160,7 @@ class Payments(db.Model):
         default=datetime.utcnow
         )
 
+    payments = db.relationship('Invoice', backref="payments")
 
 class ServiceRequest(Base):
     __tablename__ = 'service_request'
