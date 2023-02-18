@@ -46,7 +46,6 @@ class UserService:
             is_auth = bcrypt.check_password_hash(user.password, password)
             if is_auth:
                 return user
-        db.rollback()
         return False
 
    
@@ -142,7 +141,7 @@ class InvoiceService:
             total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
             amount_left = invoice.total_cost - total_payments
             # get 5 invoices that have not yet been paid
-            if amount_left and len(invoice_payment_info) < 6:
+            if amount_left and len(invoice_payment_info) < 5:
                 invoice_payment_info.append({
                     'id': invoice.id,
                     'due_date': invoice.due_date,

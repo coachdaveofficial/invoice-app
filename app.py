@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgresql:///invoice-app'))
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "it's a secret")
 toolbar = DebugToolbarExtension(app)
@@ -41,7 +41,7 @@ def add_user_to_g():
 def add_demo_user():
     """Add demo user to session"""
 
-    demo = User.query.filter_by(username="demo-user")
+    demo = User.query.filter_by(username="demo-user").first()
     if not demo:
         
         UserService.signup(
@@ -49,6 +49,7 @@ def add_demo_user():
             username="demo-user",
             password="demo-user"
         )
+
     
 
 
