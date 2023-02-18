@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import ServiceService, UserService, CustomerService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -37,6 +37,20 @@ def add_user_to_g():
     else:
         g.user = None
 
+@app.before_request
+def add_demo_user():
+    """Add demo user to session"""
+
+    demo = User.query.filter_by(username="demo-user")
+    if not demo:
+        
+        UserService.signup(
+            email="demouser@test.com",
+            username="demo-user",
+            password="demo-user"
+        )
+    
+
 
 def do_login(user):
     """Log in user."""
@@ -49,6 +63,8 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
 
 
 @app.route('/signup', methods=["GET", "POST"])
@@ -110,8 +126,11 @@ def home_page():
         return redirect("/signup")
 
     ten_recent_customers = CustomerService.get_10_customers()
+    payment_history = InvoiceService.get_five_oldest_outstanding()
+    yearly_revenue = PaymentService.get_yearly_revenue('2023')
+    
 
-    return render_template('home_page.html', customers=ten_recent_customers)
+    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])

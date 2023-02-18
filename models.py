@@ -1,6 +1,7 @@
 """SQLAlchemy models for Invoice App."""
 
 from datetime import datetime
+import enum
 
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
@@ -22,11 +23,13 @@ def connect_db(app):
     db.init_app(app)
 
 
-# class BaseModel(Base):
-#     __abstract__ = True
-#     created_date = db.Column(db.DateTime, default=datetime.utcnow)
-#     updated_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-#     deleted_date = db.Column(db.DateTime)
+class enPaymentType(enum.Enum):
+    credit_card = 1
+    check = 2
+    venmo = 3
+    paypal = 4
+    cashapp = 5
+
 
 
 class User(db.Model):
@@ -55,49 +58,6 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
-    
-   
-
-
-    
-class UserService():
-    
-    def signup(self, username, email, password):
-        """Sign up user.
-
-        Hashes password and adds user to system.
-        """
-
-        hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
-
-        user = User(
-            username=username,
-            email=email,
-            password=hashed_pwd
-        )
-
-        db.session.add(user)
-        return user
-
-
-    def authenticate(self, username, password):
-        """Find user with `username` and `password`.
-
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
-        user = self.query.filter_by(username=username).first()
-
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
-
-        return False
 
 
 class Customer(db.Model):
@@ -155,10 +115,6 @@ class Invoice(db.Model):
         db.ForeignKey('customers.id'), 
         nullable=False
         )
-    amount_paid = db.Column(
-        db.Float,
-        default=0.00
-        )
     total_cost = db.Column(
         db.Float, 
         nullable=False
@@ -174,9 +130,39 @@ class Invoice(db.Model):
         )
     deleted_date = db.Column(db.DateTime)
 
-    service_requests = db.relationship('ServiceRequest', backref="invoices")
 
-class ServiceRequest(db.Model):
+
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id =  db.Column(
+         db.Integer, 
+        primary_key=True
+        )
+    invoice_id =  db.Column(
+         db.Integer, 
+         db.ForeignKey('invoices.id')
+        )
+    amount = db.Column(
+            db.Float,
+            nullable=False
+        )
+    payment_type = db.Column(
+        db.Enum(enPaymentType),
+        nullable=False
+        )
+    reference_num = db.Column(
+        db.String,
+        nullable=False
+        )
+    created_date = db.Column(
+        db.DateTime, 
+        default=datetime.utcnow
+        )
+
+    payments = db.relationship('Invoice', backref="payments")
+
+class ServiceRequest(Base):
     __tablename__ = 'service_request'
 
     id = db.Column(
