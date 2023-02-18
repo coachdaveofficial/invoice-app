@@ -28,13 +28,17 @@
                 <h4 class="list-group-item-heading">
                     Invoices
                 </h4>
-				{{yearly_revenue}}
 				{% for payment in payment_history %}
 				<div class="list-group-item">
 					<div class="row">
+						{% if payment.due_date < payment.curr_date %}
+						<div class="col-12 text-center">
+							<p class="badge bg-warning text-dark">Warning! Invoice is overdue.</p>
+						</div>
+						{% endif %}
 						<div class="col">
 							<div class="badge bg-info">
-								Invoice #{{payment.id}}
+								Invoice #{{payment.invoice_id}}
 							</div>
 						</div>
 						<div class="col">
@@ -53,12 +57,17 @@
 						{% if c.id == payment.customer_id %}
 						<div class="row">
 							<div class="col">
-								{{c.full_name}} has <span class="badge bg-danger">{{ "$%.2f"|format	(payment.amount_left) }}</span> left to pay off.
+								{{c.full_name}} has <span class="badge bg-secondary">{{ "$%.2f"|format	(payment.amount_left) }}</span> left to pay off.
 							</div>
 						</div>
 						<div class="row">
-							<div class="col">
+							<div class="col mt-2">
+								{% if payment.due_date < payment.curr_date %}
+								Due date was <u>{{payment.due_date}}</u>
+								{% else %}
 								<u>Due date: {{payment.due_date}}.</u>
+								{% endif %}
+
 							</div>
 						</div>
 						{% endif %}
@@ -67,6 +76,8 @@
 				</div>
 				{% endfor %}
 			</div>
+		
+			
 			<a href="#" class="badge bg-primary">View all outstanding invoices</a>
 		</div>
 
@@ -86,6 +97,16 @@
 				
 
 			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
+		</div>
+		<div class="col">
+			<div class="list-group">
+                <h4 class="list-group-item-heading text-center">
+                    Yearly Revenue: <span class="badge bg-success">{{yearly_revenue}}</span>
+                </h4>
+				<div class="list-group-item">
+					
+				</div>
+			
 		</div>
 	</div>
 </div>
