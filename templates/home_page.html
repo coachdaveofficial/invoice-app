@@ -44,7 +44,7 @@
 						</div>
 						<div class="col">
 							<div class="badge bg-primary">
-								Amount paid: {{payment.total_cost - payment.amount_left}}
+								Amount paid: {{ (payment.total_cost - payment.amount_left) }}
 							</div>
 						</div>
 					</div>
@@ -53,7 +53,7 @@
 						{% if c.id == payment.customer_id %}
 						<div class="row">
 							<div class="col">
-								{{c.full_name}} has <span class="badge bg-danger">{{payment.amount_left}}</span> left to pay off.
+								{{c.full_name}} has <span class="badge bg-danger">{{ "$%.2f"|format	(payment.amount_left) }}</span> left to pay off.
 							</div>
 						</div>
 						<div class="row">

@@ -100,69 +100,7 @@ class Customer(db.Model):
         db.DateTime
         )
 
-class Invoice(db.Model):
-    __tablename__ = 'invoices'
-    id = db.Column(
-        db.Integer, 
-        primary_key=True
-        )
-    due_date = db.Column(
-        db.Date, 
-        nullable=False
-        )
-    cust_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('customers.id'), 
-        nullable=False
-        )
-    total_cost = db.Column(
-        db.Float, 
-        nullable=False
-        )
-    created_date = db.Column(
-        db.DateTime, 
-        default=datetime.utcnow
-        )
-    updated_date = db.Column(
-        db.DateTime, 
-        default=datetime.utcnow, 
-        onupdate=datetime.utcnow
-        )
-    deleted_date = db.Column(db.DateTime)
-
-
-
-class Payment(db.Model):
-    __tablename__ = "payments"
-
-    id =  db.Column(
-         db.Integer, 
-        primary_key=True
-        )
-    invoice_id =  db.Column(
-         db.Integer, 
-         db.ForeignKey('invoices.id')
-        )
-    amount = db.Column(
-            db.Float,
-            nullable=False
-        )
-    payment_type = db.Column(
-        db.Enum(enPaymentType),
-        nullable=False
-        )
-    reference_num = db.Column(
-        db.String,
-        nullable=False
-        )
-    created_date = db.Column(
-        db.DateTime, 
-        default=datetime.utcnow
-        )
-
-    payments = db.relationship('Invoice', backref="payments")
-
-class ServiceRequest(Base):
+class ServiceRequest(db.Model):
     __tablename__ = 'service_request'
 
     id = db.Column(
@@ -194,7 +132,70 @@ class ServiceRequest(Base):
         )
     deleted_date = db.Column(db.DateTime)
 
-    invoice = db.relationship("Invoice", backref='service_request')
+    # invoices = db.relationship("Invoice", backref='service_request')
+class Invoice(db.Model):
+    __tablename__ = 'invoices'
+    id = db.Column(
+        db.Integer, 
+        primary_key=True
+        )
+    due_date = db.Column(
+        db.Date, 
+        nullable=False
+        )
+    cust_id = db.Column(
+        db.Integer, 
+        db.ForeignKey('customers.id'), 
+        nullable=False
+        )
+    total_cost = db.Column(
+        db.Float, 
+        nullable=False
+        )
+    created_date = db.Column(
+        db.DateTime, 
+        default=datetime.utcnow
+        )
+    updated_date = db.Column(
+        db.DateTime, 
+        default=datetime.utcnow, 
+        onupdate=datetime.utcnow
+        )
+    deleted_date = db.Column(db.DateTime)
+
+    service_requests = db.relationship('ServiceRequest', backref='invoices')
+
+class Payment(db.Model):
+    __tablename__ = "payments"
+
+    id =  db.Column(
+         db.Integer, 
+        primary_key=True
+        )
+    invoice_id =  db.Column(
+         db.Integer, 
+         db.ForeignKey('invoices.id')
+        )
+    amount = db.Column(
+            db.Float,
+            nullable=False
+        )
+    payment_type = db.Column(
+        db.Enum(enPaymentType),
+        nullable=False
+        )
+    reference_num = db.Column(
+        db.String,
+        nullable=False
+        )
+    created_date = db.Column(
+        db.DateTime, 
+        default=datetime.utcnow
+        )
+
+    payments = db.relationship('Invoice', backref="payments")
+
+
 
 class Service(db.Model):
     __tablename__ = "services"
