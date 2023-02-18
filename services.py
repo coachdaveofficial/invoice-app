@@ -108,8 +108,10 @@ class ServiceService:
         return services
 
 class InvoiceService:
+    
     @classmethod
     def get_invoice_payment_log(self):
+        '''Get the payment info for all invoices'''
         invoice_payment_info = []
         invoices = Invoice.query.all()
         payments = Payment.query.all()
@@ -128,6 +130,7 @@ class InvoiceService:
 
     @classmethod
     def get_five_oldest_outstanding(self):
+        '''Get 5 invoices with upcoming due dates that have not been paid in full.'''
         invoice_payment_info = []
         invoices = (Invoice
                     .query
@@ -138,6 +141,7 @@ class InvoiceService:
         for invoice in invoices:
             total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
             amount_left = invoice.total_cost - total_payments
+            # get 5 invoices that have not yet been paid
             if amount_left and len(invoice_payment_info) < 6:
                 invoice_payment_info.append({
                     'id': invoice.id,
@@ -148,4 +152,27 @@ class InvoiceService:
                 }
             )
         return invoice_payment_info
+class PaymentService:
+    def get_payment_history(self):
+        '''Get payment history'''
 
+        payments = Payment.query.all()
+        payment_history = []
+        for payment in payments:
+            payment_history.append({
+                'id': payment.id,
+                'amount': payment.amount,
+                'ref_num': payment.reference_num,
+                'pay_type': payment.payment_type,
+                'date': payment.created_date
+            })
+
+    def get_yearly_revenue(year: str):
+        '''Get revenue totals sorted by the year (yyyy) the payment was submitted'''
+        
+        payments = Payment.query.all()
+        for p in payments:
+            if p.created_date:
+                return p.created_date
+        yearly_total = sum([p.amount for p in payments if year in p.created_date])
+        return yearly_total

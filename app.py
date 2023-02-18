@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import ServiceService, UserService, CustomerService, InvoiceService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -127,9 +127,10 @@ def home_page():
 
     ten_recent_customers = CustomerService.get_10_customers()
     payment_history = InvoiceService.get_five_oldest_outstanding()
+    yearly_revenue = PaymentService.get_yearly_revenue('2023')
     
 
-    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history)
+    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
