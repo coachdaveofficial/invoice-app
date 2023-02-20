@@ -1,6 +1,8 @@
 from models import User, db, Customer, Service, Invoice, Payment
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
+from datetime import datetime
+
 
 bcrypt = Bcrypt()
 
@@ -87,7 +89,7 @@ class CustomerService:
 
 class ServiceService:
     @classmethod
-    def add_service(form_data):
+    def add_service(self, form_data):
         try:
             service = Service(
                         description=form_data.description.data,
@@ -105,6 +107,17 @@ class ServiceService:
                     .query
                     .all())
         return services
+    @classmethod
+    def get_service(self, id):
+        service = (Service.query.get(id))
+        if not service:
+            return None
+        return ({
+            "id": service.id,
+            "description": service.description,
+            "price_per_unit": service.price_per_unit,
+            "unit": service.unit
+        })
 
 class InvoiceService:
     
@@ -143,8 +156,9 @@ class InvoiceService:
             # get 5 invoices that have not yet been paid
             if amount_left and len(invoice_payment_info) < 5:
                 invoice_payment_info.append({
-                    'id': invoice.id,
+                    'invoice_id': invoice.id,
                     'due_date': invoice.due_date,
+                    'curr_date': datetime.date(datetime.utcnow()),
                     'total_cost': invoice.total_cost,
                     'amount_left': amount_left,
                     'customer_id': invoice.cust_id
@@ -170,8 +184,5 @@ class PaymentService:
         '''Get revenue totals sorted by the year (yyyy) the payment was submitted'''
         
         payments = Payment.query.all()
-        for p in payments:
-            if p.created_date:
-                return p.created_date
-        yearly_total = sum([p.amount for p in payments if year in p.created_date])
+        yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
         return yearly_total

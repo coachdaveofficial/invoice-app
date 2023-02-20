@@ -129,9 +129,10 @@ def home_page():
     ten_recent_customers = CustomerService.get_10_customers()
     payment_history = InvoiceService.get_five_oldest_outstanding()
     yearly_revenue = PaymentService.get_yearly_revenue('2023')
+    all_services = ServiceService.get_all_services()
     
 
-    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue)
+    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue, services=all_services)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
@@ -192,6 +193,10 @@ def show_all_services():
     all_services = ServiceService.get_all_services()
 
     return render_template('/services/list_services.html', services=all_services)
+
+@app.route('/api/service/<int:service_id>')
+def get_service_data(service_id):
+    return ServiceService.get_service(service_id)    
 
 @app.route('/invoices/add', methods=["GET", "POST"])
 def add_new_invoice():

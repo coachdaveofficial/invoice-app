@@ -10,7 +10,7 @@
                 <div class="col md-6">
                     <div class="form-group">
                         <h2 class="join-message">Create New Invoice</h2>
-                        <form method="POST" id="user_form">
+                        <form method="POST" id="invoice_form">
                           {{ form.hidden_tag() }}
                     
                           {% for field in form if field.widget.input_type != 'hidden' %}
