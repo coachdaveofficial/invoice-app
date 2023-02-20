@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
+
 bcrypt = Bcrypt()
 
 class UserService:
@@ -88,7 +89,7 @@ class CustomerService:
 
 class ServiceService:
     @classmethod
-    def add_service(form_data):
+    def add_service(self, form_data):
         try:
             service = Service(
                         description=form_data.description.data,
@@ -106,6 +107,17 @@ class ServiceService:
                     .query
                     .all())
         return services
+    @classmethod
+    def get_service(self, id):
+        service = (Service.query.get(id))
+        if not service:
+            return None
+        return ({
+            "id": service.id,
+            "description": service.description,
+            "price_per_unit": service.price_per_unit,
+            "unit": service.unit
+        })
 
 class InvoiceService:
     

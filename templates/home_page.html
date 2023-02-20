@@ -9,25 +9,29 @@
 <div class="mt-4 container-fluid">
 	<div class="row">
         <div class="col-md-2 bg-info">
-            <p class="text-light">Welcome to my shite</p>
-			<ul class="list-group">
-				<li class="list-group-item">
-					<a href="/invoices/add" class="text-light badge badge-pill badge-primary mx-2">New Invoice</a>
+			<ul class="nav nav-pills flex-column mb-auto">
+				<li class="nav-item">
+					<a href="/invoices/add" class="m-2 text-light badge badge-pill badge-primary mx-2">New Invoice</a>
 				</li>
-				<li class="list-group-item">
-					<a href="/customers" class="text-light badge badge-pill badge-primary mx-2">Customers</a>
+					
+				<li class="nav-item">
+					<a href="/customers" class="m-2 text-light badge badge-pill badge-primary mx-2">Customers</a>
 				</li>
-				<li class="list-group-item">
-					<a href="/services" class="text-light badge badge-pill badge-primary mx-2">Services</a>
+					
+				<li class="nav-item">
+					<a href="/services" class="m-2 text-light badge badge-pill badge-primary mx-2">Services</a>
 				</li>
+					
 			</ul>
         </div>
+		
 		
 		<div class="col-md-4">
             <div class="list-group">
                 <h4 class="list-group-item-heading">
-                    Invoices
+                    Invoices 
                 </h4>
+				<a href="#" class="mb-2 badge bg-primary">Click here view all outstanding invoices</a>
 				{% for payment in payment_history %}
 				<div class="list-group-item">
 					<div class="row">
@@ -78,15 +82,16 @@
 			</div>
 		
 			
-			<a href="#" class="badge bg-primary">View all outstanding invoices</a>
+			
 		</div>
 
-		<div class="col-md-4">
+		<!-- <div class="col-md-4">
 			<div class="list-group">
 				<h4 class="list-group-item-heading">
                     Customers
                 </h4>
-                {% for customer in customers %} 
+                {% for customer in customers %}
+
 				<div class="list-group-item">
 					
                     <div class="list-item">
@@ -94,10 +99,47 @@
                     </div>
 				</div>
                 {% endfor %}
-				
-
 			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
+		</div> -->
+
+		<div class="col-md-6 ">
+			<h4>Estimates</h4>
+			<button type="button" class="btn btn-primary collapsed" data-bs-toggle="collapse" data-bs-target="#estimates">Create an estimate.</button>
+			<div id="estimates" class="collapse">
+				<a href="/services/add" class="badge bg-secondary">Create New Service</a>
+				<div id="estimate-form" class="form-group m-2">
+					<div class="text-center">
+						<label class="form-label" for="services-options">Select service to add to estimate:</label>
+						<select name="services" id="services-options" class="form-select">
+							{% for service in services %}
+							<option value="{{service.id}}">{{service.description}}</option>
+							{% endfor %}
+						</select>
+						<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
+					</div>
+				</div>
+					<ol class="list-group list-group-numbered" id="estimate-list">
+						
+						<li class="list-group-item d-flex justify-content-between align-items-start">
+							<div class="ms-2 me-auto">
+								<div><b>Subheading</b></div>
+								Content for list item
+							</div>
+							<span class="badge bg-primary rounded-pill">14</span>
+						</li>
+					</ol>
+					<ol class="list-group">
+						<li class="list-group-item">
+							<div class="ms-2 me-auto">
+								<div><b>Total</b></div>
+
+							</div>
+							<span id="estimate-total" class="badge bg-primary">0</span>
+						</li>
+					</ol>
+			</div>
 		</div>
+
 		<div class="col">
 			<div class="list-group">
                 <h4 class="list-group-item-heading text-center">
@@ -106,7 +148,7 @@
 				<div class="list-group-item">
 					
 				</div>
-			
+			</div>
 		</div>
 	</div>
 </div>
