@@ -7,7 +7,7 @@ from datetime import datetime
 bcrypt = Bcrypt()
 
 class UserService:
-    '''Services for getting user info'''
+    """Services for getting user info"""
 
     @classmethod
     def signup(cls, username, email, password):
@@ -54,7 +54,7 @@ class UserService:
     
 
 class CustomerService:
-    '''Services for getting customer info'''
+    """Services for getting customer info"""
     @classmethod
     def add_customer(form_data):
         try:
@@ -123,31 +123,33 @@ class InvoiceService:
     
     @classmethod
     def get_invoice_payment_log(self):
-        '''Get the payment info for all invoices'''
+        """Get the payment info for all invoices"""
         invoice_payment_info = []
         invoices = Invoice.query.all()
         payments = Payment.query.all()
         for invoice in invoices:
             total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
             amount_left = invoice.total_cost - total_payments
-            invoice_payment_info.append({
+            invoice_payment_info.append(
+                {
                 'id': invoice.id,
                 'due_date': invoice.due_date,
                 'total_cost': invoice.total_cost,
                 'amount_left': amount_left,
                 'customer_id': invoice.cust_id
-            }
+                 }
             )
         return invoice_payment_info
 
     @classmethod
     def get_five_oldest_outstanding(self):
-        '''Get 5 invoices with upcoming due dates that have not been paid in full.'''
+        """Get 5 invoices with upcoming due dates that have not been paid in full."""
         invoice_payment_info = []
         invoices = (Invoice
                     .query
                     .order_by(Invoice.due_date.asc())
                     .all())
+
         payments = Payment.query.all()
 
         for invoice in invoices:
@@ -167,7 +169,7 @@ class InvoiceService:
         return invoice_payment_info
 class PaymentService:
     def get_payment_history(self):
-        '''Get payment history'''
+        """Get payment history"""
 
         payments = Payment.query.all()
         payment_history = []
@@ -181,7 +183,7 @@ class PaymentService:
             })
 
     def get_yearly_revenue(year: str):
-        '''Get revenue totals sorted by the year (yyyy) the payment was submitted'''
+        """Get revenue totals sorted by the year (yyyy) the payment was submitted"""
         
         payments = Payment.query.all()
         yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
