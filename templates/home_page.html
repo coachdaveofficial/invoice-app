@@ -7,7 +7,7 @@
 
 
 <div class="mt-4 container-fluid">
-	<div class="row">
+	<!-- <div class="row">
         <div class="col-md-2 bg-info">
 			<ul class="nav nav-pills flex-column mb-auto">
 				<li class="nav-item">
@@ -23,11 +23,55 @@
 				</li>
 					
 			</ul>
-        </div>
+        </div> -->
 		
 		
 		<div class="col-md-4">
-            <div class="list-group">
+			<table class="table table-sm table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							Invoice I.D.
+						</th>
+						<th>
+							Total Cost
+						</th>
+						<th>
+							Amount Paid
+						</th>
+						<th>
+							Status
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							1
+						</td>
+						<td>
+							TB - Monthly
+						</td>
+						<td>
+							01/04/2012
+						</td>
+						<td>
+							Default
+						</td>
+					</tr>
+				</tbody>
+
+
+
+
+
+
+
+
+            <!-- <div class="list-group">
                 <h4 class="list-group-item-heading">
                     Invoices 
                 </h4>
@@ -79,28 +123,9 @@
  					</p>
 				</div>
 				{% endfor %}
-			</div>
-		
-			
-			
+			</div> -->
+
 		</div>
-
-		<!-- <div class="col-md-4">
-			<div class="list-group">
-				<h4 class="list-group-item-heading">
-                    Customers
-                </h4>
-                {% for customer in customers %}
-
-				<div class="list-group-item">
-					
-                    <div class="list-item">
-                        <a href="#">{{customer.full_name}}</a>
-                    </div>
-				</div>
-                {% endfor %}
-			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
-		</div> -->
 
 		<div class="col-md-6 ">
 			<h4>Estimates</h4>
@@ -120,13 +145,6 @@
 				</div>
 					<ol class="list-group list-group-numbered" id="estimate-list">
 						
-						<li class="list-group-item d-flex justify-content-between align-items-start">
-							<div class="ms-2 me-auto">
-								<div><b>Subheading</b></div>
-								Content for list item
-							</div>
-							<span class="badge bg-primary rounded-pill">14</span>
-						</li>
 					</ol>
 					<ol class="list-group">
 						<li class="list-group-item">
