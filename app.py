@@ -37,22 +37,6 @@ def add_user_to_g():
     else:
         g.user = None
 
-@app.before_request
-def add_demo_user():
-    """Add demo user to session"""
-
-    demo = User.query.filter_by(username="demo-user").first()
-    if not demo:
-        
-        UserService.signup(
-            email="demouser@test.com",
-            username="demo-user",
-            password="demo-user"
-        )
-
-    
-
-
 def do_login(user):
     """Log in user."""
 
@@ -119,6 +103,23 @@ def logout():
     do_logout()
     flash(f"Successfully logged out!", "success")
     return redirect("/login")
+
+@app.route('/guest')
+def guest_login():
+
+    demo = User.query.filter_by(username="demo-user").first()
+
+    if not demo:
+        
+        UserService.signup(
+            email="demouser@test.com",
+            username="Guest",
+            password="demo-user"
+        )
+    
+    do_login(demo)
+    flash(f"Hello, {demo.username}!", "success")
+    return redirect("/")
 
 @app.route('/')
 def home_page():
