@@ -1,6 +1,6 @@
 from app import app
 from faker import Faker
-from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice
+from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee
 import random
 from datetime import datetime, timedelta
 import enum
@@ -17,6 +17,29 @@ class enPaymentType(enum.Enum):
     paypal = 4
     cashapp = 5
 
+def seed_companies():
+    for i in range(3):
+        company = Company(
+            name=fake.name()
+        )
+        db.session.add(company)
+    db.session.commit()
+
+def seed_employees():
+    companies = Company.query.all()
+    users = User.query.all()
+    ids = []
+    for u in users:
+        ids.append(u.id)
+    i = 0
+    for c in companies:
+        employee = Employee(
+            company_id=c.id,
+            user_id=ids[i]
+        )
+        db.session.add(employee)
+        i = i+1
+    db.session.commit()
 
 def seed_users():
     for i in range(5):
@@ -31,13 +54,15 @@ def seed_users():
 
 
 def seed_customers():
-    for i in range(10):
+    companies = Company.query.all()
+    for c in companies:
         customer = Customer(
             full_name=fake.name(),
             address=fake.address(),
             tax_id=random.randint(100000000, 999999999),
             phone=fake.phone_number(),
-            email=fake.email()
+            email=fake.email(),
+            company_id=c.id
         )
         db.session.add(customer)
 
@@ -46,14 +71,18 @@ def seed_customers():
 
 def seed_invoices():
     customers = Customer.query.all()
+    companies = Company.query.all()
+    i = 0
+    for c in companies:
 
-    for customer in customers:
         invoice = Invoice(
             due_date=fake.date_between(start_date='-30d', end_date='+30d'),
-            cust_id=customer.id,
-            total_cost=round(random.uniform(50, 1000), 2)
+            cust_id=c.customers[0].id,
+            total_cost=round(random.uniform(50, 1000), 2),
+            company_id=c.id
         )
         db.session.add(invoice)
+        i = i+1
 
     db.session.commit()
 
@@ -79,7 +108,8 @@ def seed_services():
         service = Service(
             description=fake.sentence(),
             price_per_unit=round(random.uniform(5, 50), 2),
-            unit=fake.word()
+            unit=fake.word(),
+            company_id=1
         )
         db.session.add(service)
 
@@ -133,7 +163,9 @@ def seed_service_request_invoices():
 
 
 def seed_all():
+    seed_companies()
     seed_users()
+    seed_employees()
     seed_customers()
     seed_invoices()
     seed_payments()
