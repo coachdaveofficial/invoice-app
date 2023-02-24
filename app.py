@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -126,15 +126,16 @@ def home_page():
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
     
-    
+
     ten_recent_customers = CustomerService.get_10_customers()
     payment_history = InvoiceService.get_five_oldest_outstanding()
     yearly_revenue = PaymentService.get_yearly_revenue('2023')
     all_services = ServiceService.get_all_services()
+    companies = CompanyService.get_all_companies()
 
     
 
-    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue, services=all_services)
+    return render_template('home_page.html', companies=companies, customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue, services=all_services)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])

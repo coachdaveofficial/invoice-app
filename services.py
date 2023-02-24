@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -188,3 +188,11 @@ class PaymentService:
         payments = Payment.query.all()
         yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
         return yearly_total
+
+class CompanyService:
+    def get_all_companies():
+        return Company.query.all()
+
+class EmployeeService:
+    def get_all_employees(self):
+        return Employee.query.all()

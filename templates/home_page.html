@@ -64,6 +64,30 @@
 					</tr>
 				</tbody>
 			</table>
+
+			
+			
+				{% for c in companies %}
+				<ul>
+					<li>
+						
+					</li>
+					<li>
+						{{c.customers[0].full_name}}
+					</li>
+					<li>
+						{{c.invoices}}
+					</li>
+					<li>
+						
+						{{c.services}}
+					</li>
+					<li>
+						{{c.users}}
+					</li>
+				</ul>
+				{% endfor %}
+
 			
 
 
