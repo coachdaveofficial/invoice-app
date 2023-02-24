@@ -133,10 +133,17 @@ def home_page():
     yearly_revenue = PaymentService.get_yearly_revenue('2023')
     all_services = ServiceService.get_all_services()
     companies = CompanyService.get_all_companies()
+    invoices = InvoiceService.get_company_invoices(g.user.company_id)
 
     
 
-    return render_template('home_page.html', companies=companies, customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue, services=all_services)
+    return render_template('home_page.html', 
+                            companies=companies, 
+                            customers=ten_recent_customers, 
+                            payment_history=payment_history, 
+                            yearly_revenue=yearly_revenue, 
+                            services=all_services, 
+                            invoices=invoices)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])

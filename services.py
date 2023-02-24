@@ -120,6 +120,13 @@ class ServiceService:
         })
 
 class InvoiceService:
+
+    @classmethod
+    def get_company_invoices(self, company_id):
+        """Get all invoices for specific company"""
+
+        invoices = Invoice.query.filter_by(company_id=company_id).all()
+        return invoices
     
     @classmethod
     def get_invoice_payment_log(self):

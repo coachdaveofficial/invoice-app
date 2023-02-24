@@ -6,26 +6,7 @@
 
 
 
-<div class="mt-4 container-fluid">
-	<!-- <div class="row">
-        <div class="col-md-2 bg-info">
-			<ul class="nav nav-pills flex-column mb-auto">
-				<li class="nav-item">
-					<a href="/invoices/add" class="m-2 text-light badge badge-pill badge-primary mx-2">New Invoice</a>
-				</li>
-					
-				<li class="nav-item">
-					<a href="/customers" class="m-2 text-light badge badge-pill badge-primary mx-2">Customers</a>
-				</li>
-					
-				<li class="nav-item">
-					<a href="/services" class="m-2 text-light badge badge-pill badge-primary mx-2">Services</a>
-				</li>
-					
-			</ul>
-        </div> -->
-		
-		
+<div class="mt-4 container-fluid">	
 		<div class="col-md-4">
 			<table class="table table-sm table-hover table-bordered">
 				<thead>
@@ -43,25 +24,36 @@
 							Amount Paid
 						</th>
 						<th>
+							Due Date
+						</th>
+						<th>
 							Status
 						</th>
 					</tr>
 				</thead>
 				<tbody>
+					{% for invoice in invoices %}
 					<tr>
 						<td>
-							1
+							{{loop.index}}
 						</td>
 						<td>
-							TB - Monthly
+							{{invoice.id}}
 						</td>
 						<td>
-							01/04/2012
+							{{invoice.total_cost}}
 						</td>
 						<td>
 							Default
 						</td>
+						<td>
+							{{invoice.due_date}}
+						</td>
+						<td>
+							Status
+						</td>
 					</tr>
+					{% endfor %}
 				</tbody>
 			</table>
 
