@@ -116,16 +116,24 @@
 						</div>
 						<div class="modal-body">
 							<div id="estimate-form" class="form-group m-2">
-								<div class="text-center">
-									<label class="form-label" for="services-options">Select service to add to estimate:</label>
-									<select name="services" id="services-options" class="form-select">
-										{% for service in services %}
-										<option value="{{service.id}}">{{service.description}}</option>
-										{% endfor %}
-									</select>
-									<br>
-									<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
-								</div>
+								<form action="" id="estimate">
+									<div class="text-center">
+										<label for="customer-name">Insert Name of Customer</label>
+										<br>
+										<input id="customer-name" class="m-2" type="text" placeholder="Customer Name">
+										<br>
+										<label class="form-label" for="services-options">Select service to add to estimate:</label>
+										<select name="services" id="services-options" class="form-select">
+											{% for service in services %}
+											<option value="{{service.id}}">{{service.description}}</option>
+											{% endfor %}
+										</select>
+										<br>
+										<br>
+										<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
+									</div>
+									
+								</form>
 							</div>
 								<ol class="list-group list-group-numbered" id="estimate-list">
 			
@@ -133,10 +141,13 @@
 								<ol class="list-group">
 									<li class="list-group-item">
 										<div class="ms-2 me-auto">
-											<div><b>Total</b></div>
-			
+											<div>
+												<b>Total</b>
+												<span id="estimate-total" class="badge bg-primary float-right">0</span>
+											</div>
+											
 										</div>
-										<span id="estimate-total" class="badge bg-primary">0</span>
+										
 									</li>
 								</ol>
 						</div>
