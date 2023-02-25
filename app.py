@@ -130,11 +130,7 @@ def home_page():
         return redirect("/signup")
     
 
-    ten_recent_customers = CustomerService.get_10_customers()
-    payment_history = InvoiceService.get_five_oldest_outstanding()
-    yearly_revenue = PaymentService.get_yearly_revenue('2023')
-    all_services = ServiceService.get_all_services()
-    companies = CompanyService.get_all_companies()
+    
 
     print(g.user.employer.company_id)
 
@@ -144,12 +140,7 @@ def home_page():
 
     
 
-    return render_template('home_page.html', 
-                            companies=companies, 
-                            customers=ten_recent_customers, 
-                            payment_history=payment_history, 
-                            yearly_revenue=yearly_revenue, 
-                            services=all_services, 
+    return render_template('home_page.html',  
                             invoices=invoices)
 
 
