@@ -49,6 +49,12 @@ class UserService:
             if is_auth:
                 return user
         return False
+    
+    @classmethod
+    def delete_user(self, user_id):
+        user = User.query.get(user_id)
+        db.session.delete(user)
+        db.session.commit()
 
    
     
@@ -213,6 +219,7 @@ class CompanyService:
             db.session.commit()
             return c
         except IntegrityError:
+            db.session.rollback()
             return None
 
     @classmethod

@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
-from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm, CompanyForm
+from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
 
@@ -71,13 +71,14 @@ def signup():
     if not user:
         flash("Username or Email already taken", 'danger')
         return redirect('/signup')
-  
+    
     company = CompanyService.create_company(company_name=signup_form.company_name.data, owner_id=user.id)
 
     if not company:
         flash("Company with that name already exists", "danger")
+        UserService.delete_user(user.id)
+        return redirect('/signup')
         
-
     do_login(user)
     EmployeeService.set_employer(user_id=user.id, company_id=company.id)
     return redirect('/')
