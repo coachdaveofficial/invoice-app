@@ -1,6 +1,7 @@
 from app import app
 from faker import Faker
 from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee
+from services import UserService, CompanyService
 import random
 from datetime import datetime, timedelta
 import enum
@@ -165,6 +166,18 @@ def seed_service_request_invoices():
         db.session.add(service_request_invoice)
 
     db.session.commit()
+
+def seed_demo_user():
+    demo = UserService.signup(
+        username="Guest",
+        email="demouser@test.com",
+        password="demouser"
+    )
+
+    c = CompanyService.create_company(
+        name="Demo Company",
+        owner_id=demo.id
+        )
 
 
 def seed_all():
