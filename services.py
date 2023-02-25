@@ -196,3 +196,48 @@ class PaymentService:
         yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
         return yearly_total
 
+class CompanyService:
+    def get_all_companies():
+        return Company.query.all()
+    
+    @classmethod
+    def authenticate(cls, company_name, pin):
+        company = Company.query.filter_by(name=company_name).first()
+
+        if company:
+            is_auth = bcrypt.check_password_hash(company.pin, pin)
+            if is_auth:
+                return company
+        return False
+
+
+
+    @classmethod
+    def create_company(cls, company_name, pin, owner_id):
+        try:
+            hashed_pin = bcrypt.generate_password_hash(pin).decode('UTF-8')
+            c = Company(
+                name=company_name,
+                pin=hashed_pin,
+                owner_id=owner_id
+            )
+
+            db.session.add(c)
+            db.session.commit()
+            return c
+        except IntegrityError:
+
+            return None
+    @classmethod
+    def delete_company(id):
+        Company.query.filter_by(id=id).delete()
+        db.session.commit()
+class EmployeeService:
+    def get_all_employees(self):
+        return Employee.query.all()
+    
+    @classmethod
+    def set_employer(self, user_id, company_id):
+        e = Employee(user_id=user_id, company_id=company_id)
+        db.session.add(e)
+        db.session.commit()
