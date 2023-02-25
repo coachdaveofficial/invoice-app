@@ -82,33 +82,48 @@
 				{% endfor %}
 		</div>
 		<div class="col-md-6">
-			<h4>Estimates</h4>
-			<button type="button" class="btn btn-primary collapsed" data-bs-toggle="collapse" data-bs-target="#estimates">Create an estimate.</button>
-			<div id="estimates" class="collapse">
-				<a href="/services/add" class="badge bg-secondary">Create New Service</a>
-				<div id="estimate-form" class="form-group m-2">
-					<div class="text-center">
-						<label class="form-label" for="services-options">Select service to add to estimate:</label>
-						<select name="services" id="services-options" class="form-select">
-							{% for service in services %}
-							<option value="{{service.id}}">{{service.description}}</option>
-							{% endfor %}
-						</select>
-						<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+				Launch demo modal
+			</button>
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+						<h1 class="modal-title fs-5" id="exampleModalLabel">New Estimate</h1>
+						</div>
+						<div class="modal-body">
+							<div id="estimate-form" class="form-group m-2">
+								<div class="text-center">
+									<label class="form-label" for="services-options">Select service to add to estimate:</label>
+									<select name="services" id="services-options" class="form-select">
+										{% for service in services %}
+										<option value="{{service.id}}">{{service.description}}</option>
+										{% endfor %}
+									</select>
+									<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
+								</div>
+							</div>
+								<ol class="list-group list-group-numbered" id="estimate-list">
+			
+								</ol>
+								<ol class="list-group">
+									<li class="list-group-item">
+										<div class="ms-2 me-auto">
+											<div><b>Total</b></div>
+			
+										</div>
+										<span id="estimate-total" class="badge bg-primary">0</span>
+									</li>
+								</ol>
+						</div>
+						<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" aria-label="Close" data-bs-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary">Save changes</button>
+						</div>
 					</div>
 				</div>
-					<ol class="list-group list-group-numbered" id="estimate-list">
-
-					</ol>
-					<ol class="list-group">
-						<li class="list-group-item">
-							<div class="ms-2 me-auto">
-								<div><b>Total</b></div>
-
-							</div>
-							<span id="estimate-total" class="badge bg-primary">0</span>
-						</li>
-					</ol>
 			</div>
 		</div>
 	</div>
