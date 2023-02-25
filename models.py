@@ -208,8 +208,7 @@ class Invoice(db.Model):
     company_id = db.Column(
         db.Integer, 
         db.ForeignKey('companies.id'), 
-        nullable=False,
-        unique=True
+        nullable=False
         )
     created_date = db.Column(
         db.DateTime, 
