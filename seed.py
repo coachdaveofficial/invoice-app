@@ -4,6 +4,9 @@ from models import db, connect_db, User, Customer, Invoice, Payment, Service, Se
 import random
 from datetime import datetime, timedelta
 import enum
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 
 fake = Faker()
@@ -18,9 +21,13 @@ class enPaymentType(enum.Enum):
     cashapp = 5
 
 def seed_companies():
+    u = User.query.all()
+    hashed_pin = bcrypt.generate_password_hash('1234').decode('UTF-8')
     for i in range(3):
         company = Company(
-            name=fake.name()
+            name="Company #" + str(i+1),
+            pin=hashed_pin,
+            owner_id=u[i].id
         )
         db.session.add(company)
     db.session.commit()
@@ -163,8 +170,8 @@ def seed_service_request_invoices():
 
 
 def seed_all():
-    seed_companies()
     seed_users()
+    seed_companies()
     seed_employees()
     seed_customers()
     seed_invoices()

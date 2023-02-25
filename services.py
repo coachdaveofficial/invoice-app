@@ -29,7 +29,7 @@ class UserService:
             db.session.commit()
             return user
         except IntegrityError:
-            db.rollback()
+            # db.rollback()
             return None
     @classmethod
     def authenticate(cls, username, password):
@@ -196,10 +196,3 @@ class PaymentService:
         yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
         return yearly_total
 
-class CompanyService:
-    def get_all_companies():
-        return Company.query.all()
-
-class EmployeeService:
-    def get_all_employees(self):
-        return Employee.query.all()

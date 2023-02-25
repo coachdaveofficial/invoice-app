@@ -10,9 +10,9 @@
                 <div class="form-group">
                   <h2 class="join-message">Create Account</h2>
                   <form method="POST" id="user_form">
-                    {{ form.hidden_tag() }}
+                    {{ signup_form.hidden_tag() }}
               
-                    {% for field in form if field.widget.input_type != 'hidden' %}
+                    {% for field in signup_form if field.widget.input_type != 'hidden' %}
                       {% for error in field.errors %}
                         <span class="text-danger">{{ error }}</span>
                       {% endfor %}

@@ -1,9 +1,9 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User
+from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
-from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
+from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm, CompanyForm
 
 app = Flask(__name__)
 
@@ -55,22 +55,31 @@ def do_logout():
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
 
-    form = UserAddForm()
+    signup_form = UserAddForm()
 
-    if not form.validate_on_submit():
-        return render_template('users/signup.html', form=form)
+
+    if not signup_form.validate_on_submit():
+        return render_template('users/signup.html', signup_form=signup_form)
     
+
     u = UserService()
     user = u.signup(
-        username=form.username.data,
-        email=form.email.data,
-        password=form.password.data
+        username=signup_form.username.data,
+        email=signup_form.email.data,
+        password=signup_form.password.data
         )
-    
     if not user:
         flash("Username or Email already taken", 'danger')
         return redirect('/signup')
+    check_if_company = Company.query.filter_by(name=signup_form.company_name.data).first()
+    company = None
+    if check_if_company:
+        company = CompanyService.authenticate(company_name=signup_form.company_name.data, pin=signup_form.pin.data)
+    if not company:
+        company = CompanyService.create_company(company_name=signup_form.company_name.data, pin=signup_form.pin.data, owner_id=user.id)
 
+    do_login(user)
+    EmployeeService.set_employer(user_id=user.id, company_id=company.id)
     return redirect('/')
 
 @app.route('/login', methods=["GET", "POST"])
@@ -123,6 +132,7 @@ def guest_login():
 
 @app.route('/')
 def home_page():
+    print(g.user)
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
@@ -133,7 +143,12 @@ def home_page():
     yearly_revenue = PaymentService.get_yearly_revenue('2023')
     all_services = ServiceService.get_all_services()
     companies = CompanyService.get_all_companies()
-    invoices = InvoiceService.get_company_invoices(g.user.company_id)
+
+    print(g.user.employer.company_id)
+
+    invoices = InvoiceService.get_company_invoices(g.user.employer.company_id)
+    print(invoices)
+    
 
     
 

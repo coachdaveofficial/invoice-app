@@ -55,12 +55,12 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-    company_id = db.Column(
-        db.Integer,
-        db.ForeignKey('companies.id')
-    )
+    # company_id = db.Column(
+    #     db.Integer,
+    #     db.ForeignKey('companies.id')
+    # )
     
-    employee = db.relationship("Employee", backref="users", uselist=False)
+    employer = db.relationship("Employee", backref="users", uselist=False)
 
 
     def __repr__(self):
@@ -74,13 +74,23 @@ class Company(db.Model):
     )
     name = db.Column(
         db.Text,
+        nullable=False,
+        unique=True
+    )
+    pin = db.Column(
+        db.Text,
         nullable=False
+    )
+    owner_id = db.Column(
+        db.ForeignKey('users.id'),
+        nullable=False
+        
     )
     employees = db.relationship("Employee", backref="companies")
     customers = db.relationship("Customer", backref="companies")
     invoices = db.relationship("Invoice", backref="companies")
     services = db.relationship("Service", backref="companies")
-    users = db.relationship("User", backref="companies")
+    # users = db.relationship("User", backref="companies")
     
 class Employee(db.Model):
     __tablename__ = 'employees'
