@@ -200,25 +200,12 @@ class CompanyService:
     def get_all_companies():
         return Company.query.all()
     
-    @classmethod
-    def authenticate(cls, company_name, pin):
-        company = Company.query.filter_by(name=company_name).first()
-
-        if company:
-            is_auth = bcrypt.check_password_hash(company.pin, pin)
-            if is_auth:
-                return company
-        return False
-
-
 
     @classmethod
-    def create_company(cls, company_name, pin, owner_id):
+    def create_company(cls, company_name, owner_id):
         try:
-            hashed_pin = bcrypt.generate_password_hash(pin).decode('UTF-8')
             c = Company(
                 name=company_name,
-                pin=hashed_pin,
                 owner_id=owner_id
             )
 
@@ -226,8 +213,8 @@ class CompanyService:
             db.session.commit()
             return c
         except IntegrityError:
-
             return None
+
     @classmethod
     def delete_company(id):
         Company.query.filter_by(id=id).delete()

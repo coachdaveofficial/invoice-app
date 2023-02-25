@@ -57,26 +57,26 @@ def signup():
 
     signup_form = UserAddForm()
 
-
     if not signup_form.validate_on_submit():
         return render_template('users/signup.html', signup_form=signup_form)
-    
 
     u = UserService()
+
     user = u.signup(
         username=signup_form.username.data,
         email=signup_form.email.data,
         password=signup_form.password.data
         )
+
     if not user:
         flash("Username or Email already taken", 'danger')
         return redirect('/signup')
-    check_if_company = Company.query.filter_by(name=signup_form.company_name.data).first()
-    company = None
-    if check_if_company:
-        company = CompanyService.authenticate(company_name=signup_form.company_name.data, pin=signup_form.pin.data)
+  
+    company = CompanyService.create_company(company_name=signup_form.company_name.data, owner_id=user.id)
+
     if not company:
-        company = CompanyService.create_company(company_name=signup_form.company_name.data, pin=signup_form.pin.data, owner_id=user.id)
+        flash("Company with that name already exists", "danger")
+        
 
     do_login(user)
     EmployeeService.set_employer(user_id=user.id, company_id=company.id)
