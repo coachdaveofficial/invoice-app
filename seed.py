@@ -173,12 +173,38 @@ def seed_demo_user():
         email="demouser@test.com",
         password="demouser"
     )
+    
+
 
     c = CompanyService.create_company(
         company_name="Demo Company",
         owner_id=demo.id
         )
     EmployeeService.set_employer(user_id=demo.id, company_id=c.id)
+
+    for i in range(3):
+        customer = Customer(
+                full_name=fake.name(),
+                address=fake.address(),
+                tax_id=random.randint(100000000, 999999999),
+                phone=fake.phone_number(),
+                email=fake.email(),
+                company_id=c.id
+            )
+        db.session.add(customer)
+
+    db.session.commit()
+
+    for customer in c.customers:
+        invoice = Invoice(
+            due_date=fake.date_between(start_date='-30d', end_date='+30d'),
+            cust_id=customer.id,
+            total_cost=round(random.uniform(50, 1000), 2),
+            company_id=c.id
+        )
+        db.session.add(invoice)
+    db.session.commit()
+
 
 
 def seed_all():
