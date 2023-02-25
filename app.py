@@ -184,7 +184,7 @@ def add_new_service():
     if not form.validate_on_submit():
         return render_template('/services/add_service.html', form=form)
     
-    service = ServiceService.add_service(form)
+    service = ServiceService.add_service(form, g.user.employer.company_id)
 
     if not service:
         flash("Service with similar credentials already exists", "danger")
@@ -199,7 +199,7 @@ def show_all_services():
         flash("Access unauthorized", "danger")
         return redirect('/')
     
-    all_services = ServiceService.get_all_services()
+    all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
 
     return render_template('/services/list_services.html', services=all_services)
 
