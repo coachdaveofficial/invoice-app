@@ -7,7 +7,8 @@
 
 
 <div class="mt-4 container-fluid">	
-		<div class="col-md-4">
+	<div class="row">
+		<div class="col-md-6">
 			<table class="table table-sm table-hover table-bordered">
 				<thead>
 					<tr>
@@ -47,7 +48,7 @@
 							Default
 						</td>
 						<td>
-							{{invoice.due_date}}
+							{{invoice.due_date.strftime('%m-%d-%Y')}}
 						</td>
 						<td>
 							Status
@@ -79,73 +80,8 @@
 					</li>
 				</ul>
 				{% endfor %}
-
-			
-
-
-
-
-
-
-
-
-            <!-- <div class="list-group">
-                <h4 class="list-group-item-heading">
-                    Invoices 
-                </h4>
-				<a href="#" class="mb-2 badge bg-primary">Click here view all outstanding invoices</a>
-				{% for payment in payment_history %}
-				<div class="list-group-item">
-					<div class="row">
-						{% if payment.due_date < payment.curr_date %}
-						<div class="col-12 text-center">
-							<p class="badge bg-warning text-dark">Warning! Invoice is overdue.</p>
-						</div>
-						{% endif %}
-						<div class="col">
-							<div class="badge bg-info">
-								Invoice #{{payment.invoice_id}}
-							</div>
-						</div>
-						<div class="col">
-							<div class="badge bg-secondary">
-								Total Cost: {{payment.total_cost}}
-							</div>
-						</div>
-						<div class="col">
-							<div class="badge bg-primary">
-								Amount paid: {{ (payment.total_cost - payment.amount_left) }}
-							</div>
-						</div>
-					</div>
-					<p class="mt-2 mb-0">
-						{% for c in customers %}
-						{% if c.id == payment.customer_id %}
-						<div class="row">
-							<div class="col">
-								{{c.full_name}} has <span class="badge bg-secondary">{{ "$%.2f"|format	(payment.amount_left) }}</span> left to pay off.
-							</div>
-						</div>
-						<div class="row">
-							<div class="col mt-2">
-								{% if payment.due_date < payment.curr_date %}
-								Due date was <u>{{payment.due_date}}</u>
-								{% else %}
-								<u>Due date: {{payment.due_date}}.</u>
-								{% endif %}
-
-							</div>
-						</div>
-						{% endif %}
-						{% endfor %}
- 					</p>
-				</div>
-				{% endfor %}
-			</div> -->
-
 		</div>
-
-		<div class="col-md-6 ">
+		<div class="col-md-6">
 			<h4>Estimates</h4>
 			<button type="button" class="btn btn-primary collapsed" data-bs-toggle="collapse" data-bs-target="#estimates">Create an estimate.</button>
 			<div id="estimates" class="collapse">
@@ -175,7 +111,7 @@
 					</ol>
 			</div>
 		</div>
-
+	</div>
 		<div class="col">
 			<div class="list-group">
                 <h4 class="list-group-item-heading text-center">
@@ -186,7 +122,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </div>
 
 {% endblock %}
