@@ -117,16 +117,7 @@ def logout():
 @app.route('/guest')
 def guest_login():
 
-    demo = User.query.filter_by(username="demo-user").first()
-
-    if not demo:
-        
-        UserService.signup(
-            email="demouser@test.com",
-            username="Guest",
-            password="demo-user"
-        )
-    
+    demo = UserService.find_user_by_username("Guest")
     do_login(demo)
     flash(f"Hello, {demo.username}!", "success")
     return redirect("/")

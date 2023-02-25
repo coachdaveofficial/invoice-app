@@ -56,7 +56,13 @@ class UserService:
         db.session.delete(user)
         db.session.commit()
 
-   
+    @classmethod
+    def find_user_by_username(self, username):
+        try:
+            user = User.query.filter_by(username=username).first()
+            return user
+        except IntegrityError:
+            return None
     
 
 class CustomerService:
