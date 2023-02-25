@@ -22,11 +22,9 @@ class enPaymentType(enum.Enum):
 
 def seed_companies():
     u = User.query.all()
-    hashed_pin = bcrypt.generate_password_hash('1234').decode('UTF-8')
     for i in range(3):
         company = Company(
             name="Company #" + str(i+1),
-            pin=hashed_pin,
             owner_id=u[i].id
         )
         db.session.add(company)

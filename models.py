@@ -77,10 +77,6 @@ class Company(db.Model):
         nullable=False,
         unique=True
     )
-    pin = db.Column(
-        db.Text,
-        nullable=False
-    )
     owner_id = db.Column(
         db.ForeignKey('users.id'),
         nullable=False
@@ -90,7 +86,7 @@ class Company(db.Model):
     customers = db.relationship("Customer", backref="companies")
     invoices = db.relationship("Invoice", backref="companies")
     services = db.relationship("Service", backref="companies")
-    # users = db.relationship("User", backref="companies")
+
     
 class Employee(db.Model):
     __tablename__ = 'employees'
@@ -189,7 +185,7 @@ class ServiceRequest(db.Model):
         )
     deleted_date = db.Column(db.DateTime)
 
-    # invoices = db.relationship("Invoice", backref='service_request')
+
 class Invoice(db.Model):
     __tablename__ = 'invoices'
     id = db.Column(
