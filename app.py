@@ -128,20 +128,13 @@ def home_page():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
-    
-
-    
-
-    print(g.user.employer.company_id)
 
     invoices = InvoiceService.get_company_invoices(g.user.employer.company_id)
-    print(invoices)
+    services = ServiceService.get_services_for_company(g.user.employer.company_id)
     
-
-    
-
     return render_template('home_page.html',  
-                            invoices=invoices)
+                            invoices=invoices,
+                            services=services)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
