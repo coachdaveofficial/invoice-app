@@ -101,12 +101,13 @@ class CustomerService:
 
 class ServiceService:
     @classmethod
-    def add_service(self, form_data):
+    def add_service(self, form_data, company_id):
         try:
             service = Service(
                         description=form_data.description.data,
                         price_per_unit=form_data.price_per_unit.data,
-                        unit=form_data.unit.data
+                        unit=form_data.unit.data,
+                        company_id=company_id
                         )
             db.session.add(service)
             db.session.commit()
@@ -114,9 +115,10 @@ class ServiceService:
         except IntegrityError:
             return None
     @classmethod
-    def get_all_services(self):
+    def get_services_for_company(self, company_id):
         services = (Service
                     .query
+                    .filter_by(company_id=company_id)
                     .all())
         return services
     @classmethod
@@ -130,6 +132,7 @@ class ServiceService:
             "price_per_unit": service.price_per_unit,
             "unit": service.unit
         })
+    
 
 class InvoiceService:
 
