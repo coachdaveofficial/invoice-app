@@ -28,11 +28,13 @@ class UserAddForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('E-mail', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[Length(min=6)])
+    company_name = StringField('Company Name')
 class LoginForm(FlaskForm):
     """Form for logging in users."""
 
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[Length(min=6)])
+
 
 class InvoiceAddForm(FlaskForm):
     """Form for making invoices"""

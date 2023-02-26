@@ -6,103 +6,82 @@
 
 
 
-<div class="mt-4 container-fluid">
+<div class="mt-4 container-fluid">	
 	<div class="row">
-        <div class="col-md-2 bg-info">
-			<ul class="nav nav-pills flex-column mb-auto">
-				<li class="nav-item">
-					<a href="/invoices/add" class="m-2 text-light badge badge-pill badge-primary mx-2">New Invoice</a>
-				</li>
-					
-				<li class="nav-item">
-					<a href="/customers" class="m-2 text-light badge badge-pill badge-primary mx-2">Customers</a>
-				</li>
-					
-				<li class="nav-item">
-					<a href="/services" class="m-2 text-light badge badge-pill badge-primary mx-2">Services</a>
-				</li>
-					
-			</ul>
-        </div>
-		
-		
-		<div class="col-md-4">
-            <div class="list-group">
-                <h4 class="list-group-item-heading">
-                    Invoices 
-                </h4>
-				<a href="#" class="mb-2 badge bg-primary">Click here view all outstanding invoices</a>
-				{% for payment in payment_history %}
-				<div class="list-group-item">
-					<div class="row">
-						{% if payment.due_date < payment.curr_date %}
-						<div class="col-12 text-center">
-							<p class="badge bg-warning text-dark">Warning! Invoice is overdue.</p>
-						</div>
-						{% endif %}
-						<div class="col">
-							<div class="badge bg-info">
-								Invoice #{{payment.invoice_id}}
-							</div>
-						</div>
-						<div class="col">
-							<div class="badge bg-secondary">
-								Total Cost: {{payment.total_cost}}
-							</div>
-						</div>
-						<div class="col">
-							<div class="badge bg-primary">
-								Amount paid: {{ (payment.total_cost - payment.amount_left) }}
-							</div>
-						</div>
-					</div>
-					<p class="mt-2 mb-0">
-						{% for c in customers %}
-						{% if c.id == payment.customer_id %}
-						<div class="row">
-							<div class="col">
-								{{c.full_name}} has <span class="badge bg-secondary">{{ "$%.2f"|format	(payment.amount_left) }}</span> left to pay off.
-							</div>
-						</div>
-						<div class="row">
-							<div class="col mt-2">
-								{% if payment.due_date < payment.curr_date %}
-								Due date was <u>{{payment.due_date}}</u>
-								{% else %}
-								<u>Due date: {{payment.due_date}}.</u>
-								{% endif %}
+		<div class="col-md-6">
+			<table class="table table-sm table-hover table-bordered">
+				<thead>
+					<tr>
+						<th>
+							#
+						</th>
+						<th>
+							Invoice I.D.
+						</th>
+						<th>
+							Total Cost
+						</th>
+						<th>
+							Amount Paid
+						</th>
+						<th>
+							Due Date
+						</th>
+						<th>
+							Status
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for invoice in invoices %}
+					<tr>
+						<td>
+							{{loop.index}}
+						</td>
+						<td>
+							{{invoice.id}}
+						</td>
+						<td>
+							{{invoice.total_cost}}
+						</td>
+						<td>
+							Default
+						</td>
+						<td>
+							{{invoice.due_date.strftime('%m-%d-%Y')}}
+						</td>
+						<td>
+							Status
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
 
-							</div>
-						</div>
-						{% endif %}
-						{% endfor %}
- 					</p>
-				</div>
+			
+			
+				{% for c in companies %}
+				<ul>
+					<li>
+						
+					</li>
+					<li>
+						{{c}}
+					</li>
+					<li>
+						{{c.invoices}}
+					</li>
+					<li>
+						
+						{{c.services}}
+					</li>
+					<li>
+						{{c.users}}
+					</li>
+				</ul>
 				{% endfor %}
-			</div>
-		
-			
-			
 		</div>
-
-		<!-- <div class="col-md-4">
-			<div class="list-group">
-				<h4 class="list-group-item-heading">
-                    Customers
-                </h4>
-                {% for customer in customers %}
-
-				<div class="list-group-item">
-					
-                    <div class="list-item">
-                        <a href="#">{{customer.full_name}}</a>
-                    </div>
-				</div>
-                {% endfor %}
-			</div> <a href="/customers/add" class="btn btn-primary btn-block" type="button">Add New Customer</a>
-		</div> -->
-
-		<div class="col-md-6 ">
+		<div class="col-md-6">
 			<h4>Estimates</h4>
 			<button type="button" class="btn btn-primary collapsed" data-bs-toggle="collapse" data-bs-target="#estimates">Create an estimate.</button>
 			<div id="estimates" class="collapse">
@@ -119,14 +98,7 @@
 					</div>
 				</div>
 					<ol class="list-group list-group-numbered" id="estimate-list">
-						
-						<li class="list-group-item d-flex justify-content-between align-items-start">
-							<div class="ms-2 me-auto">
-								<div><b>Subheading</b></div>
-								Content for list item
-							</div>
-							<span class="badge bg-primary rounded-pill">14</span>
-						</li>
+
 					</ol>
 					<ol class="list-group">
 						<li class="list-group-item">
@@ -139,7 +111,7 @@
 					</ol>
 			</div>
 		</div>
-
+	</div>
 		<div class="col">
 			<div class="list-group">
                 <h4 class="list-group-item-heading text-center">
@@ -150,7 +122,6 @@
 				</div>
 			</div>
 		</div>
-	</div>
 </div>
 
 {% endblock %}

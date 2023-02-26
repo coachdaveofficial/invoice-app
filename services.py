@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -7,7 +7,7 @@ from datetime import datetime
 bcrypt = Bcrypt()
 
 class UserService:
-    '''Services for getting user info'''
+    """Services for getting user info"""
 
     @classmethod
     def signup(cls, username, email, password):
@@ -29,7 +29,7 @@ class UserService:
             db.session.commit()
             return user
         except IntegrityError:
-            db.rollback()
+            # db.rollback()
             return None
     @classmethod
     def authenticate(cls, username, password):
@@ -49,12 +49,24 @@ class UserService:
             if is_auth:
                 return user
         return False
+    
+    @classmethod
+    def delete_user(self, user_id):
+        user = User.query.get(user_id)
+        db.session.delete(user)
+        db.session.commit()
 
-   
+    @classmethod
+    def find_user_by_username(self, username):
+        try:
+            user = User.query.filter_by(username=username).first()
+            return user
+        except IntegrityError:
+            return None
     
 
 class CustomerService:
-    '''Services for getting customer info'''
+    """Services for getting customer info"""
     @classmethod
     def add_customer(form_data):
         try:
@@ -120,34 +132,43 @@ class ServiceService:
         })
 
 class InvoiceService:
+
+    @classmethod
+    def get_company_invoices(self, company_id):
+        """Get all invoices for specific company"""
+
+        invoices = Invoice.query.filter_by(company_id=company_id).all()
+        return invoices
     
     @classmethod
     def get_invoice_payment_log(self):
-        '''Get the payment info for all invoices'''
+        """Get the payment info for all invoices"""
         invoice_payment_info = []
         invoices = Invoice.query.all()
         payments = Payment.query.all()
         for invoice in invoices:
             total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
             amount_left = invoice.total_cost - total_payments
-            invoice_payment_info.append({
+            invoice_payment_info.append(
+                {
                 'id': invoice.id,
                 'due_date': invoice.due_date,
                 'total_cost': invoice.total_cost,
                 'amount_left': amount_left,
                 'customer_id': invoice.cust_id
-            }
+                 }
             )
         return invoice_payment_info
 
     @classmethod
     def get_five_oldest_outstanding(self):
-        '''Get 5 invoices with upcoming due dates that have not been paid in full.'''
+        """Get 5 invoices with upcoming due dates that have not been paid in full."""
         invoice_payment_info = []
         invoices = (Invoice
                     .query
                     .order_by(Invoice.due_date.asc())
                     .all())
+
         payments = Payment.query.all()
 
         for invoice in invoices:
@@ -167,7 +188,7 @@ class InvoiceService:
         return invoice_payment_info
 class PaymentService:
     def get_payment_history(self):
-        '''Get payment history'''
+        """Get payment history"""
 
         payments = Payment.query.all()
         payment_history = []
@@ -181,8 +202,43 @@ class PaymentService:
             })
 
     def get_yearly_revenue(year: str):
-        '''Get revenue totals sorted by the year (yyyy) the payment was submitted'''
+        """Get revenue totals sorted by the year (yyyy) the payment was submitted"""
         
         payments = Payment.query.all()
         yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
         return yearly_total
+
+class CompanyService:
+    def get_all_companies():
+        return Company.query.all()
+    
+
+    @classmethod
+    def create_company(cls, company_name, owner_id):
+        try:
+            c = Company(
+                name=company_name,
+                owner_id=owner_id
+            )
+
+            db.session.add(c)
+            db.session.commit()
+            return c
+        except IntegrityError:
+            db.session.rollback()
+            return None
+
+    @classmethod
+    def delete_company(id):
+        Company.query.filter_by(id=id).delete()
+        db.session.commit()
+class EmployeeService:
+    def get_all_employees(self):
+        return Employee.query.all()
+    
+    @classmethod
+    def set_employer(self, user_id, company_id):
+        e = Employee(user_id=user_id, company_id=company_id)
+        db.session.add(e)
+        db.session.commit()
+

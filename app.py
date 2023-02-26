@@ -1,8 +1,8 @@
 import os
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService
+from models import connect_db, db, User, Company
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 
 app = Flask(__name__)
@@ -37,22 +37,6 @@ def add_user_to_g():
     else:
         g.user = None
 
-@app.before_request
-def add_demo_user():
-    """Add demo user to session"""
-
-    demo = User.query.filter_by(username="demo-user").first()
-    if not demo:
-        
-        UserService.signup(
-            email="demouser@test.com",
-            username="demo-user",
-            password="demo-user"
-        )
-
-    
-
-
 def do_login(user):
     """Log in user."""
 
@@ -71,22 +55,32 @@ def do_logout():
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
 
-    form = UserAddForm()
+    signup_form = UserAddForm()
 
-    if not form.validate_on_submit():
-        return render_template('users/signup.html', form=form)
-    
+    if not signup_form.validate_on_submit():
+        return render_template('users/signup.html', signup_form=signup_form)
+
     u = UserService()
+
     user = u.signup(
-        username=form.username.data,
-        email=form.email.data,
-        password=form.password.data
+        username=signup_form.username.data,
+        email=signup_form.email.data,
+        password=signup_form.password.data
         )
-    
+
     if not user:
         flash("Username or Email already taken", 'danger')
         return redirect('/signup')
+    
+    company = CompanyService.create_company(company_name=signup_form.company_name.data, owner_id=user.id)
 
+    if not company:
+        flash("Company with that name already exists", "danger")
+        UserService.delete_user(user.id)
+        return redirect('/signup')
+        
+    do_login(user)
+    EmployeeService.set_employer(user_id=user.id, company_id=company.id)
     return redirect('/')
 
 @app.route('/login', methods=["GET", "POST"])
@@ -120,19 +114,34 @@ def logout():
     flash(f"Successfully logged out!", "success")
     return redirect("/login")
 
+@app.route('/guest')
+def guest_login():
+
+    demo = UserService.find_user_by_username("Guest")
+    do_login(demo)
+    flash(f"Hello, {demo.username}!", "success")
+    return redirect("/")
+
 @app.route('/')
 def home_page():
+    print(g.user)
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
-
-    ten_recent_customers = CustomerService.get_10_customers()
-    payment_history = InvoiceService.get_five_oldest_outstanding()
-    yearly_revenue = PaymentService.get_yearly_revenue('2023')
-    all_services = ServiceService.get_all_services()
     
 
-    return render_template('home_page.html', customers=ten_recent_customers, payment_history=payment_history, yearly_revenue=yearly_revenue, services=all_services)
+    
+
+    print(g.user.employer.company_id)
+
+    invoices = InvoiceService.get_company_invoices(g.user.employer.company_id)
+    print(invoices)
+    
+
+    
+
+    return render_template('home_page.html',  
+                            invoices=invoices)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
