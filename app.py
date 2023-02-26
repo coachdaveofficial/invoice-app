@@ -200,10 +200,10 @@ def show_all_services():
 def get_service_data(service_id):
     return ServiceService.get_service(service_id)    
 
-@app.route('/invoices/add', methods=["GET", "POST"])
+@app.route('/invoices/add', methods=["POST"])
 def add_new_invoice():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    
+    return request.form.getlist("services")
     
