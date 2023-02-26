@@ -191,6 +191,13 @@ def seed_demo_user():
                 email=fake.email(),
                 company_id=c.id
             )
+        service = Service(
+            description=fake.sentence(),
+            price_per_unit=round(random.uniform(5, 50), 2),
+            unit=fake.word(),
+            company_id=c.id
+        )
+        db.session.add(service)
         db.session.add(customer)
 
     db.session.commit()
@@ -205,6 +212,16 @@ def seed_demo_user():
         db.session.add(invoice)
     db.session.commit()
 
+    for invoice in c.invoices:
+        amount_paid = random.uniform(0, invoice.total_cost)
+        payment = Payment(
+            invoice_id=invoice.id,
+            amount=round(amount_paid, 0),
+            payment_type=random.choice(['credit_card', 'check', 'venmo', 'paypal', 'cashapp']),
+            reference_num=fake.uuid4()
+        )
+        db.session.add(payment)
+    db.session.commit()
 
 
 def seed_all():
