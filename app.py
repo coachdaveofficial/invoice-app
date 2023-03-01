@@ -1,9 +1,10 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
+import json
 
 app = Flask(__name__)
 
@@ -205,5 +206,7 @@ def add_new_invoice():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    return request.form.getlist("services")
-    
+
+    json.loads(request.data)['services']
+
+
