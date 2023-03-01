@@ -125,17 +125,20 @@ def guest_login():
 
 @app.route('/')
 def home_page():
+    company_id = g.user.employer.company_id
     print(g.user)
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
 
-    invoices = InvoiceService.get_company_invoices(g.user.employer.company_id)
-    services = ServiceService.get_services_for_company(g.user.employer.company_id)
+    invoices = InvoiceService.get_company_invoices(company_id)
+    services = ServiceService.get_services_for_company(company_id)
+    customers = CustomerService.get_customers_for_company(company_id)
     
     return render_template('home_page.html',  
                             invoices=invoices,
-                            services=services)
+                            services=services,
+                            customers=customers)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])

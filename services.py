@@ -98,6 +98,16 @@ class CustomerService:
                     .order_by(Customer.created_date.desc())
                     .all())
         return customers
+    
+    @classmethod
+    def get_customers_for_company(self, c_id):
+        """Get all customers of a specific company using the company ID (c_id)"""
+        customers = (Customer
+                    .query
+                    .order_by(Customer.full_name)
+                    .filter_by(company_id=c_id)
+                    .all())
+        return customers
 
 class ServiceService:
     @classmethod

@@ -120,7 +120,13 @@
 												<div class="text-center">
 													<label for="customer-name">Insert Name of Customer</label>
 													<br>
-													<input id="customer-name" class="m-2" type="text" placeholder="Customer Name">
+													<select name="customer-select" id="customer-select">
+														{% for cust in customers %} 
+															<option value="{{cust.id}}">{{cust.full_name}}</option>
+														{% endfor %}
+													</select>
+														
+														
 													<br>
 													<label class="form-label" for="services-options">Select service to add to estimate:</label>
 													<select name="services" id="services-options" class="form-select">
