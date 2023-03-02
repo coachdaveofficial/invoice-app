@@ -132,6 +132,7 @@ def home_page():
         return redirect("/signup")
 
     invoices = InvoiceService.get_company_invoices(company_id)
+    print(invoices)
     services = ServiceService.get_services_for_company(company_id)
     customers = CustomerService.get_customers_for_company(company_id)
     

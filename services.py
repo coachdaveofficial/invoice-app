@@ -150,7 +150,7 @@ class InvoiceService:
     def get_company_invoices(self, company_id):
         """Get all invoices for specific company"""
 
-        invoices = Invoice.query.filter_by(company_id=company_id, is_estimate=False).all()
+        invoices = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == False).all()
         return invoices
     
     @classmethod
