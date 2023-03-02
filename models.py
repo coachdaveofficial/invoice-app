@@ -193,8 +193,7 @@ class Invoice(db.Model):
         primary_key=True
         )
     due_date = db.Column(
-        db.Date, 
-        nullable=False
+        db.Date
         )
     cust_id = db.Column(
         db.Integer, 
@@ -202,8 +201,7 @@ class Invoice(db.Model):
         nullable=False
         )
     total_cost = db.Column(
-        db.Float, 
-        nullable=False
+        db.Float
         )
     company_id = db.Column(
         db.Integer, 
