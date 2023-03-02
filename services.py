@@ -147,6 +147,11 @@ class ServiceService:
 class InvoiceService:
 
     @classmethod
+    def get_invoice_by_id(self, id):
+        invoice = Invoice.query.get(id)
+        return invoice
+
+    @classmethod
     def get_company_invoices(self, company_id):
         """Get all invoices for specific company"""
 
@@ -253,6 +258,9 @@ class CompanyService:
     def delete_company(id):
         Company.query.filter_by(id=id).delete()
         db.session.commit()
+    @classmethod
+    def get_company_by_id(self, id):
+        return Company.query.get(id)
 class EmployeeService:
     def get_all_employees(self):
         return Employee.query.all()
@@ -271,3 +279,4 @@ class ServiceRequestService:
                             quantity=quantity)
         db.session.add(s_r)
         db.session.commit()
+    

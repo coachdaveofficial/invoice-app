@@ -222,4 +222,19 @@ def add_new_invoice():
     print(services_and_quantity)
     for service in services_and_quantity:
         ServiceRequestService.add_service_request(service_id=service['serviceId'], quantity=service['quantity'], invoice_id=estimate.id)
+    return {'id': estimate.id}
+    return redirect(f'/estimates/{estimate.id}')
 
+@app.route('/estimates/<int:estimate_id>')
+def show_estimate_info(estimate_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(estimate_id)
+    if invoice.company_id != g.user.employer.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    company = CompanyService.get_company_by_id(invoice.company_id)
+
+
+    return render_template('invoices/estimate.html', estimate=invoice, company=company)

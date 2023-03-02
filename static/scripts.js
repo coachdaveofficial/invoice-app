@@ -81,7 +81,6 @@ $(document).ready(function() {
             sId = sId.split('-')[1];
 
             let serviceQuantity = $(`#service-${sId}-estimate-quantity`).val()
-            console.log(serviceQuantity)
             
             // Add the service ID to the array
             serviceIdQuantityPair.push({serviceId: sId, quantity: serviceQuantity});
@@ -93,7 +92,9 @@ $(document).ready(function() {
             customerId: custId
         }
         ).then(function (response) {
-            console.log(response);
+            if (response.status == 200) {
+                window.location.href = `/estimates/${response.data.id}`;
+            }
           })
     
         
