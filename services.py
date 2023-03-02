@@ -255,3 +255,7 @@ class EmployeeService:
         db.session.add(e)
         db.session.commit()
 
+class ServiceRequestService:
+    @classmethod
+    def add_service_request(self, service_id, invoice_id):
+        s_r = ServiceRequest()

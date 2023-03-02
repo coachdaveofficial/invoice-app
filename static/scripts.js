@@ -69,24 +69,27 @@ $(document).ready(function() {
         // e.preventDefault();
     
 
-        let serviceIds = [];
+        let serviceIdQuantityPair = [];
         // get selected Customer's id
         let custId = $('#customer-select').val();
     
         // Loop through each list item in the ordered list
         $("#estimate-list li").each(function() {
             // Get the value of the service ID
-            let serviceId = $(this).attr('id');
+            let sId = $(this).attr('id');
             // the service id is formatted in HTML as 'service-1-estimate' so split() is used to get the '1' by itself
-            serviceId = serviceId.split('-')[1];
+            sId = sId.split('-')[1];
+
+            let serviceQuantity = $(`#service-${sId}-estimate-quantity`).val()
+            console.log(serviceQuantity)
             
             // Add the service ID to the array
-            serviceIds.push(serviceId);
+            serviceIdQuantityPair.push({serviceId: sId, quantity: serviceQuantity});
         });
 
         
         await axios.post('invoices/add', {
-            services: serviceIds,
+            services: serviceIdQuantityPair,
             custumerId: custId
             }
         ).then(function (response) {

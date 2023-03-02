@@ -212,4 +212,6 @@ def add_new_invoice():
 
     print(json.loads(request.data))
 
-    
+    service_ids = json.loads(request.data['services'])
+    # for s_id in service_ids:
+
