@@ -210,6 +210,6 @@ def add_new_invoice():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    json.loads(request.data)['services']
+    print(json.loads(request.data))
 
-
+    

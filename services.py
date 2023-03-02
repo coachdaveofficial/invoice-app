@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment, Company, Employee
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
