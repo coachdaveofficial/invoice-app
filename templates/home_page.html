@@ -105,7 +105,7 @@
 		<div class="col-md-2" id="estimate-modal">
 			<!-- Button trigger modal -->
 			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-				Launch demo modal
+				Create Estimate
 			</button>
 			<!-- Modal -->
 			<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -116,50 +116,59 @@
 						</div>
 						<div class="modal-body">
 							<div id="estimate-form" class="form-group m-2">
-								<form action="" id="estimate">
-									<div class="text-center">
-										<label for="customer-name">Insert Name of Customer</label>
-										<br>
-										<input id="customer-name" class="m-2" type="text" placeholder="Customer Name">
-										<br>
-										<label class="form-label" for="services-options">Select service to add to estimate:</label>
-										<select name="services" id="services-options" class="form-select">
-											{% for service in services %}
-											<option value="{{service.id}}">{{service.description}}</option>
-											{% endfor %}
-										</select>
-										<br>
-										<br>
-										<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
-									</div>
-									
-								</form>
-							</div>
-								<ol class="list-group list-group-numbered" id="estimate-list">
-			
-								</ol>
-								<ol class="list-group">
-									<li class="list-group-item">
-										<div class="ms-2 me-auto">
-											<div>
-												<b>Total</b>
-												<span id="estimate-total" class="badge bg-primary float-right">0</span>
-											</div>
+
+												<div class="text-center">
+													<label for="customer-name">Insert Name of Customer</label>
+													<br>
+													<select name="customer-select" id="customer-select">
+														{% for cust in customers %} 
+															<option value="{{cust.id}}">{{cust.full_name}}</option>
+														{% endfor %}
+													</select>
+														
+														
+													<br>
+													<label class="form-label" for="services-options">Select service to add to estimate:</label>
+													<select name="services" id="services-options" class="form-select">
+														{% for service in services %}
+														<option value="{{service.id}}">{{service.description}}</option>
+														{% endfor %}
+													</select>
+													<br>
+													<br>
+													<a href="#" id="add-service-estimate" class="btn-sm btn-primary bg-dark">Add Service</a>
+												</div>
+
+								
 											
 										</div>
-										
-									</li>
-								</ol>
-						</div>
-						<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" aria-label="Close" data-bs-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-						</div>
+											<ol class="list-group list-group-numbered" id="estimate-list">
+						
+											</ol>
+											<ol class="list-group">
+												<li class="list-group-item">
+													<div class="ms-2 me-auto">
+														<div>
+															<b>Total</b>
+															<span id="estimate-total" class="badge bg-primary float-right">0</span>
+														</div>
+														
+													</div>
+													
+												</li>
+											</ol>
+									</div>
+									<div class="modal-footer">
+									<a class="btn btn-secondary" aria-label="Close" data-bs-dismiss="modal">Close</a>
+									<a href='#' id="estimate-submit-btn" class="btn btn-primary" >Save Changes</a>
+									</div>
+								
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 		<div class="col">
 			<div class="list-group">
                 <h4 class="list-group-item-heading text-center">

@@ -4,14 +4,15 @@ $(document).ready(function() {
 
     const $estimateList = $('#estimate-list');
     const $servicesOptions = $('#services-options');
-    const serviceAPI = '/api/service/'
-    const $addServiceBtn = $('#add-service-estimate')
+    const serviceAPI = '/api/service/';
+    const $addServiceBtn = $('#add-service-estimate');
+    const $estimateForm = $('#estimate');
+    const $estimateSubmitBtn = $('#estimate-submit-btn');
 
 
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)
         if (service.data.id > 0) {
-            console.log(service);
             return service;
         }
         return null;
@@ -39,7 +40,7 @@ $(document).ready(function() {
                 <span>Price:</span>
                 <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.price_per_unit}</span>
                 </li>`
-    }
+    };
 
     $(document).on('change', ':input[type="number"]', async function(){
         let listId = this.id;
@@ -61,7 +62,42 @@ $(document).ready(function() {
         $estimateList.append(listHTML);
         updateEstimateTotalHTML();
     
-    })
+    });
+
+    $estimateSubmitBtn.on('click', async function(e) {
+
+        // e.preventDefault();
+    
+
+        let serviceIdQuantityPair = [];
+        // get selected Customer's id
+        let custId = $('#customer-select').val();
+    
+        // Loop through each list item in the ordered list
+        $("#estimate-list li").each(function() {
+            // Get the value of the service ID
+            let sId = $(this).attr('id');
+            // the service id is formatted in HTML as 'service-1-estimate' so split() is used to get the '1' by itself
+            sId = sId.split('-')[1];
+
+            let serviceQuantity = $(`#service-${sId}-estimate-quantity`).val()
+            console.log(serviceQuantity)
+            
+            // Add the service ID to the array
+            serviceIdQuantityPair.push({serviceId: sId, quantity: serviceQuantity});
+        });
+
+        
+        await axios.post('invoices/add', {
+            services: serviceIdQuantityPair,
+            custumerId: custId
+            }
+        ).then(function (response) {
+            console.log(response);
+          })
+    
+        
+    });
 
 })
 

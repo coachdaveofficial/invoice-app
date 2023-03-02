@@ -1,9 +1,10 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
+import json
 
 app = Flask(__name__)
 
@@ -124,17 +125,20 @@ def guest_login():
 
 @app.route('/')
 def home_page():
+    company_id = g.user.employer.company_id
     print(g.user)
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/signup")
 
-    invoices = InvoiceService.get_company_invoices(g.user.employer.company_id)
-    services = ServiceService.get_services_for_company(g.user.employer.company_id)
+    invoices = InvoiceService.get_company_invoices(company_id)
+    services = ServiceService.get_services_for_company(company_id)
+    customers = CustomerService.get_customers_for_company(company_id)
     
     return render_template('home_page.html',  
                             invoices=invoices,
-                            services=services)
+                            services=services,
+                            customers=customers)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
@@ -200,10 +204,14 @@ def show_all_services():
 def get_service_data(service_id):
     return ServiceService.get_service(service_id)    
 
-@app.route('/invoices/add', methods=["GET", "POST"])
+@app.route('/invoices/add', methods=["POST"])
 def add_new_invoice():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    
-    
+
+    print(json.loads(request.data))
+
+    service_ids = json.loads(request.data['services'])
+    # for s_id in service_ids:
+
