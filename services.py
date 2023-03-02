@@ -257,5 +257,9 @@ class EmployeeService:
 
 class ServiceRequestService:
     @classmethod
-    def add_service_request(self, service_id, invoice_id):
-        s_r = ServiceRequest()
+    def add_service_request(self, service_id, invoice_id, quantity):
+        s_r = ServiceRequest(service_id=service_id,
+                            invoice_id=invoice_id,
+                            quantity=quantity)
+        db.session.add(s_r)
+        db.session.commit()
