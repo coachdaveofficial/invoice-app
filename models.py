@@ -210,6 +210,10 @@ class Invoice(db.Model):
         db.ForeignKey('companies.id'), 
         nullable=False
         )
+    is_estimate = db.Column(
+        db.Boolean,
+        default=True
+    )
     created_date = db.Column(
         db.DateTime, 
         default=datetime.utcnow
