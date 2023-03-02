@@ -199,6 +199,14 @@ class InvoiceService:
                 }
             )
         return invoice_payment_info
+    
+    @classmethod
+    def create_estimate(self, cust_id, comp_id):
+        est = Invoice(cust_id=cust_id,
+                    company_id=comp_id)
+        db.session.add(est)
+        db.session.commit()
+        return est
 class PaymentService:
     def get_payment_history(self):
         """Get payment history"""

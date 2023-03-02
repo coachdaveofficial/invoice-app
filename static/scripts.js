@@ -90,8 +90,8 @@ $(document).ready(function() {
         
         await axios.post('invoices/add', {
             services: serviceIdQuantityPair,
-            custumerId: custId
-            }
+            customerId: custId
+        }
         ).then(function (response) {
             console.log(response);
           })

@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 import json
 
@@ -209,9 +209,16 @@ def add_new_invoice():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    cust_id = json.loads(request.data)['customerId']
+    print(cust_id)
+    comp_id = g.user.employer.company_id  
+    
+    estimate = InvoiceService.create_estimate(cust_id=cust_id, comp_id=comp_id)
 
-    print(json.loads(request.data))
 
-    service_ids = json.loads(request.data['services'])
-    # for s_id in service_ids:
+
+    services_and_quantity = json.loads(request.data)['services']
+    print(services_and_quantity)
+    for service in services_and_quantity:
+        ServiceRequestService.add_service_request(service_id=service['serviceId'], quantity=service['quantity'], invoice_id=estimate.id)
 
