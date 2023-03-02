@@ -85,7 +85,8 @@ def seed_invoices():
             due_date=fake.date_between(start_date='-30d', end_date='+30d'),
             cust_id=c.customers[0].id,
             total_cost=round(random.uniform(50, 1000), 2),
-            company_id=c.id
+            company_id=c.id,
+            is_estimate=False
         )
         db.session.add(invoice)
         i = i+1
