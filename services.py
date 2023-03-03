@@ -108,6 +108,10 @@ class CustomerService:
                     .filter_by(company_id=c_id)
                     .all())
         return customers
+    
+    @classmethod
+    def get_customer_by_id(self, c_id):
+        return Customer.query.get(c_id)
 
 class ServiceService:
     @classmethod

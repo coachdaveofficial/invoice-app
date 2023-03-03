@@ -221,7 +221,10 @@ def add_new_invoice():
     services_and_quantity = json.loads(request.data)['services']
     print(services_and_quantity)
     for service in services_and_quantity:
-        ServiceRequestService.add_service_request(service_id=service['serviceId'], quantity=service['quantity'], invoice_id=estimate.id)
+        ServiceRequestService.add_service_request(
+                                service_id=service['serviceId'], 
+                                quantity=service['quantity'], 
+                                invoice_id=estimate.id)
     return {'id': estimate.id}
 
 
@@ -230,11 +233,16 @@ def show_estimate_info(estimate_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    invoice = InvoiceService.get_invoice_by_id(estimate_id)
-    if invoice.company_id != g.user.employer.company_id:
+    estimate = InvoiceService.get_invoice_by_id(estimate_id)
+    if estimate.company_id != g.user.employer.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    company = CompanyService.get_company_by_id(invoice.company_id)
-    service_descriptions = ServiceService.get_services_for_invoice(invoice.id)
+    company = CompanyService.get_company_by_id(estimate.company_id)
+    service_descriptions = ServiceService.get_services_for_invoice(estimate.id)
+    customer = CustomerService.get_customer_by_id(estimate.cust_id)
 
-    return render_template('invoices/estimate.html', estimate=invoice, company=company, services=service_descriptions)
+    return render_template('invoices/estimate.html', 
+                            estimate=estimate, 
+                            company=company, 
+                            services=service_descriptions, 
+                            customer=customer)

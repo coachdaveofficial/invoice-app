@@ -61,6 +61,7 @@ $(document).ready(function() {
         updateEstimateTotalHTML();
         
     } );
+    // the function below removes list items on estimate modal on click
     $(document).on('click', 'button#remove-estimate-item', function() {
         $(this).closest('li').remove();
         updateEstimateTotalHTML();
