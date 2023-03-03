@@ -66,6 +66,19 @@ $(document).ready(function() {
         $(this).closest('li').remove();
         updateEstimateTotalHTML();
     });
+
+    $('#confirm-invoice').on('click', 'button.btn-primary', async function() {
+        let estimateId = $(this).attr('id');
+        estimateId = estimateId.split('-')[4];
+
+        await axios.post(`/invoices/finalize/${estimateId}`).then(
+            function(response) {
+                if (response.status == 200) {
+                    window.location.href = `/invoices/${estimateId}`;
+                }
+            }
+        )
+    })
     
     $addServiceBtn.on('click', async function(e) {
         e.preventDefault()
