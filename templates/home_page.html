@@ -46,24 +46,28 @@
 							{{invoice.id}}
 						</td>
 						<td>
-							{{invoice.total_cost}}
+							{{ '%0.2f'| format(invoice.total_cost) }}
 						</td>
 						<td>
-							{{invoice.payments[0].amount}}
+							{% if invoice.payments %}
+							{{invoice.payments|sum(attribute='amount')}}
+							{% else %} 
+							0
+							{% endif %}
 						</td>
 						<td>
-							{{ '%0.2f'| format((invoice.total_cost - invoice.payments[0].amount)|float) }}
+							{{ '%0.2f'| format((invoice.total_cost - invoice.payments|sum(attribute='amount'))|float) }}
 						</td>
 						<td>
 							{{invoice.due_date.strftime('%m-%d-%Y')}}
 						</td>
 						
-							{% if invoice.total_cost - invoice.payments[0].amount == 0 %}
+							{% if invoice.total_cost - invoice.payments|sum(attribute='amount') == 0 %}
 								<td class="bg-success">
 									Paid in full
 								</td>
 								
-							{% elif invoice.payments[0].amount == 0 %}
+							{% elif invoice.payments|sum(attribute='amount') == 0 %}
 								<td class="bg-danger">
 									Unpaid
 								</td>
