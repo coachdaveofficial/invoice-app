@@ -32,15 +32,22 @@ $(document).ready(function() {
     };
 
     function createListHTML(content) {
-        // return `<li id="service-${content.id}-estimate" class="list-group-item">${content.data.description}<span class="badge bg-primary text-end">${content.data.price_per_unit}</span></li>`
 
         return `<li id="service-${content.data.id}-estimate" class="list-group-item d-flex justify-content-between align-items-start">
+        <button class="btn-sm btn-danger" id="remove-estimate-item">Remove</button>
                 <div class="ms-2 me-auto">
                     <div><b>${content.data.description}</b></div>
-                    <label for"service-${content.data.id}-estimate-quantity">Quantity:</label><input class="form-control" id="service-${content.data.id}-estimate-quantity" type="number" value="1" min="0">
+                    <div>
+                    <label for"service-${content.data.id}-estimate-quantity">Quantity:</label>
+                    <input class="form-control" id="service-${content.data.id}-estimate-quantity" type="number" value="1" min="0">
+                    
+                    </div>
+                    
                 </div>
+                
                 <span>Price:</span>
                 <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.price_per_unit}</span>
+                
                 </li>`
     };
 
@@ -54,7 +61,10 @@ $(document).ready(function() {
         updateEstimateTotalHTML();
         
     } );
-
+    $(document).on('click', 'button#remove-estimate-item', function() {
+        $(this).closest('li').remove();
+        updateEstimateTotalHTML();
+    });
     
     $addServiceBtn.on('click', async function(e) {
         e.preventDefault()
