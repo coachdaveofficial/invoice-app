@@ -70,15 +70,18 @@ $(document).ready(function() {
     $('#confirm-invoice').on('click', 'button.btn-primary', async function() {
         let estimateId = $(this).attr('id');
         estimateId = estimateId.split('-')[4];
+        let dueDate = $('#invoice-due-date').val()
 
-        await axios.post(`/invoices/finalize/${estimateId}`).then(
-            function(response) {
+        await axios.post(`/invoices/finalize/${estimateId}`, {
+            due: dueDate
+        }
+        ).then(function(response) {
                 if (response.status == 200) {
                     window.location.href = `/invoices/${estimateId}`;
                 }
             }
         )
-    })
+    });
     
     $addServiceBtn.on('click', async function(e) {
         e.preventDefault()

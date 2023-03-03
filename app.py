@@ -206,7 +206,7 @@ def get_service_data(service_id):
     return ServiceService.get_service(service_id)    
 
 @app.route('/invoices/add', methods=["POST"])
-def add_new_invoice():
+def add_new_estimate():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -227,7 +227,34 @@ def add_new_invoice():
                                 invoice_id=estimate.id)
     return {'id': estimate.id}
 
-
+@app.route('/invoices/finalize/<int:estimate_id>', methods=["POST"])
+def finalize_invoice(estimate_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(estimate_id)
+    if g.user.employer.company_id != invoice.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    due_date = json.loads(request.data)['due']
+    invoice.due_date = due_date
+    invoice.is_estimate = False
+    db.session.commit()
+    return redirect(f'invoices/{invoice.id}')
+@app.route('/invoices/<int:invoice_id>')
+def display_invoice(invoice_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(invoice_id)
+    if g.user.employer.company_id != invoice.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    if not invoice.is_estimate:
+        flash("Invoice does not exist. Make sure your finalize your invoice before trying to view.", "danger")
+        return redirect("/")
+    
+    return render_template('invoice.html', invoice=invoice)
 @app.route('/estimates/<int:estimate_id>')
 def show_estimate_info(estimate_id):
     if not g.user:
