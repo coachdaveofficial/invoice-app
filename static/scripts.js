@@ -1,4 +1,5 @@
 // Empty JS for your own code to be here
+
 $(document).ready(function() {
 
 
@@ -8,6 +9,7 @@ $(document).ready(function() {
     const $addServiceBtn = $('#add-service-estimate');
     const $estimateForm = $('#estimate');
     const $estimateSubmitBtn = $('#estimate-submit-btn');
+    const $estimateTotals = $('#estimate-total-cost');
 
 
     async function getService(id) {
@@ -99,6 +101,8 @@ $(document).ready(function() {
     
         
     });
+
+    
 
 })
 

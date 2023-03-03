@@ -223,7 +223,7 @@ def add_new_invoice():
     for service in services_and_quantity:
         ServiceRequestService.add_service_request(service_id=service['serviceId'], quantity=service['quantity'], invoice_id=estimate.id)
     return {'id': estimate.id}
-    return redirect(f'/estimates/{estimate.id}')
+
 
 @app.route('/estimates/<int:estimate_id>')
 def show_estimate_info(estimate_id):
@@ -235,6 +235,6 @@ def show_estimate_info(estimate_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
     company = CompanyService.get_company_by_id(invoice.company_id)
+    service_descriptions = ServiceService.get_services_for_invoice(invoice.id)
 
-
-    return render_template('invoices/estimate.html', estimate=invoice, company=company)
+    return render_template('invoices/estimate.html', estimate=invoice, company=company, services=service_descriptions)

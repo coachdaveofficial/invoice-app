@@ -142,7 +142,17 @@ class ServiceService:
             "price_per_unit": service.price_per_unit,
             "unit": service.unit
         })
-    
+    @classmethod
+    def get_services_for_invoice(self, invoice_id):
+        invoice = InvoiceService.get_invoice_by_id(invoice_id)
+        services = []
+        for sr in invoice.service_requests:
+            s = Service.query.get(sr.service_id)
+            services.append(s)
+        prices = [s.price_per_unit for s in services]
+        invoice.total_cost = sum(prices)
+        db.session.commit()
+        return services
 
 class InvoiceService:
 
@@ -279,4 +289,4 @@ class ServiceRequestService:
                             quantity=quantity)
         db.session.add(s_r)
         db.session.commit()
-    
+
