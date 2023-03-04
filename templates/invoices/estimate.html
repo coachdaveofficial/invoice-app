@@ -19,7 +19,7 @@
             </div>
             <div class="modal-footer" id="confirm-invoice">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="create-invoice-for-estimate-{{estimate.id}}">Save changes</button>
+            <button type="button" class="btn btn-primary" id="create-invoice-for-estimate-{{estimate.id}}" disabled="true">Save changes</button>
             </div>
         </div>
         </div>
@@ -49,6 +49,9 @@
                                     <!-- Row start -->
                                     <div class="row gutters">
                                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                            <h2 class="text-muted">
+                                                Estimate
+                                            </h2>
                                             <h2>
                                                 {{company.name}}
                                             </h2>
@@ -107,7 +110,7 @@
                                                     </thead>
                                                     <tbody>
                                                         
-                                                            {% for s in services %}
+                                                            {% for (s, quan) in services %}
                                                             <tr> 
                                                                 <td>
                                                                     {{s.description}}
@@ -116,19 +119,10 @@
                                                                     {{s.id}}
                                                                 </td>
                                                                 <td>
-                                                                    {% for sr in estimate.service_requests %} 
-                                                                        {% if sr.service_id == s.id %} 
-                                                                            {{sr.quantity}}
-                                                                            {% set quantity = sr.quantity %}
-                                                                        {% endif %} 
-                                                                    {% endfor %}
+                                                                    {{quan}}
                                                                 </td>
                                                                 <td>
-                                                                    {% for sr in estimate.service_requests %} 
-                                                                        {% if sr.service_id == s.id %} 
-                                                                            {{s.price_per_unit * sr.quantity}}
-                                                                        {% endif %} 
-                                                                    {% endfor %}
+                                                                    {{s.price_per_unit * quan}}
                                                                 </td>
                                                             </tr>
                                                             {% endfor %}

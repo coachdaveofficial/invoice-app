@@ -50,7 +50,7 @@ $(document).ready(function() {
                 
                 </li>`
     };
-
+    // update total price when making changes on estimate modal
     $(document).on('change', ':input[type="number"]', async function(){
         let listId = this.id;
         let serviceId = listId.split('-')[1];
@@ -61,11 +61,21 @@ $(document).ready(function() {
         updateEstimateTotalHTML();
         
     } );
-    // the function below removes list items on estimate modal on click
+    // removes list items on estimate modal on click
     $(document).on('click', 'button#remove-estimate-item', function() {
         $(this).closest('li').remove();
         updateEstimateTotalHTML();
     });
+    // disables the save changes button unless a due date is provided
+    $('#invoice-due-date').on('change', function() {
+        if ($('#invoice-due-date').val() != '') {
+            $('button.btn-primary').attr('disabled', false);
+        } else {
+            $('button.btn-primary').attr('disabled', true);
+        }
+
+        
+    })
 
     $('#confirm-invoice').on('click', 'button.btn-primary', async function() {
         let estimateId = $(this).attr('id');

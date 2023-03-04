@@ -219,7 +219,6 @@ def add_new_estimate():
 
 
     services_and_quantity = json.loads(request.data)['services']
-    print(services_and_quantity)
     for service in services_and_quantity:
         ServiceRequestService.add_service_request(
                                 service_id=service['serviceId'], 
@@ -240,7 +239,9 @@ def finalize_invoice(estimate_id):
     invoice.due_date = due_date
     invoice.is_estimate = False
     db.session.commit()
-    return redirect(f'invoices/{invoice.id}')
+    # JavaScript handles the redirect here
+    return {}
+
 @app.route('/invoices/<int:invoice_id>')
 def display_invoice(invoice_id):
     if not g.user:
@@ -250,11 +251,20 @@ def display_invoice(invoice_id):
     if g.user.employer.company_id != invoice.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    if not invoice.is_estimate:
+    
+    if invoice.is_estimate:
         flash("Invoice does not exist. Make sure your finalize your invoice before trying to view.", "danger")
         return redirect("/")
     
-    return render_template('invoice.html', invoice=invoice)
+    company = CompanyService.get_company_by_id(invoice.company_id)
+    customer = CustomerService.get_customer_by_id(invoice.cust_id)
+    
+    
+    return render_template('invoices/invoice.html', 
+                            invoice=invoice,
+                            company=company,
+                            customer=customer)
+
 @app.route('/estimates/<int:estimate_id>')
 def show_estimate_info(estimate_id):
     if not g.user:
