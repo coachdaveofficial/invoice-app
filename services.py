@@ -143,8 +143,8 @@ class ServiceService:
         return ({
             "id": service.id,
             "description": service.description,
-            "price_per_unit": service.price_per_unit,
-            "unit": service.unit
+            "rate": service.rate.amount,
+            "unit": service.unit.name,
         })
     @classmethod
     def get_services_for_invoice(self, invoice_id):
@@ -154,7 +154,7 @@ class ServiceService:
             s = Service.query.get(sr.service_id)
 
             services.append((s, sr.quantity))
-        prices = [s.price_per_unit * q for (s, q) in services]
+        prices = [s.rate.amount * q for (s, q) in services]
         invoice.total_cost = sum(prices)
         db.session.commit()
         return services

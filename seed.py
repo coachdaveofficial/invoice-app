@@ -122,7 +122,7 @@ def seed_units():
 def seed_service_rates():
     for r in range(4):
         service_rate = ServiceRate(
-            rate=round(random.uniform(5, 50), 2)
+            amount=round(random.uniform(5, 50), 2)
         )
         db.session.add(service_rate)
     db.session.commit()

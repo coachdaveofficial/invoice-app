@@ -262,7 +262,7 @@ class ServiceRate(db.Model):
         db.Integer,
         primary_key=True
         )
-    rate = db.Column(
+    amount = db.Column(
         db.Float
     )
 class Unit(db.Model):
