@@ -1,6 +1,6 @@
 from app import app
 from faker import Faker
-from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee
+from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, Unit
 from services import UserService, CompanyService, EmployeeService
 import random
 from datetime import datetime, timedelta
@@ -110,17 +110,39 @@ def seed_payments():
     db.session.commit()
 
 
+def seed_units():
+    units = ['hr', 'sq_ft', 'qty', 'weight']
+    for u in units:
+        unit = Unit(
+            name=u
+        )
+        db.session.add(unit)
+    db.session.commit()
+
+def seed_service_rates():
+    for r in range(4):
+        service_rate = ServiceRate(
+            rate=round(random.uniform(5, 50), 2)
+        )
+        db.session.add(service_rate)
+    db.session.commit()
+
 def seed_services():
-    for i in range(5):
+    units = Unit.query.all()
+    rates = ServiceRate.query.all()
+    i = 0
+    for unit in units:
         service = Service(
             description=fake.sentence(),
-            price_per_unit=round(random.uniform(5, 50), 2),
-            unit=fake.word(),
+            service_rate_id=rates[i].id,
+            unit_id=unit.id,
             company_id=1
         )
         db.session.add(service)
+        i += 1
 
     db.session.commit()
+
 
 
 def seed_service_requests():
@@ -174,15 +196,14 @@ def seed_demo_user():
         email="demouser@test.com",
         password="demouser"
     )
-    
-
 
     c = CompanyService.create_company(
         company_name="Demo Company",
         owner_id=demo.id
         )
     EmployeeService.set_employer(user_id=demo.id, company_id=c.id)
-
+    units = Unit.query.all()
+    rates = ServiceRate.query.all()
     for i in range(3):
         customer = Customer(
                 full_name=fake.name(),
@@ -192,12 +213,17 @@ def seed_demo_user():
                 email=fake.email(),
                 company_id=c.id
             )
+        
+        
         service = Service(
             description=fake.sentence(),
-            price_per_unit=round(random.uniform(5, 50), 2),
-            unit=fake.word(),
+            service_rate_id=rates[i].id,
+            unit_id=units[i].id,
             company_id=c.id
         )
+
+
+
         db.session.add(service)
         db.session.add(customer)
 
@@ -227,6 +253,8 @@ def seed_demo_user():
 
 
 def seed_all():
+    seed_units()
+    seed_service_rates()
     seed_users()
     seed_companies()
     seed_employees()

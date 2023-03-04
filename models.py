@@ -255,8 +255,27 @@ class Payment(db.Model):
 
     payments = db.relationship('Invoice', backref="payments")
 
+class ServiceRate(db.Model):
+    __tablename__ = 'service_rates'
 
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
+    rate = db.Column(
+        db.Float
+    )
+class Unit(db.Model):
+    __tablename__ = 'units'
 
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+        )
+    name = db.Column(
+        db.String(50),
+        unique=True
+    )
 class Service(db.Model):
     __tablename__ = "services"
 
@@ -268,13 +287,13 @@ class Service(db.Model):
         db.Text, 
         nullable=False
         )
-    price_per_unit = db.Column(
-        db.Float, 
-        nullable=False
+    service_rate_id = db.Column(
+        db.Integer,
+        db.ForeignKey('service_rates.id')
         )
-    unit = db.Column(
-        db.String(50), 
-        nullable=False
+    unit_id = db.Column(
+        db.Integer,
+        db.ForeignKey('units.id')
         )
     company_id = db.Column(
         db.Integer, 
@@ -282,6 +301,8 @@ class Service(db.Model):
         nullable=False
         )
     
+    unit = db.relationship('Unit', backref='services')
+    rate = db.relationship('ServiceRate', backref='services')
     
 
 class Discount(db.Model):
