@@ -193,8 +193,7 @@ class Invoice(db.Model):
         primary_key=True
         )
     due_date = db.Column(
-        db.Date, 
-        nullable=False
+        db.Date
         )
     cust_id = db.Column(
         db.Integer, 
@@ -202,14 +201,17 @@ class Invoice(db.Model):
         nullable=False
         )
     total_cost = db.Column(
-        db.Float, 
-        nullable=False
+        db.Float
         )
     company_id = db.Column(
         db.Integer, 
         db.ForeignKey('companies.id'), 
         nullable=False
         )
+    is_estimate = db.Column(
+        db.Boolean,
+        default=True
+    )
     created_date = db.Column(
         db.DateTime, 
         default=datetime.utcnow

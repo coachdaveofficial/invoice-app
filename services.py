@@ -108,6 +108,10 @@ class CustomerService:
                     .filter_by(company_id=c_id)
                     .all())
         return customers
+    
+    @classmethod
+    def get_customer_by_id(self, c_id):
+        return Customer.query.get(c_id)
 
 class ServiceService:
     @classmethod
@@ -142,15 +146,31 @@ class ServiceService:
             "price_per_unit": service.price_per_unit,
             "unit": service.unit
         })
-    
+    @classmethod
+    def get_services_for_invoice(self, invoice_id):
+        invoice = InvoiceService.get_invoice_by_id(invoice_id)
+        services = []
+        for sr in invoice.service_requests:
+            s = Service.query.get(sr.service_id)
+
+            services.append((s, sr.quantity))
+        prices = [s.price_per_unit * q for (s, q) in services]
+        invoice.total_cost = sum(prices)
+        db.session.commit()
+        return services
 
 class InvoiceService:
+
+    @classmethod
+    def get_invoice_by_id(self, id):
+        invoice = Invoice.query.get(id)
+        return invoice
 
     @classmethod
     def get_company_invoices(self, company_id):
         """Get all invoices for specific company"""
 
-        invoices = Invoice.query.filter_by(company_id=company_id).all()
+        invoices = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == False).all()
         return invoices
     
     @classmethod
@@ -199,6 +219,14 @@ class InvoiceService:
                 }
             )
         return invoice_payment_info
+    
+    @classmethod
+    def create_estimate(self, cust_id, comp_id):
+        est = Invoice(cust_id=cust_id,
+                    company_id=comp_id)
+        db.session.add(est)
+        db.session.commit()
+        return est
 class PaymentService:
     def get_payment_history(self):
         """Get payment history"""
@@ -245,6 +273,9 @@ class CompanyService:
     def delete_company(id):
         Company.query.filter_by(id=id).delete()
         db.session.commit()
+    @classmethod
+    def get_company_by_id(self, id):
+        return Company.query.get(id)
 class EmployeeService:
     def get_all_employees(self):
         return Employee.query.all()
@@ -263,3 +294,4 @@ class ServiceRequestService:
                             quantity=quantity)
         db.session.add(s_r)
         db.session.commit()
+

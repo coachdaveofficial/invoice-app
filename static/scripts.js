@@ -1,4 +1,5 @@
 // Empty JS for your own code to be here
+
 $(document).ready(function() {
 
 
@@ -8,6 +9,7 @@ $(document).ready(function() {
     const $addServiceBtn = $('#add-service-estimate');
     const $estimateForm = $('#estimate');
     const $estimateSubmitBtn = $('#estimate-submit-btn');
+    const $estimateTotals = $('#estimate-total-cost');
 
 
     async function getService(id) {
@@ -30,18 +32,25 @@ $(document).ready(function() {
     };
 
     function createListHTML(content) {
-        // return `<li id="service-${content.id}-estimate" class="list-group-item">${content.data.description}<span class="badge bg-primary text-end">${content.data.price_per_unit}</span></li>`
 
         return `<li id="service-${content.data.id}-estimate" class="list-group-item d-flex justify-content-between align-items-start">
+        <button class="btn-sm btn-danger" id="remove-estimate-item">Remove</button>
                 <div class="ms-2 me-auto">
                     <div><b>${content.data.description}</b></div>
-                    <label for"service-${content.data.id}-estimate-quantity">Quantity:</label><input class="form-control" id="service-${content.data.id}-estimate-quantity" type="number" value="1" min="0">
+                    <div>
+                    <label for"service-${content.data.id}-estimate-quantity">Quantity:</label>
+                    <input class="form-control" id="service-${content.data.id}-estimate-quantity" type="number" value="1" min="0">
+                    
+                    </div>
+                    
                 </div>
+                
                 <span>Price:</span>
                 <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.price_per_unit}</span>
+                
                 </li>`
     };
-
+    // update total price when making changes on estimate modal
     $(document).on('change', ':input[type="number"]', async function(){
         let listId = this.id;
         let serviceId = listId.split('-')[1];
@@ -52,7 +61,37 @@ $(document).ready(function() {
         updateEstimateTotalHTML();
         
     } );
+    // removes list items on estimate modal on click
+    $(document).on('click', 'button#remove-estimate-item', function() {
+        $(this).closest('li').remove();
+        updateEstimateTotalHTML();
+    });
+    // disables the save changes button unless a due date is provided
+    $('#invoice-due-date').on('change', function() {
+        if ($('#invoice-due-date').val() != '') {
+            $('button.btn-primary').attr('disabled', false);
+        } else {
+            $('button.btn-primary').attr('disabled', true);
+        }
 
+        
+    })
+
+    $('#confirm-invoice').on('click', 'button.btn-primary', async function() {
+        let estimateId = $(this).attr('id');
+        estimateId = estimateId.split('-')[4];
+        let dueDate = $('#invoice-due-date').val()
+
+        await axios.post(`/invoices/finalize/${estimateId}`, {
+            due: dueDate
+        }
+        ).then(function(response) {
+                if (response.status == 200) {
+                    window.location.href = `/invoices/${estimateId}`;
+                }
+            }
+        )
+    });
     
     $addServiceBtn.on('click', async function(e) {
         e.preventDefault()
@@ -81,7 +120,6 @@ $(document).ready(function() {
             sId = sId.split('-')[1];
 
             let serviceQuantity = $(`#service-${sId}-estimate-quantity`).val()
-            console.log(serviceQuantity)
             
             // Add the service ID to the array
             serviceIdQuantityPair.push({serviceId: sId, quantity: serviceQuantity});
@@ -90,14 +128,18 @@ $(document).ready(function() {
         
         await axios.post('invoices/add', {
             services: serviceIdQuantityPair,
-            custumerId: custId
-            }
+            customerId: custId
+        }
         ).then(function (response) {
-            console.log(response);
+            if (response.status == 200) {
+                window.location.href = `/estimates/${response.data.id}`;
+            }
           })
     
         
     });
+
+    
 
 })
 

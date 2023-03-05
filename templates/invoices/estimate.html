@@ -1,0 +1,185 @@
+{% extends 'base.html' %} 
+{% block content %} 
+<div class="row mt-4 justify-content-center">
+    <div class="col-1 mb-2">
+            <button class="btn-lg btn-dark" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
+    </div>
+
+        <!-- Modal -->
+    <div class="modal fade" id="confirmInvoice" tabindex="-1" aria-labelledby="confirmInvoiceLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="confirmInvoiceLabel">Create New Invoice</h5>
+            </div>
+            <div class="modal-body">
+            Create an official invoice from this estimate?<br>
+            <label class="mt-2" for="due-date">Due Date:</label>
+            <input type="date" name="due-date" id="invoice-due-date">
+            </div>
+            <div class="modal-footer" id="confirm-invoice">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="create-invoice-for-estimate-{{estimate.id}}" disabled="true">Save changes</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row gutters">
+                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div class="invoice-container">
+                                <div class="invoice-header">
+                                    <!-- Row start -->
+                                    <div class="row gutters">
+                                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                            <div class="custom-actions-btns mb-5">
+                                                <a href="#" class="btn btn-primary">
+                                                    <i class="icon-download"></i> Download
+                                                </a>
+                                                <a href="#" class="btn btn-info">
+                                                    <i class="icon-printer"></i> Print
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Row end -->
+                                    <!-- Row start -->
+                                    <div class="row gutters">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                            <h2 class="text-muted">
+                                                Estimate
+                                            </h2>
+                                            <h2>
+                                                {{company.name}}
+                                            </h2>
+                                                
+
+                                        </div>
+                                        <div class="col-lg-6 col-md-6 col-sm-6">
+                                            <address class="text-right">
+                                                {{company.name}}, 111 SW Main Street.<br>
+                                                Portland, Oregon.<br>
+                                                97201
+                                            </address>
+                                        </div>
+                                    </div>
+                                    <!-- Row end -->
+                                    <!-- Row start -->
+                                    <div class="row gutters">
+                                        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+                                            <div class="invoice-details text-muted">
+                                                <div class="row">
+                                                    <div class="col-2">
+                                                        For:
+                                                    </div>
+                                                    <div class="col">
+                                                        {{customer.full_name}}<br>
+                                                        {{customer.address}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+                                            <div class="invoice-details">
+                                                <div class="invoice-num">
+                                                    <div>Invoice - #{{estimate.id}}</div>
+                                                    <div>{{estimate.created_date.strftime('%m-%d-%Y')}}</div>
+                                                </div>
+                                            </div>													
+                                        </div>
+                                    </div>
+                                    <!-- Row end -->
+                                </div>
+                                <div class="invoice-body">
+                                    <!-- Row start -->
+                                    <div class="row gutters">
+                                        <div class="col-lg-12 col-md-12 col-sm-12">
+                                            <div class="table-responsive">
+                                                <table class="table custom-table m-0">
+                                                
+                                                    <thead>
+                                                        <tr class="bg-info">
+                                                            <th>Items</th>
+                                                            <th>Product ID</th>
+                                                            <th>Quantity</th>
+                                                            <th>Sub Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        
+                                                            {% for (s, quan) in services %}
+                                                            <tr> 
+                                                                <td>
+                                                                    {{s.description}}
+                                                                </td>
+                                                                <td>
+                                                                    {{s.id}}
+                                                                </td>
+                                                                <td>
+                                                                    {{quan}}
+                                                                </td>
+                                                                <td>
+                                                                    {{s.price_per_unit * quan}}
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                            <td colspan="2">
+                                                                <p class="m-0">
+                                                                    Subtotal
+                                                                </p>
+                                                                <p class="m-0">
+                                                                    Discount
+                                                                </p>
+                                                                <p>
+                                                                    Tax
+                                                                </p>
+                                                            </td>			
+                                                            <td>
+                                                                <div id="estimate-total-cost">
+                                                                    <p class="m-0">
+                                                                        {{estimate.total_cost}}
+                                                                    </p>
+                                                                    <p class="m-0">
+                                                                        <!-- Discount -->
+                                                                    </p>
+                                                                    <p>
+                                                                        <!-- Tax -->
+                                                                    </p>
+                                                                </div>
+                                                                
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                            <td colspan="2">
+                                                                <h5 class="text-success"><strong>Grand Total</strong></h5>
+                                                            </td>
+                                                            <td>
+                                                                <h5 class="text-success"><strong>${{estimate.total_cost}}</strong></h5>
+                                                            </td>
+                                                        </tr>
+                                                            
+                                                        
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Row end -->
+                                </div>
+                                <div class="invoice-footer">
+                                    Thank you for your Business.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>        
+{% endblock %}

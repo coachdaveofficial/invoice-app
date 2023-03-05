@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 import json
 
@@ -132,6 +132,7 @@ def home_page():
         return redirect("/signup")
 
     invoices = InvoiceService.get_company_invoices(company_id)
+    print(invoices)
     services = ServiceService.get_services_for_company(company_id)
     customers = CustomerService.get_customers_for_company(company_id)
     
@@ -205,13 +206,80 @@ def get_service_data(service_id):
     return ServiceService.get_service(service_id)    
 
 @app.route('/invoices/add', methods=["POST"])
-def add_new_invoice():
+def add_new_estimate():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    cust_id = json.loads(request.data)['customerId']
+    print(cust_id)
+    comp_id = g.user.employer.company_id  
+    
+    estimate = InvoiceService.create_estimate(cust_id=cust_id, comp_id=comp_id)
 
-    print(json.loads(request.data))
 
-    service_ids = json.loads(request.data['services'])
-    # for s_id in service_ids:
 
+    services_and_quantity = json.loads(request.data)['services']
+    for service in services_and_quantity:
+        ServiceRequestService.add_service_request(
+                                service_id=service['serviceId'], 
+                                quantity=service['quantity'], 
+                                invoice_id=estimate.id)
+    return {'id': estimate.id}
+
+@app.route('/invoices/finalize/<int:estimate_id>', methods=["POST"])
+def finalize_invoice(estimate_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(estimate_id)
+    if g.user.employer.company_id != invoice.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    due_date = json.loads(request.data)['due']
+    invoice.due_date = due_date
+    invoice.is_estimate = False
+    db.session.commit()
+    # JavaScript handles the redirect here
+    return {}
+
+@app.route('/invoices/<int:invoice_id>')
+def display_invoice(invoice_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(invoice_id)
+    if g.user.employer.company_id != invoice.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    
+    if invoice.is_estimate:
+        flash("Invoice does not exist. Make sure your finalize your invoice before trying to view.", "danger")
+        return redirect("/")
+    
+    company = CompanyService.get_company_by_id(invoice.company_id)
+    customer = CustomerService.get_customer_by_id(invoice.cust_id)
+    
+    
+    return render_template('invoices/invoice.html', 
+                            invoice=invoice,
+                            company=company,
+                            customer=customer)
+
+@app.route('/estimates/<int:estimate_id>')
+def show_estimate_info(estimate_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    estimate = InvoiceService.get_invoice_by_id(estimate_id)
+    if estimate.company_id != g.user.employer.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    company = CompanyService.get_company_by_id(estimate.company_id)
+    service_descriptions = ServiceService.get_services_for_invoice(estimate.id)
+    customer = CustomerService.get_customer_by_id(estimate.cust_id)
+
+    return render_template('invoices/estimate.html', 
+                            estimate=estimate, 
+                            company=company, 
+                            services=service_descriptions, 
+                            customer=customer)
