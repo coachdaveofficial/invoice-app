@@ -203,8 +203,8 @@ def show_all_services():
 
 @app.route('/api/service/<int:service_id>')
 def get_service_data(service_id):
-    return ServiceService.get_service(service_id)    
-
+    return ServiceService.get_service(service_id)  
+    
 @app.route('/invoices/add', methods=["POST"])
 def add_new_estimate():
     if not g.user:

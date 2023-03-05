@@ -46,7 +46,7 @@ $(document).ready(function() {
                 </div>
                 
                 <span>Price:</span>
-                <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.price_per_unit}</span>
+                <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.rate}</span>
                 
                 </li>`
     };
@@ -55,7 +55,7 @@ $(document).ready(function() {
         let listId = this.id;
         let serviceId = listId.split('-')[1];
         let service = await getService(serviceId);
-        let servicePrice = service.data.price_per_unit;
+        let servicePrice = service.data.rate;
         let quantity = this.value;
         $(`#estimate-price-${serviceId}`).text(parseInt(quantity) * parseFloat(servicePrice));
         updateEstimateTotalHTML();
