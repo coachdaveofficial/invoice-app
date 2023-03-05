@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block body_class %}bg-info{% endblock %}
+{% block body_class %}{% endblock %}
 
 {% block content %}
 
@@ -18,27 +18,45 @@
 		<div class="col-md-2">
 		</div>
 		<div class="col-md-8">
-            {% for service in services %}
-			<div id="card-689092">
-				<div class="card">
-					<div class="card-header">
-						 <a class="card-link" data-toggle="collapse" data-parent="#card-689092" href="#card-element-168808">{{service.description}}</a>
-					</div>
-					<div id="card-element-168808" class="collapse show">
-						<div class="card-body">
-							<ul>
-                                <li>
-                                    {{service.price_per_unit}}
-                                </li>
-                                <li>
-                                    {{service.unit}}
-                                </li>
-                            </ul>
-						</div>
-					</div>
-				</div>
-			</div>
-            {% endfor %}
+			<h4>Services</h4>
+			<table class="table table-hover table-bordered border-primary">
+				<thead>
+					<tr>
+					  <th scope="col">#</th>
+					  <th scope="col">Description</th>
+					  <th scope="col">Price Per Unit</th>
+					  <th scope="col">Unit</th>
+					  <th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					
+
+					
+					{% for service in services %}
+					<tr>
+						<th>
+							{{loop.index}}
+						</th>
+						<td>
+							{{service.description}}
+						</td>
+						<td>
+							{{service.rate.amount}}
+						</td>
+						<td>
+							{{service.unit.name}}
+						</td>
+						<td>
+							<button class="btn btn-sm rounded-pill btn-info" id="service-{{service.id}}-edit">Edit</button>
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			  </table>
+            
+			
+            
 		</div>
 	</div>
 </div>
