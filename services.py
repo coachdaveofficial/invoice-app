@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest, ServicesForCompany
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -130,10 +130,10 @@ class ServiceService:
             return None
     @classmethod
     def get_services_for_company(self, company_id):
-        services = (Service
-                    .query
-                    .filter_by(company_id=company_id)
-                    .all())
+        
+        services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).all()
+
+            
         return services
     @classmethod
     def get_service_data(self, id):

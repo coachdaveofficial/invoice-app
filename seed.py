@@ -1,6 +1,6 @@
 from app import app
 from faker import Faker
-from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, Unit
+from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, Unit, ServicesForCompany
 from services import UserService, CompanyService, EmployeeService
 import random
 from datetime import datetime, timedelta
@@ -136,14 +136,24 @@ def seed_services():
             description=fake.sentence(),
             service_rate_id=rates[i].id,
             unit_id=unit.id,
-            company_id=1
         )
         db.session.add(service)
         i += 1
 
     db.session.commit()
 
+def seed_company_services():
+    services = Service.query.all()
+    companies = Company.query.all()
+    for i in range(len(companies)):
 
+        comp_serv = ServicesForCompany(
+            service_id=i+1,
+            company_id=i+1
+        )
+        db.session.add(comp_serv)
+    db.session.commit()
+        
 
 def seed_service_requests():
     invoices = Invoice.query.all()
@@ -213,20 +223,20 @@ def seed_demo_user():
                 email=fake.email(),
                 company_id=c.id
             )
-        
-        
         service = Service(
             description=fake.sentence(),
             service_rate_id=rates[i].id,
             unit_id=units[i].id,
-            company_id=c.id
         )
-
-
-
         db.session.add(service)
         db.session.add(customer)
 
+    db.session.commit()
+
+    services = Service.query.all()
+    for s in services:
+        comp_serv = ServicesForCompany(service_id=s.id, company_id=c.id)
+        db.session.add(comp_serv)
     db.session.commit()
 
     for customer in c.customers:
@@ -264,6 +274,7 @@ def seed_all():
     seed_services()
     seed_service_requests()
     seed_discounts()
+    seed_company_services()
     seed_demo_user()
     # seed_service_request_invoices()
 

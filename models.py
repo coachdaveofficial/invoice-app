@@ -85,7 +85,7 @@ class Company(db.Model):
     employees = db.relationship("Employee", backref="companies")
     customers = db.relationship("Customer", backref="companies")
     invoices = db.relationship("Invoice", backref="companies")
-    services = db.relationship("Service", backref="companies")
+    # services = db.relationship("Service", secondary="company_services", backref="companies")
 
     
 class Employee(db.Model):
@@ -295,15 +295,35 @@ class Service(db.Model):
         db.Integer,
         db.ForeignKey('units.id')
         )
-    company_id = db.Column(
-        db.Integer, 
-        db.ForeignKey('companies.id'), 
-        nullable=False
-        )
-    
+    # company_id = db.Column(
+    #     db.Integer, 
+    #     db.ForeignKey('companies.id'), 
+    #     nullable=False
+    #     )
+
+    companies = db.relationship(
+        'Company',
+        secondary='company_services',
+        backref='services'
+    )
     unit = db.relationship('Unit', backref='services')
     rate = db.relationship('ServiceRate', backref='services')
     
+class ServicesForCompany(db.Model):
+    __tablename__ = 'company_services'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+    company_id = db.Column(
+        db.Integer,
+        db.ForeignKey('companies.id')
+    )
+    service_id = db.Column(
+        db.Integer,
+        db.ForeignKey('services.id')
+    )
 
 class Discount(db.Model):
     __tablename__ = 'discounts'
