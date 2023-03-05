@@ -76,7 +76,7 @@ $(document).ready(function() {
 
         
     })
-
+    // create invoice from estimate 
     $('#confirm-invoice').on('click', 'button.btn-primary', async function() {
         let estimateId = $(this).attr('id');
         estimateId = estimateId.split('-')[4];
@@ -139,9 +139,17 @@ $(document).ready(function() {
         
     });
 
-    
+    $(document).on('click', "button[id^='service-']", function() {
+        let btnId = $(this).attr('id');
+        let action = btnId.split('-')[2];
+        let serviceId = btnId.split('-')[1]
+        if (action === 'delete') {
+            $('#service-delete-btn').on('click', () => $(`#service-${serviceId}-tr`).remove())
+            
+        }
+    })
 
-})
+});
 
 
 

@@ -43,15 +43,11 @@ def do_login(user):
 
     session[CURR_USER_KEY] = user.id
 
-
 def do_logout():
     """Logout user."""
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
-
-
-
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -203,8 +199,8 @@ def show_all_services():
 
 @app.route('/api/service/<int:service_id>')
 def get_service_data(service_id):
-    return ServiceService.get_service(service_id)  
-    
+    return ServiceService.get_service_data(service_id)  
+
 @app.route('/invoices/add', methods=["POST"])
 def add_new_estimate():
     if not g.user:
@@ -283,3 +279,12 @@ def show_estimate_info(estimate_id):
                             company=company, 
                             services=service_descriptions, 
                             customer=customer)
+
+@app.route('/services/<int:service_id>/delete')
+def delete_service(service_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    service = ServiceService.get_service_by_id(service_id)
+

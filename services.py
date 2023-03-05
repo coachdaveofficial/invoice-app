@@ -136,7 +136,7 @@ class ServiceService:
                     .all())
         return services
     @classmethod
-    def get_service(self, id):
+    def get_service_data(self, id):
         service = (Service.query.get(id))
         if not service:
             return None
@@ -146,6 +146,10 @@ class ServiceService:
             "rate": service.rate.amount,
             "unit": service.unit.name,
         })
+    @classmethod
+    def get_service_by_id(self, id):
+        service = Service.query.get(id)
+        return service
     @classmethod
     def get_services_for_invoice(self, invoice_id):
         invoice = InvoiceService.get_invoice_by_id(invoice_id)
