@@ -295,11 +295,6 @@ class Service(db.Model):
         db.Integer,
         db.ForeignKey('units.id')
         )
-    # company_id = db.Column(
-    #     db.Integer, 
-    #     db.ForeignKey('companies.id'), 
-    #     nullable=False
-    #     )
 
     companies = db.relationship(
         'Company',

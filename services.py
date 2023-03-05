@@ -130,7 +130,7 @@ class ServiceService:
             return None
     @classmethod
     def get_services_for_company(self, company_id):
-        
+
         services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).all()
 
             
