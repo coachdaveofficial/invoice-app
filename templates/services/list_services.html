@@ -51,9 +51,9 @@
 
 					
 					{% for service in services %}
-					<tr id="service-{{service.id}}-tr">
-						<th>
-							{{loop.index}}
+					<tr class ="service-rows" id="service-{{service.id}}-tr">
+						<th id="service-index">
+
 						</th>
 						<td>
 							{{service.description}}

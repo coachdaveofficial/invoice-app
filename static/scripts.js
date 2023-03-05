@@ -11,6 +11,18 @@ $(document).ready(function() {
     const $estimateSubmitBtn = $('#estimate-submit-btn');
     const $estimateTotals = $('#estimate-total-cost');
 
+    // update # counter on HTML tables
+    function updateListCounter(tableRowClass) {
+        rows = $(`.${tableRowClass}`);
+        // update the index column for each row
+        rows.each(function(index) {
+            if (!index) {
+                index = 0
+            }
+            $(this).find("#service-index").text(index + 1);
+        });
+    };
+    updateListCounter('service-rows');
 
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)
@@ -90,7 +102,7 @@ $(document).ready(function() {
                     window.location.href = `/invoices/${estimateId}`;
                 }
             }
-        )
+        );
     });
     
     $addServiceBtn.on('click', async function(e) {
@@ -139,13 +151,22 @@ $(document).ready(function() {
         
     });
 
+    // on click of edit or delete button /services/ page
     $(document).on('click', "button[id^='service-']", function() {
         let btnId = $(this).attr('id');
         let action = btnId.split('-')[2];
-        let serviceId = btnId.split('-')[1]
+        let serviceId = btnId.split('-')[1];
         if (action === 'delete') {
-            $('#service-delete-btn').on('click', () => $(`#service-${serviceId}-tr`).remove())
-            
+            $('#service-delete-btn').on('click', async () => {
+                $(`#service-${serviceId}-tr`).remove()
+                updateListCounter('service-rows');
+                await axios.post(`/services/${serviceId}/delete`)
+            }).then(function(response) {
+                if (response.status == 200) {
+                    
+                }
+            }
+        );
         }
     })
 

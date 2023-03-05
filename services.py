@@ -299,3 +299,13 @@ class ServiceRequestService:
         db.session.add(s_r)
         db.session.commit()
 
+class ServicesForCompanyService:
+    @classmethod
+    def remove_company_service(self, comp_id, serv_id):
+        comp_serv = (ServicesForCompany.query
+                                        .filter(ServicesForCompany.company_id == comp_id)
+                                        .filter(ServicesForCompany.service_id == serv_id)
+                                        .first()
+                                        )
+        db.session.delete(comp_serv)
+        db.session.commit()

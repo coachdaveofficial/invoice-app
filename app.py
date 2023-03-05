@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService, ServicesForCompanyService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 import json
 
@@ -199,7 +199,23 @@ def show_all_services():
 
 @app.route('/api/service/<int:service_id>')
 def get_service_data(service_id):
-    return ServiceService.get_service_data(service_id)  
+    return ServiceService.get_service_data(service_id) 
+
+@app.route('/services/<int:service_id>/delete', methods=["POST"])
+def delete_service(service_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    service = ServiceService.get_service_by_id(service_id)
+    company_ids = [c.id for c in service.companies]
+    if g.user.employer.company_id not in company_ids:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    ServicesForCompanyService.remove_company_service(serv_id=service_id, comp_id=g.user.employer.company_id)
+    
+    return {}
+    
 
 @app.route('/invoices/add', methods=["POST"])
 def add_new_estimate():
@@ -280,11 +296,5 @@ def show_estimate_info(estimate_id):
                             services=service_descriptions, 
                             customer=customer)
 
-@app.route('/services/<int:service_id>/delete')
-def delete_service(service_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
 
-    service = ServiceService.get_service_by_id(service_id)
 
