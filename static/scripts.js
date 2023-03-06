@@ -162,12 +162,41 @@ $(document).ready(function() {
                 updateListCounter('service-rows');
                 await axios.post(`/services/${serviceId}/delete`)
             }).then(function(response) {
-                if (response.status == 200) {
-                    
-                }
+                console.log(response)
             }
         );
-        }
+        } 
+        let desc = $(`#serv-${serviceId}-desc`);
+        let rate = $(`#serv-${serviceId}-rate`);
+        let unit = $(`#serv-${serviceId}-unit`);
+        let descInput = $('#description-edit-input');
+        let rateInput = $('#rate-edit-input');
+        let unitInput = $('#unit-edit-input');
+
+        let descVal = $(`#serv-${serviceId}-desc`)
+                                                .text()
+                                                .trim();
+        let rateVal = parseFloat($(`#serv-${serviceId}-rate`)
+                                                        .text()
+                                                        .trim()
+                                                        .split('$')[1]);
+        let unitVal = $(`#serv-${serviceId}-unit`)
+                                                .text()
+                                                .trim();
+        descInput.val(descVal);
+        rateInput.val(rateVal);
+        unitInput.val(unitVal);
+
+        $('#service-edit-btn').on('click', async () => {
+            desc.text(descInput.val())
+
+            await axios.post(`/services/${serviceId}/edit`)
+            })
+            .then(function(response) {
+                console.log(response)
+                }
+            );
+             
     })
 
 });

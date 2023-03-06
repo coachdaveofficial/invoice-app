@@ -188,14 +188,19 @@ def add_new_service():
 
 @app.route('/services', methods=["GET"])
 def show_all_services():
-
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
-    
-    all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
 
+    all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
     return render_template('/services/list_services.html', services=all_services)
+
+@app.route('/services/<int:service_id>/edit', methods=["POST"])
+def edit_service(service_id):
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
+
 
 @app.route('/api/service/<int:service_id>')
 def get_service_data(service_id):

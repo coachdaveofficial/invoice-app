@@ -46,8 +46,8 @@ class InvoiceAddForm(FlaskForm):
 class ServiceAddForm(FlaskForm):
     """Form for creating new services"""
     description = StringField('Description', validators= [DataRequired()])
-    price_per_unit = FloatField("Price per unit", validators=[DataRequired()])
-    unit = SelectField('Unit', choices=[("per_hour", "Hourly"), ("per_sq_ft", "Square Feet")], validators=[DataRequired()])
+    rate = FloatField("Price per unit", validators=[DataRequired()])
+    unit = SelectField('Unit', choices=[("ht", "Hourly"), ("sq_ft", "Square Feet"), ("weight", "Weight"), ("qty", "Quantity")], validators=[DataRequired()])
 
 class CustomerAddForm(FlaskForm):
     """Form for adding a new customer"""
