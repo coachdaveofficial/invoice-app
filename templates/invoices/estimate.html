@@ -1,9 +1,7 @@
 {% extends 'base.html' %} 
 {% block content %} 
 <div class="row mt-4 justify-content-center">
-    <div class="col-1 mb-2">
-            <button class="btn-lg btn-dark" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
-    </div>
+    
 
         <!-- Modal -->
     <div class="modal fade" id="confirmInvoice" tabindex="-1" aria-labelledby="confirmInvoiceLabel" aria-hidden="true">
@@ -27,7 +25,11 @@
 
     <div class="container">
         <div class="row gutters">
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="col-1 mb-2">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
+            </div>
+            
+                <div class="col-10">
                     <div class="card">
                         <div class="card-body p-0">
                             <div class="invoice-container">
@@ -59,7 +61,7 @@
 
                                         </div>
                                         <div class="col-lg-6 col-md-6 col-sm-6">
-                                            <address class="text-right">
+                                            <address class="text-end">
                                                 {{company.name}}, 111 SW Main Street.<br>
                                                 Portland, Oregon.<br>
                                                 97201
@@ -97,7 +99,7 @@
                                     <!-- Row start -->
                                     <div class="row gutters">
                                         <div class="col-lg-12 col-md-12 col-sm-12">
-                                            <div class="table-responsive">
+                                            <div class="table-responsive float-end">
                                                 <table class="table custom-table m-0">
                                                 
                                                     <thead>
