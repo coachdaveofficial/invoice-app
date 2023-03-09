@@ -78,7 +78,7 @@
 		</div>
 
 		<div class="col-sm-2 col-md-8">
-			<h4>Services</h4>
+			<h4>Services for {{company.name}}</h4>
 			<div class="table-responsive">
 				<table class="table table-hover table-bordered border-primary">
 					<thead>
@@ -90,12 +90,12 @@
 						  <th scope="col"></th>
 						</tr>
 					</thead>
-					<tbody>
+					<tbody id="services-for-company-{{company.id}}">
 						
 	
 						
 						{% for service in services %}
-						<tr class ="service-rows" id="service-{{service.id}}-tr">
+						<tr class="service-rows" id="service-{{service.id}}-tr">
 							<th id="service-index">
 	
 							</th>
