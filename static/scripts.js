@@ -46,7 +46,7 @@ $(document).ready(function() {
     function createListHTML(content) {
 
         return `<li id="service-${content.data.id}-estimate" class="list-group-item d-flex justify-content-between align-items-start">
-        <button class="btn-sm btn-danger" id="remove-estimate-item">Remove</button>
+        <button class="mx-2 btn btn-sm btn-outline-danger" id="remove-estimate-item">Remove</button>
                 <div class="ms-2 me-auto">
                     <div><b>${content.data.description}</b></div>
                     <div>
@@ -58,7 +58,7 @@ $(document).ready(function() {
                 </div>
                 
                 <span>Price:</span>
-                <span id="estimate-price-${content.data.id}" class="cost badge bg-primary rounded-pill">${content.data.rate}</span>
+                <span id="estimate-price-${content.data.id}" class="cost mx-2 badge bg-success rounded-pill">${content.data.rate}</span>
                 
                 </li>`
     };
@@ -94,7 +94,7 @@ $(document).ready(function() {
         estimateId = estimateId.split('-')[4];
         let dueDate = $('#invoice-due-date').val()
 
-        await axios.post(`/invoices/finalize/${estimateId}`, {
+        await axios.post(`/invoices/${estimateId}/finalize`, {
             due: dueDate
         }
         ).then(function(response) {
@@ -138,7 +138,7 @@ $(document).ready(function() {
         });
 
         
-        await axios.post('invoices/add', {
+        await axios.post('invoices/', {
             services: serviceIdQuantityPair,
             customerId: custId
         }
