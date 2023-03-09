@@ -62,6 +62,29 @@ $(document).ready(function() {
                 
                 </li>`
     };
+    function createServiceRowHTML(serviceId, description, rate, unit) {
+        return `<tr class="service-rows" id="service-${serviceId}-tr">
+							<th id="service-index">
+	
+							</th>
+							<td id="serv-${serviceId}-desc">
+								${description}
+							</td>
+							<td id="serv-${serviceId}-rate">
+								$${rate}
+							</td>
+							<td id="serv-${serviceId}-unit">
+								${unit}
+							</td>
+							<td>
+								<div class="btn-group" id="edit-delete-service">
+									<button class="btn btn-sm btn-block btn-info" id="service-${serviceId}-edit" data-bs-toggle="modal" data-bs-target="#editService">Edit</button>
+									<button class="btn btn-sm btn-block btn-danger" id="service-${serviceId}-delete" data-bs-toggle="modal" data-bs-target="#confirmServiceDelete">Delete</button>
+								</div>
+								
+							</td>
+						</tr>`
+    };
     // update total price when making changes on estimate modal
     $(document).on('change', ':input[type="number"]', async function(){
         let listId = this.id;
@@ -156,48 +179,60 @@ $(document).ready(function() {
         let btnId = $(this).attr('id');
         let action = btnId.split('-')[2];
         let serviceId = btnId.split('-')[1];
+        // if delete button clicked, remove that row on table and remove service from company's list of services
         if (action === 'delete') {
             $('#service-delete-btn').on('click', async () => {
                 $(`#service-${serviceId}-tr`).remove()
                 updateListCounter('service-rows');
+                // this route does not actually delete the service from the DB, but rather remove the company's access to it
                 await axios.post(`/services/${serviceId}/delete`)
             }).then(function(response) {
                 console.log(response)
             }
         );
         } 
+        // if edit button clicked, get service info and preload into edit service form
         let desc = $(`#serv-${serviceId}-desc`);
         let rate = $(`#serv-${serviceId}-rate`);
         let unit = $(`#serv-${serviceId}-unit`);
+        let comp_id = $("tbody[id^='services-for-company-']").attr('id').split('-')[3];
+        console.log(comp_id)
+        // inputs on modal edit service form
         let descInput = $('#description-edit-input');
         let rateInput = $('#rate-edit-input');
         let unitInput = $('#unit-edit-input');
 
-        let descVal = $(`#serv-${serviceId}-desc`)
-                                                .text()
-                                                .trim();
-        let rateVal = parseFloat($(`#serv-${serviceId}-rate`)
-                                                        .text()
-                                                        .trim()
-                                                        .split('$')[1]);
-        let unitVal = $(`#serv-${serviceId}-unit`)
-                                                .text()
-                                                .trim();
+        let descVal = desc.text().trim();
+        let rateVal = parseFloat(rate
+                                    .text()
+                                    .trim()
+                                    .split('$')[1]
+                                );
+        let unitVal = unit.text().trim();
         descInput.val(descVal);
         rateInput.val(rateVal);
         unitInput.val(unitVal);
 
         $('#service-edit-btn').on('click', async () => {
-            desc.text(descInput.val())
+            desc.text(descInput.val());
+            let newRow = createServiceRowHTML(serviceId, descInput.val(), parseFloat(rateInput.val()), unitInput.val());
+            $(`#service-${serviceId}-tr`).replaceWith(newRow);
+            updateListCounter('service-rows');
 
-            await axios.post(`/services/${serviceId}/edit`)
-            })
-            .then(function(response) {
-                console.log(response)
-                }
-            );
-             
-    })
+
+            await axios.post(`/services/${serviceId}/edit`, {
+                company_id: comp_id,
+                description: descInput.val(),
+                rate: rateInput.val(),
+                unit: unitInput.val()
+                })
+                .then(function(response) {
+                    console.log(response)
+                    }
+                );
+            });
+            
+        });
 
 });
 
