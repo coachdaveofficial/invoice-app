@@ -222,7 +222,7 @@ def delete_service(service_id):
     return {}
     
 
-@app.route('/invoices/add', methods=["POST"])
+@app.route('/invoices/', methods=["POST"])
 def add_new_estimate():
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -242,8 +242,9 @@ def add_new_estimate():
                                 quantity=service['quantity'], 
                                 invoice_id=estimate.id)
     return {'id': estimate.id}
+    # return redirect(url_for('home_page'))
 
-@app.route('/invoices/finalize/<int:estimate_id>', methods=["POST"])
+@app.route('/invoices/<int:estimate_id>/finalize', methods=["POST"])
 def finalize_invoice(estimate_id):
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -257,7 +258,7 @@ def finalize_invoice(estimate_id):
     invoice.is_estimate = False
     db.session.commit()
     # JavaScript handles the redirect here
-    return {}
+    return redirect(f'/estimates/{estimate_id}')
 
 @app.route('/invoices/<int:invoice_id>')
 def display_invoice(invoice_id):
