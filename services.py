@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest, ServicesForCompany
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest, ServicesForCompany, ServiceRate
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -131,7 +131,7 @@ class ServiceService:
     @classmethod
     def get_services_for_company(self, company_id):
 
-        services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).all()
+        services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).order_by(Service.description.asc()).all()
 
             
         return services
@@ -164,6 +164,40 @@ class ServiceService:
         invoice.total_cost = sum(prices)
         db.session.commit()
         return services
+
+    @classmethod
+    def update_service(self, service_id, form_data):
+        service = Service.query.get(service_id)
+        if form_data.get('description') != service.description or form_data.get('unit') != service.unit.name:
+            # Create a new Service instance if the description or unit has changed
+            new_service = Service(description=form_data.get('description'), unit=form_data.get('unit'))
+            new_service.rate = service.rate # Copy the existing rate to the new instance
+            db.session.add(new_service)
+            db.session.commit()
+            comp_serv = ServicesForCompanyService.add_service(serv_id=new_service.id, comp_id=form_data.get('company_id'))
+            ServicesForCompanyService.remove_company_service(comp_id=form_data.get('company_id'), serv_id=service.id)
+            return {'id': new_service.id,
+                    'description': new_service.description,
+                    'rate': new_service.rate.amount,
+                    'unit': new_service.unit.name,
+                    'comp_serv_id': comp_serv.id
+                    }
+        elif form_data.get('rate') != service.rate.amount:
+            # Create a new ServiceRate instance and update the existing Service instance with the new rate id
+            new_rate = ServiceRate(amount=form_data.get('rate'))
+            db.session.add(new_rate)
+            db.session.commit()
+            service.service_rate_id = new_rate.id
+            db.session.commit()
+            ServicesForCompanyService.add_service(serv_id=service.id, comp_id=form_data.get('company_id'))
+            return {'id': service.id,
+                    'description': service.description,
+                    'rate': service.rate.amount,
+                    'unit': service.unit.name
+                    }
+        
+
+        
 
 class InvoiceService:
 
@@ -311,3 +345,9 @@ class ServicesForCompanyService:
                                         )
         db.session.delete(comp_serv)
         db.session.commit()
+    @classmethod
+    def add_service(self, comp_id, serv_id):
+        comp_serv = ServicesForCompany(company_id=comp_id, service_id=serv_id)
+        db.session.add(comp_serv)
+        db.session.commit()
+        return comp_serv
