@@ -153,11 +153,13 @@ class ServiceService:
     @classmethod
     def get_services_for_invoice(self, invoice_id):
         invoice = InvoiceService.get_invoice_by_id(invoice_id)
+        service_instances = Service.query.filter(Service.id.in_([sr.service_id for sr in invoice.service_requests])).all()
+        service_by_service_id = {service.id: service for service in service_instances}
         services = []
         for sr in invoice.service_requests:
-            s = Service.query.get(sr.service_id)
+            service = service_by_service_id[sr.service_id]
+            services.append((service, sr.quantity))
 
-            services.append((s, sr.quantity))
         prices = [s.rate.amount * q for (s, q) in services]
         invoice.total_cost = sum(prices)
         db.session.commit()
@@ -167,8 +169,8 @@ class InvoiceService:
 
     @classmethod
     def get_invoice_by_id(self, id):
-        invoice = Invoice.query.get(id)
-        return invoice
+        return Invoice.query.get(id)
+
 
     @classmethod
     def get_company_invoices(self, company_id):
