@@ -191,15 +191,19 @@ def show_all_services():
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
-
+    # services are alphabetized by default
     all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
-    return render_template('/services/list_services.html', services=all_services)
+    company = CompanyService.get_company_by_id(g.user.employer.company_id)
+    return render_template('/services/list_services.html', services=all_services, company=company)
 
 @app.route('/services/<int:service_id>/edit', methods=["POST"])
 def edit_service(service_id):
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
+    service = ServiceService.update_service(service_id=service_id, form_data=(json.loads(request.data)))
+    return service
+
 
 
 @app.route('/api/service/<int:service_id>')
