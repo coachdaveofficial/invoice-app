@@ -267,7 +267,8 @@ class ServiceRate(db.Model):
         primary_key=True
         )
     amount = db.Column(
-        db.Float
+        db.Float,
+        nullable=False
     )
 
 class Service(db.Model):
