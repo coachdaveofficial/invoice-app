@@ -30,7 +30,11 @@ class enPaymentType(enum.Enum):
     paypal = 4
     cashapp = 5
 
-
+class enUnit(enum.Enum):
+    hr = 1
+    sq_ft = 2
+    weight = 3
+    qty = 4
 
 class User(db.Model):
     """User in the system."""
@@ -265,17 +269,7 @@ class ServiceRate(db.Model):
     amount = db.Column(
         db.Float
     )
-class Unit(db.Model):
-    __tablename__ = 'units'
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-        )
-    name = db.Column(
-        db.String(50),
-        unique=True
-    )
 class Service(db.Model):
     __tablename__ = "services"
 
@@ -291,9 +285,9 @@ class Service(db.Model):
         db.Integer,
         db.ForeignKey('service_rates.id')
         )
-    unit_id = db.Column(
-        db.Integer,
-        db.ForeignKey('units.id')
+    unit = db.Column(
+        db.Enum(enUnit),
+        nullable=False
         )
 
     companies = db.relationship(
@@ -301,7 +295,6 @@ class Service(db.Model):
         secondary='company_services',
         backref='services'
     )
-    unit = db.relationship('Unit', backref='services')
     rate = db.relationship('ServiceRate', backref='services')
     
 class ServicesForCompany(db.Model):
