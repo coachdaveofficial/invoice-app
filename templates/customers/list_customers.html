@@ -6,32 +6,16 @@
 
 <div class="container-fluid mt-2">
 	<div class="row">
-		<div class="col mb-3">
-					<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomer">Add Customer</button>
+		<div class="col-4 mb-3 text-center">
+			<h4>Customers for {{company.name}}</h4>
 		</div>
-		<div class="col">
-			<div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="addCustomerLabel" aria-hidden="true">
-				<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-					<h5 class="modal-title" id="addCustomerLabel">Add New Service</h5>
-					</div>
-					<div class="modal-body">
-					<div class="form-group">
-					
-					</div>
-					<div class="modal-footer" id="add-customer">
-						<a class="btn btn-primary" data-bs-dismiss="modal">Cancel</a>
-						<button class="btn btn-success">Add Customer</button>
-					</div>
-					</div>
-				</div>
-				</div>
-			</div>
+		<div class="col-4 mb-3 text-center">
+			<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomer">Add Customer</button>
+		</div>
+		<div class="col-4">
+
 		</div>
 	<div class="row">
-
-	
 			<div class="col">
 				
 				<div class="table-responsive">
@@ -39,6 +23,7 @@
 						<thead>
 							<tr>
 							<th scope="col">#</th>
+							<th scope="col">Customer ID</th>
 							<th scope="col">Name</th>
 							<th scope="col">Address</th>
 							<th scope="col">Phone</th>
@@ -53,6 +38,9 @@
 								<th class="fit text-wrap" id="customer-index">
 		
 								</th>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-id">
+									{{customer.id}}
+								</td>
 								<td class="fit text-wrap" id="cust-{{customer.id}}-name">
 									{{customer.full_name}}
 								</td>
@@ -79,6 +67,41 @@
 							{% endfor %}
 						</tbody>
 					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col">
+			<div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="addCustomerLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+					<h5 class="modal-title" id="addCustomerLabel">Add New Service</h5>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<form method="POST" id="customer_form">
+								{{ form.hidden_tag() }}
+              
+								{% for field in form if field.widget.input_type != 'hidden' %}
+									{% for error in field.errors %}
+										<span class="text-danger">{{ error }}</span>
+									{% endfor %}
+								{% if field.name == 'tax_id' %} 
+									{{ field(placeholder="Tax ID (not required)", class="form-control m-3") }}
+								{% else %}
+									{{ field(placeholder=field.label.text, class="form-control m-3") }}
+								{% endif %}
+								{% endfor %}
+							
+						
+									<div class="modal-footer" id="add-customer">
+										<a class="btn btn-primary" data-bs-dismiss="modal">Cancel</a>
+										<button class="btn btn-success">Add Customer</button>
+									</div>
+							</form>
+						</div>
+					</div>
+				</div>
 				</div>
 			</div>
 		</div>
