@@ -157,16 +157,20 @@ def add_new_customer():
 
     return redirect('/')
 
-@app.route('/customers', methods=["GET"])
+@app.route('/customers', methods=["GET", "POST"])
 def show_all_customers():
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
-    
-    all_customers = CustomerService.get_all_customers()
+    form = CustomerAddForm()
+    company_customers = CustomerService.get_customers_for_company(g.user.employer.company_id)
     company = CompanyService.get_company_by_id(g.user.employer.company_id)
 
-    return render_template('/customers/list_customers.html', customers=all_customers, company=company)
+    if not form.validate_on_submit():
+        return render_template('/customers/list_customers.html', customers=company_customers, company=company, form=form)
+    
+    CustomerService.add_customer(form_data=form, comp_id=g.user.employer.company_id)
+    return redirect('/customers')
 
 @app.route('/services/', methods=["GET", "POST"])
 def add_new_service():

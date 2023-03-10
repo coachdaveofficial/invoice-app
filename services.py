@@ -67,14 +67,15 @@ class UserService:
 class CustomerService:
     """Services for getting customer info"""
     @classmethod
-    def add_customer(form_data):
+    def add_customer(self,form_data, comp_id):
         try:
             customer = Customer(
                 full_name=form_data.full_name.data,
                 address=form_data.address.data,
                 tax_id=float(form_data.tax_id.data) if form_data.tax_id.data else None,
                 phone=form_data.phone.data,
-                email=form_data.email.data
+                email=form_data.email.data,
+                company_id=comp_id
             )
             db.session.add(customer)
             db.session.commit()
