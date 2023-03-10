@@ -64,7 +64,6 @@ class UserService:
         except IntegrityError:
             return None
     
-
 class CustomerService:
     """Services for getting customer info"""
     @classmethod
@@ -115,13 +114,12 @@ class CustomerService:
 
 class ServiceService:
     @classmethod
-    def add_service(self, form_data, company_id):
+    def add_service(self, form_data, rate_id):
         try:
             service = Service(
                         description=form_data.description.data,
-                        price_per_unit=form_data.price_per_unit.data,
                         unit=form_data.unit.data,
-                        company_id=company_id
+                        service_rate_id=rate_id
                         )
             db.session.add(service)
             db.session.commit()
@@ -196,9 +194,6 @@ class ServiceService:
                     'unit': service.unit.name
                     }
         
-
-        
-
 class InvoiceService:
 
     @classmethod
@@ -336,6 +331,7 @@ class ServiceRequestService:
         db.session.commit()
 
 class ServicesForCompanyService:
+
     @classmethod
     def remove_company_service(self, comp_id, serv_id):
         comp_serv = (ServicesForCompany.query
@@ -351,3 +347,11 @@ class ServicesForCompanyService:
         db.session.add(comp_serv)
         db.session.commit()
         return comp_serv
+
+class ServiceRateService:
+    @classmethod
+    def add_rate(self,rate):
+        service_rate = ServiceRate(amount=rate)
+        db.session.add(service_rate)
+        db.session.commit()
+        return service_rate
