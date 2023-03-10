@@ -2,7 +2,7 @@ import os
 from flask import Flask, render_template, request, flash, redirect, session, g, jsonify, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
-from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService, ServicesForCompanyService
+from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService, ServicesForCompanyService, ServiceRateService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 import json
 
@@ -167,13 +167,13 @@ def show_all_customers():
 
     return render_template('/customers/list_customers.html', customers=all_customers)
 
-@app.route('/services/add', methods=["GET", "POST"])
+@app.route('/services/', methods=["GET", "POST"])
 def add_new_service():
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     
-    form = ServiceAddForm()
+    
 
     if not form.validate_on_submit():
         return render_template('/services/add_service.html', form=form)
@@ -186,15 +186,23 @@ def add_new_service():
 
     return redirect('/')
 
-@app.route('/services', methods=["GET"])
-def show_all_services():
+@app.route('/services', methods=["GET", "POST"])
+def services_menu():
+    form = ServiceAddForm()
     if not g.user:
         flash("Access unauthorized", "danger")
         return redirect('/')
-    # services are alphabetized by default
-    all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
-    company = CompanyService.get_company_by_id(g.user.employer.company_id)
-    return render_template('/services/list_services.html', services=all_services, company=company)
+    if not form.validate_on_submit():
+        # services are alphabetized by default
+        all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
+        company = CompanyService.get_company_by_id(g.user.employer.company_id)
+        return render_template('/services/list_services.html', services=all_services, company=company, form=form)
+
+    
+    rate = ServiceRateService.add_rate(float(form.rate.data))
+    service = ServiceService.add_service(form_data=form, rate_id=rate.id)
+    service_company_relationship = ServicesForCompanyService.add_service(comp_id=g.user.employer.company_id, serv_id=service.id)
+    return redirect('/services')
 
 @app.route('/services/<int:service_id>/edit', methods=["POST"])
 def edit_service(service_id):
