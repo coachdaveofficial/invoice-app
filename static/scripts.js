@@ -12,17 +12,18 @@ $(document).ready(function() {
     const $estimateTotals = $('#estimate-total-cost');
 
     // update # counter on HTML tables
-    function updateListCounter(tableRowClass) {
-        rows = $(`.${tableRowClass}`);
+    function updateListCounter(tableRowName) {
+        rows = $(`.${tableRowName}-rows`);
         // update the index column for each row
         rows.each(function(index) {
             if (!index) {
                 index = 0
             }
-            $(this).find("#service-index").text(index + 1);
+            $(this).find(`#${tableRowName}-index`).text(index + 1);
         });
     };
-    updateListCounter('service-rows');
+    updateListCounter('service');
+    updateListCounter('customer');
 
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)
@@ -233,7 +234,7 @@ $(document).ready(function() {
             });
             
         });
-
+    // disable service edit if fields are blank
     $(document).on('input', "input[id$='edit-input']", function() {
         let empty = false
         $('#description-edit-input, #rate-edit-input').each(function() {
