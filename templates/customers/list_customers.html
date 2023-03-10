@@ -1,47 +1,86 @@
 {% extends 'base.html' %}
 
-{% block body_class %}bg-info{% endblock %}
+{% block body_class %}{% endblock %}
 
 {% block content %}
 
 <div class="container-fluid mt-2">
 	<div class="row">
-		<div class="col-md-2">
-			<div class="list-group">
-				 <div class="list-group-item list-group-item-action active">Menu</div>
-				<div class="list-group-item">
-					<a href="/customers/add">Add a customer</a>
-				</div>
-				<a href="/" class="list-group-item list-group-item-action active">Home</a>
-			</div>
+		<div class="col mb-3">
+					<button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomer">Add Customer</button>
 		</div>
-		<div class="col-md-2">
-		</div>
-		<div class="col-md-8">
-            {% for customer in customers %}
-			<div id="card-689092">
-				<div class="card">
-					<div class="card-header">
-						 <a class="card-link" data-toggle="collapse" data-parent="#card-689092" href="#card-element-168808">{{customer.full_name}}</a>
+		<div class="col">
+			<div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="addCustomerLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+					<h5 class="modal-title" id="addCustomerLabel">Add New Service</h5>
 					</div>
-					<div id="card-element-168808" class="collapse show">
-						<div class="card-body">
-							<ul>
-                                <li>
-                                    {{customer.address}}
-                                </li>
-                                <li>
-                                    {{customer.phone}}
-                                </li>
-                                <li>
-                                    {{customer.email}}
-                                </li>
-                            </ul>
-						</div>
+					<div class="modal-body">
+					<div class="form-group">
+					
+					</div>
+					<div class="modal-footer" id="add-customer">
+						<a class="btn btn-primary" data-bs-dismiss="modal">Cancel</a>
+						<button class="btn btn-success">Add Customer</button>
+					</div>
 					</div>
 				</div>
+				</div>
 			</div>
-            {% endfor %}
+		</div>
+	<div class="row">
+
+	
+			<div class="col">
+				
+				<div class="table-responsive">
+					<table class="table table-hover table-bordered border-primary fs-5 w-100">
+						<thead>
+							<tr>
+							<th scope="col">#</th>
+							<th scope="col">Name</th>
+							<th scope="col">Address</th>
+							<th scope="col">Phone</th>
+							<th scope="col">Email</th>
+							<th scope="col">Created Date</th>
+							<th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody class="fs-6" id="customers-for-company-{{company.id}}">	
+							{% for customer in customers %}
+							<tr class="customer-rows" id="customer-{{customer.id}}-tr">
+								<th class="fit text-wrap" id="customer-index">
+		
+								</th>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-name">
+									{{customer.full_name}}
+								</td>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-address">
+									{{customer.address}}
+								</td>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-phone">
+									{{customer.phone}}
+								</td>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-email">
+									{{customer.email}}
+								</td>
+								<td class="fit text-wrap" id="cust-{{customer.id}}-created-date">
+									{{customer.created_date.strftime('%m-%d-%Y')}}
+								</td>
+								<td class="fit">
+									<div class="btn-group" id="edit-delete-service">
+										<button class="btn btn-sm btn-block btn-info" id="customer-{{customer.id}}-edit" data-bs-toggle="modal" data-bs-target="#editService">Edit</button>
+										<button class="btn btn-sm btn-block btn-danger" id="customer-{{customer.id}}-delete" data-bs-toggle="modal" data-bs-target="#confirmServiceDelete">Delete</button>
+									</div>
+									
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

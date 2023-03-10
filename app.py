@@ -164,8 +164,9 @@ def show_all_customers():
         return redirect('/')
     
     all_customers = CustomerService.get_all_customers()
+    company = CompanyService.get_company_by_id(g.user.employer.company_id)
 
-    return render_template('/customers/list_customers.html', customers=all_customers)
+    return render_template('/customers/list_customers.html', customers=all_customers, company=company)
 
 @app.route('/services/', methods=["GET", "POST"])
 def add_new_service():
@@ -201,7 +202,8 @@ def services_menu():
     
     rate = ServiceRateService.add_rate(float(form.rate.data))
     service = ServiceService.add_service(form_data=form, rate_id=rate.id)
-    service_company_relationship = ServicesForCompanyService.add_service(comp_id=g.user.employer.company_id, serv_id=service.id)
+    # link service to user's company
+    ServicesForCompanyService.add_service(comp_id=g.user.employer.company_id, serv_id=service.id)
     return redirect('/services')
 
 @app.route('/services/<int:service_id>/edit', methods=["POST"])
