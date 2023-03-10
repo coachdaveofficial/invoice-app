@@ -86,7 +86,7 @@ $(document).ready(function() {
 						</tr>`
     };
     // update total price when making changes on estimate modal
-    $(document).on('change', ':input[type="number"]', async function(){
+    $(document).on('change', 'input[id$="-estimate-quantity"]', async function(){
         let listId = this.id;
         let serviceId = listId.split('-')[1];
         let service = await getService(serviceId);
@@ -234,6 +234,20 @@ $(document).ready(function() {
             
         });
 
+    $(document).on('input', "input[id$='edit-input']", function() {
+        let empty = false
+        $('#description-edit-input, #rate-edit-input').each(function() {
+            
+            if ($(this).val() == '') {
+                empty = true;
+                }
+            });
+            if (empty) {
+                $('#service-edit-btn').prop('disabled', true);
+            } else {
+                $('#service-edit-btn').prop('disabled', false);
+            }
+    });     
 });
 
 
