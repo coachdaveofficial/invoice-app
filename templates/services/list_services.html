@@ -6,16 +6,61 @@
 
 <div class="container-fluid mt-2">
 	<div class="row">
-		<div class="col-md-2">
-			<div class="list-group">
-				 <div class="list-group-item list-group-item-action active">Menu</div>
-				<div class="list-group-item text-center">
-					<button class="btn btn-block btn-outline-success" data-bs-toggle="modal" data-bs-target="#addService">Add Service</button>
+			<div class="col">
+					<button class="btn btn-block btn-primary float-end" data-bs-toggle="modal" data-bs-target="#addService">Add Service</button>
+
+			</div>
+	</div>
+		
+		<div class="row">
+			<div class="col d-flex justify-content-center">
+				
+				<div class="table-responsive">
+					<h4 class="text-center">Services for {{company.name}}</h4>
+					<table class="table table-hover table-bordered border-primary">
+						<thead>
+							<tr>
+							  <th scope="col">#</th>
+							  <th scope="col">Description</th>
+							  <th scope="col">Price Per Unit</th>
+							  <th scope="col">Unit</th>
+							  <th scope="col"></th>
+							</tr>
+						</thead>
+						<tbody id="services-for-company-{{company.id}}">
+							
+		
+							
+							{% for service in services %}
+							<tr class="service-rows" id="service-{{service.id}}-tr">
+								<th id="service-index">
+		
+								</th>
+								<td id="serv-{{service.id}}-desc">
+									{{service.description}}
+								</td>
+								<td id="serv-{{service.id}}-rate">
+									${{service.rate.amount}}
+								</td>
+								<td id="serv-{{service.id}}-unit">
+									{{service.unit.name}}
+								</td>
+								<td>
+									<div class="btn-group" id="edit-delete-service">
+										<button class="btn btn-sm btn-block btn-info" id="service-{{service.id}}-edit" data-bs-toggle="modal" data-bs-target="#editService">Edit</button>
+										<button class="btn btn-sm btn-block btn-danger" id="service-{{service.id}}-delete" data-bs-toggle="modal" data-bs-target="#confirmServiceDelete">Delete</button>
+									</div>
+									
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					  </table>
 				</div>
-				<a href="/" class="list-group-item list-group-item-action active">Home</a>
 			</div>
 		</div>
-		<!-- Modals -->
+		<div class="row">
+						<!-- Modals -->
 		<div class="col-md-2">
 			<!-- Confirm Delete Modal -->
 			<div class="modal fade" id="confirmServiceDelete" tabindex="-1" aria-labelledby="confirmServiceDeleteLabel" aria-hidden="true">
@@ -112,51 +157,6 @@
 
 
 		</div>
-
-		<div class="col-sm-2 col-md-8">
-			<h4>Services for {{company.name}}</h4>
-			<div class="table-responsive">
-				<table class="table table-hover table-bordered border-primary">
-					<thead>
-						<tr>
-						  <th scope="col">#</th>
-						  <th scope="col">Description</th>
-						  <th scope="col">Price Per Unit</th>
-						  <th scope="col">Unit</th>
-						  <th scope="col"></th>
-						</tr>
-					</thead>
-					<tbody id="services-for-company-{{company.id}}">
-						
-	
-						
-						{% for service in services %}
-						<tr class="service-rows" id="service-{{service.id}}-tr">
-							<th id="service-index">
-	
-							</th>
-							<td id="serv-{{service.id}}-desc">
-								{{service.description}}
-							</td>
-							<td id="serv-{{service.id}}-rate">
-								${{service.rate.amount}}
-							</td>
-							<td id="serv-{{service.id}}-unit">
-								{{service.unit.name}}
-							</td>
-							<td>
-								<div class="btn-group" id="edit-delete-service">
-									<button class="btn btn-sm btn-block btn-info" id="service-{{service.id}}-edit" data-bs-toggle="modal" data-bs-target="#editService">Edit</button>
-									<button class="btn btn-sm btn-block btn-danger" id="service-{{service.id}}-delete" data-bs-toggle="modal" data-bs-target="#confirmServiceDelete">Delete</button>
-								</div>
-								
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				  </table>
-			</div>
-			
 		</div>
 	</div>
 </div>

@@ -126,7 +126,7 @@
 												<div class="text-center">
 													<label for="customer-name">Insert Name of Customer</label>
 													<br>
-													<select name="customer-select" id="customer-select">
+													<select class="form-select text-center" name="customer-select" id="customer-select">
 														{% for cust in customers %} 
 															<option value="{{cust.id}}">{{cust.full_name}}</option>
 														{% endfor %}
@@ -135,14 +135,14 @@
 														
 													<br>
 													<label class="form-label" for="services-options">Select service to add to estimate:</label>
-													<select name="services" id="services-options" class="form-select">
+													<select name="services" id="services-options" class="form-select text-center">
 														{% for service in services %}
 														<option value="{{service.id}}">{{service.description}}</option>
 														{% endfor %}
 													</select>
 													<br>
 													<br>
-													<a href="#" id="add-service-estimate" class="btn-sm btn-primary">Add Service</a>
+													<a href="#" id="add-service-estimate" class="btn btn-sm btn-primary">Add Service</a>
 												</div>
 
 								
