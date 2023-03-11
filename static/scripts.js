@@ -184,7 +184,7 @@ $(document).ready(function() {
         if (action === 'delete') {
             $('#service-delete-btn').on('click', async () => {
                 $(`#service-${serviceId}-tr`).remove()
-                updateListCounter('service-rows');
+                updateListCounter('service');
                 // this route does not actually delete the service from the DB, but rather remove the company's access to it
                 await axios.post(`/services/${serviceId}/delete`)
             }).then(function(response) {
@@ -218,7 +218,7 @@ $(document).ready(function() {
             desc.text(descInput.val());
             let newRow = createServiceRowHTML(serviceId, descInput.val(), parseFloat(rateInput.val()), unitInput.val());
             $(`#service-${serviceId}-tr`).replaceWith(newRow);
-            updateListCounter('service-rows');
+            updateListCounter('service');
 
 
             await axios.post(`/services/${serviceId}/edit`, {
@@ -249,6 +249,33 @@ $(document).ready(function() {
                 $('#service-edit-btn').prop('disabled', false);
             }
     });     
+    
+    $(document).on('click', "button[id^='customer-']", function() {
+        let btnId = $(this).attr('id');
+        let action = btnId.split('-')[2];
+        let customerId = btnId.split('-')[1];
+
+        // if delete button clicked, remove that row on table and remove customer from company's list of customers
+        if (action === 'delete') {
+            $('#customer-delete-btn').on('click', async () => {
+                $(`#customer-${customerId}-tr`).remove()
+                updateListCounter('customer');
+                await axios.post(`/customers/${customerId}/delete`)
+            }).then(function(response) {
+                console.log(response)
+                }
+            );
+        };
+        // autofill edit form with current customer info
+        $(".edit-customer input").each(function() {
+            let fieldName = $(this).attr('name');
+            let customerCol = $(`td[id$="${customerId}-${fieldName}"]`);
+            let colValue = customerCol.text().trim();
+            $(this).val(colValue);
+          }); 
+
+
+    })
 });
 
 

@@ -83,6 +83,12 @@ class CustomerService:
         except IntegrityError:
             return None
     @classmethod
+    def set_delete_date_for_customer_by_id(self, cust_id):
+        customer = Customer.query.get(cust_id)
+        customer.deleted_date = datetime.date(datetime.utcnow())
+        db.session.commit()
+
+    @classmethod
     def get_10_customers(self):
         customers = (Customer
                     .query

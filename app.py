@@ -172,6 +172,12 @@ def show_all_customers():
     CustomerService.add_customer(form_data=form, comp_id=g.user.employer.company_id)
     return redirect('/customers')
 
+@app.route('/customers/<int:cust_id>/delete', methods=["POST"])
+def delete_customer(cust_id):
+    CustomerService.set_delete_date_for_customer_by_id(cust_id)
+    return {}
+    
+
 @app.route('/services/', methods=["GET", "POST"])
 def add_new_service():
     if not g.user:
