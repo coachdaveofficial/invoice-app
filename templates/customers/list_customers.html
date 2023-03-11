@@ -28,7 +28,7 @@
 							<th scope="col">Address</th>
 							<th scope="col">Phone</th>
 							<th scope="col">Email</th>
-							<th scope="col">Created Date</th>
+							<th scope="col">Last Updated</th>
 							<th scope="col"></th>
 							</tr>
 						</thead>
@@ -55,7 +55,7 @@
 									{{customer.email}}
 								</td>
 								<td class="fit text-wrap" id="cust-{{customer.id}}-created-date">
-									{{customer.created_date.strftime('%m-%d-%Y')}}
+									{{customer.updated_date.strftime('%m-%d-%Y')}}
 								</td>
 								<td class="fit">
 									<div class="btn-group" id="edit-delete-service">
