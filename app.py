@@ -176,26 +176,6 @@ def show_all_customers():
 def delete_customer(cust_id):
     CustomerService.set_delete_date_for_customer_by_id(cust_id)
     return {}
-    
-
-@app.route('/services/', methods=["GET", "POST"])
-def add_new_service():
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
-    
-    
-
-    if not form.validate_on_submit():
-        return render_template('/services/add_service.html', form=form)
-    
-    service = ServiceService.add_service(form, g.user.employer.company_id)
-
-    if not service:
-        flash("Service with similar credentials already exists", "danger")
-        return redirect('/services/add')
-
-    return redirect('/')
 
 @app.route('/services', methods=["GET", "POST"])
 def services_menu():
