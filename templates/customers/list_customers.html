@@ -41,7 +41,7 @@
 								<td class="fit text-wrap" id="cust-{{customer.id}}-id">
 									{{customer.id}}
 								</td>
-								<td class="fit text-wrap" id="cust-{{customer.id}}-name">
+								<td class="fit text-wrap" id="cust-{{customer.id}}-full_name">
 									{{customer.full_name}}
 								</td>
 								<td class="fit text-wrap" id="cust-{{customer.id}}-address">
@@ -58,7 +58,7 @@
 								</td>
 								<td class="fit">
 									<div class="btn-group" id="edit-delete-service">
-										<button class="btn btn-sm btn-block btn-info" id="customer-{{customer.id}}-edit" data-bs-toggle="modal" data-bs-target="#editService">Edit</button>
+										<button class="btn btn-sm btn-block btn-info" id="customer-{{customer.id}}-edit" data-bs-toggle="modal" data-bs-target="#editCustomer">Edit</button>
 										<button class="btn btn-sm btn-block btn-danger" id="customer-{{customer.id}}-delete" data-bs-toggle="modal" data-bs-target="#confirmServiceDelete">Delete</button>
 									</div>
 									
@@ -71,11 +71,12 @@
 			</div>
 		</div>
 		<div class="col">
+			<!-- Add Customer Modal -->
 			<div class="modal fade" id="addCustomer" tabindex="-1" aria-labelledby="addCustomerLabel" aria-hidden="true">
 				<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-					<h5 class="modal-title" id="addCustomerLabel">Add New Service</h5>
+					<h5 class="modal-title" id="addCustomerLabel">Add New Customer</h5>
 					</div>
 					<div class="modal-body">
 						<div class="form-group">
@@ -97,6 +98,42 @@
 									<div class="modal-footer" id="add-customer">
 										<a class="btn btn-primary" data-bs-dismiss="modal">Cancel</a>
 										<button class="btn btn-success">Add Customer</button>
+									</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+			<!-- Edit Customer Modal -->
+			<div class="modal fade" id="editCustomer" tabindex="-1" aria-labelledby="editCustomerLabel" aria-hidden="true">
+				<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+					<h5 class="modal-title" id="editCustomerLabel">Edit Customer</h5>
+					</div>
+					<div class="modal-body">
+						<div class="form-group">
+							<form method="POST" id="customer_edit_form">
+								{{ form.hidden_tag() }}
+								<div class="edit-customer">
+									{% for field in form if field.widget.input_type != 'hidden' %}
+									{% for error in field.errors %}
+										<span class="text-danger">{{ error }}</span>
+									{% endfor %}
+									{% if field.name == 'tax_id' %} 
+										{{ field(placeholder="Tax ID (not required)", class="form-control m-3") }}
+									{% else %}
+										{{ field(placeholder=field.label.text, class="form-control m-3") }}
+									{% endif %}
+									{% endfor %}
+								</div>
+								
+							
+						
+									<div class="modal-footer" id="edit-customer">
+										<a class="btn btn-primary" data-bs-dismiss="modal">Cancel</a>
+										<button class="btn btn-success">Edit Customer</button>
 									</div>
 							</form>
 						</div>
