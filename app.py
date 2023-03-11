@@ -177,6 +177,11 @@ def delete_customer(cust_id):
     CustomerService.set_delete_date_for_customer_by_id(cust_id)
     return {}
 
+@app.route('/customers/<int:cust_id>/edit', methods=["POST"])
+def edit_customer(cust_id):
+    edit_form = json.loads(request.data)
+    customer_info = CustomerService.edit_customer(cust_id=cust_id, form_data=edit_form)
+    return customer_info
 @app.route('/services', methods=["GET", "POST"])
 def services_menu():
     form = ServiceAddForm()

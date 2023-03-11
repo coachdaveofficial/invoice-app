@@ -106,18 +106,36 @@ class CustomerService:
         return customers
     
     @classmethod
-    def get_customers_for_company(self, c_id):
+    def get_customers_for_company(self, comp_id):
         """Get all customers of a specific company using the company ID (c_id)"""
         customers = (Customer
                     .query
                     .order_by(Customer.full_name)
-                    .filter_by(company_id=c_id)
+                    .filter_by(company_id=comp_id)
                     .all())
         return customers
     
     @classmethod
-    def get_customer_by_id(self, c_id):
-        return Customer.query.get(c_id)
+    def get_customer_by_id(self, cust_id):
+        return Customer.query.get(cust_id)
+
+    @classmethod
+    def edit_customer(self, cust_id, form_data):
+        customer = Customer.query.get(cust_id)
+        customer.full_name = form_data.get('full_name') or customer.full_name
+        customer.address = form_data.get('address') or customer.address
+        customer.tax_id = form_data.get('tax_id') or customer.tax_id
+        customer.phone = form_data.get('phone') or customer.phone
+        customer.email = form_data.get('email') or customer.email
+        customer.updated_date = datetime.date(datetime.utcnow())
+        db.session.commit()
+        return {'full_name': customer.full_name,
+                'address': customer.address,
+                'tax_id': customer.tax_id,
+                'phone': customer.phone,
+                'email': customer.email,
+                'updated_date': customer.updated_date,
+                }
 
 class ServiceService:
     @classmethod
