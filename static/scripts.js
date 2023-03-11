@@ -261,23 +261,34 @@ $(document).ready(function() {
                 $(`#customer-${customerId}-tr`).remove()
                 updateListCounter('customer');
                 await axios.post(`/customers/${customerId}/delete`)
-            }).then(function(response) {
-                console.log(response)
-                }
-            );
-        };
-        // autofill edit form with current customer info
-        $(".edit-customer input").each(function() {
-            let fieldName = $(this).attr('name');
-            let customerCol = $(`td[id$="${customerId}-${fieldName}"]`);
-            let colValue = customerCol.text().trim();
-            $(this).val(colValue);
-          }); 
+                }).then(function(response) {
+                    console.log(response)
+                    });
+        } else if (action === 'edit') {
+            // autofill edit form with current customer info
+            $(".edit-customer input").each(function() {
+                let fieldName = $(this).attr('name');
+                let customerCol = $(`td[id$="${customerId}-${fieldName}"]`);
+                let colValue = customerCol.text().trim();
+                $(this).val(colValue);
+            }); 
 
-
-    })
-});
-
-
-
-
+            $('#customer-edit-btn').on('click', async () => {
+                await axios.post(`/customers/${customerId}/edit`, 
+                {
+                    full_name: $('#full-name-edit-input').val(),
+                    address: $('#address-edit-input').val(),
+                    tax_id: $('#tax-id-edit-input').val(),
+                    phone: $('#phone-edit-input').val(),
+                    email: $('#email-edit-input').val()
+                }).then(function(response) {
+                    console.log(response)
+                    Object.entries(response.data).forEach(function([key, value]) {
+                        console.log(key, value);
+                        $(`#cust-${customerId}-${key}`).text(value)
+                      });
+                    })
+            })
+        }
+    });
+})
