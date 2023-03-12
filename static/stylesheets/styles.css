@@ -144,3 +144,10 @@
 .custom-actions-btns .btn {
     margin: .3rem 0 .3rem .3rem;
 }
+
+@media print {
+    /* Hide elements with a class of "no-print" */
+    .no-print {
+      display: none;
+    }
+  }

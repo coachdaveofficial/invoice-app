@@ -4,7 +4,7 @@
     
 
         <!-- Modal -->
-    <div class="modal fade" id="confirmInvoice" tabindex="-1" aria-labelledby="confirmInvoiceLabel" aria-hidden="true">
+    <div class="modal fade no-print" id="confirmInvoice" tabindex="-1" aria-labelledby="confirmInvoiceLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -25,7 +25,7 @@
 
     <div class="container">
         <div class="row gutters">
-            <div class="col-1 mb-2">
+            <div class="col-1 mb-2 no-print">
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
             </div>
             
@@ -37,13 +37,14 @@
                                     <!-- Row start -->
                                     <div class="row gutters">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                                            <div class="custom-actions-btns mb-5">
+                                            <div class="no-print custom-actions-btns mb-5">
                                                 <a href="#" class="btn btn-primary">
                                                     <i class="icon-download"></i> Download
                                                 </a>
-                                                <a href="#" class="btn btn-info">
+                                                <!-- <a href="#" class="btn btn-info">
                                                     <i class="icon-printer"></i> Print
-                                                </a>
+                                                </a> -->
+                                                <button onclick="window.print()">Print</button>
                                             </div>
                                         </div>
                                     </div>
