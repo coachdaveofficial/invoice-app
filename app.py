@@ -6,6 +6,8 @@ from services import ServiceService, UserService, CustomerService, InvoiceServic
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
 import json
 
+from pdf_conversion import convertLinkToPDF
+
 app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
@@ -251,7 +253,6 @@ def add_new_estimate():
                                 quantity=service['quantity'], 
                                 invoice_id=estimate.id)
     return {'id': estimate.id}
-    # return redirect(url_for('home_page'))
 
 @app.route('/invoices/<int:estimate_id>/finalize', methods=["POST"])
 def finalize_invoice(estimate_id):
@@ -266,6 +267,7 @@ def finalize_invoice(estimate_id):
     invoice.due_date = due_date
     invoice.is_estimate = False
     db.session.commit()
+    convertLinkToPDF(f'https://falson.net/', "\\result.pdf")
     # JavaScript handles the redirect here
     return redirect(f'/estimates/{estimate_id}')
 
