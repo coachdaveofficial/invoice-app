@@ -228,6 +228,7 @@ class Invoice(db.Model):
     deleted_date = db.Column(db.DateTime)
 
     service_requests = db.relationship('ServiceRequest', backref='invoices')
+    customer = db.relationship('Customer', backref='invoices')
     
 
 class Payment(db.Model):
