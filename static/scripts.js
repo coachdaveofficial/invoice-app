@@ -24,6 +24,11 @@ $(document).ready(function() {
     };
     updateListCounter('service');
     updateListCounter('customer');
+    updateListCounter('estimate');
+
+    $(document).on('click', '#invoice-table-body td', function(e) {
+        console.log($(this).parent().attr('id'))
+    })
 
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)

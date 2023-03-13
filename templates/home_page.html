@@ -9,9 +9,9 @@
 <div class="mt-4 container-fluid">	
 	<div class="row">
 		<!-- Invoice Table -->
-		<div class="col-md-8" id="invoice-table">
-			<table class="table table-sm table-hover table-bordered table-dark">
-				<thead>
+		<div class="col-md-8">
+			<table class="table table-sm table-hover table-bordered ">
+				<thead class="table-dark">
 					<tr>
 						<th>
 							#
@@ -36,9 +36,9 @@
 						</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="table-light" id="invoice-table-body">
 					{% for invoice in invoices %}
-					<tr>
+					<tr id="invoice-{{invoice.id}}-row">
 						<td>
 							{{loop.index}}
 						</td>
