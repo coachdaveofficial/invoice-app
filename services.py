@@ -134,7 +134,7 @@ class CustomerService:
                 'tax_id': customer.tax_id,
                 'phone': customer.phone,
                 'email': customer.email,
-                'updated_date': customer.updated_date,
+                'updated_date': customer.updated_date
                 }
 
 class ServiceService:
@@ -233,6 +233,13 @@ class InvoiceService:
         invoices = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == False).all()
         return invoices
     
+    @classmethod
+    def get_company_estimates(self, company_id):
+        """Get all estimates for specific company"""
+
+        estimates = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == True).all()
+        return estimates
+
     @classmethod
     def get_invoice_payment_log(self):
         """Get the payment info for all invoices"""

@@ -313,5 +313,14 @@ def show_estimate_info(estimate_id):
                             services=service_descriptions, 
                             customer=customer)
 
+@app.route('/estimates')
+def show_all_estimates():
+    if not g.user:
+        flash("Access unauthorized", "danger")
+        return redirect('/')
 
+    estimates = InvoiceService.get_company_estimates(g.user.employer.company_id)
+    company = CompanyService.get_company_by_id(g.user.employer.company_id)
+
+    return render_template('invoices/list_estimates.html', estimates=estimates, company=company)
 
