@@ -7,9 +7,78 @@
 
 
 <div class="mt-4 container-fluid">	
+
+	<!-- Estimate Modal pop up -->
+	<div class="col-md-2 m-4" id="estimate-modal">
+		<!-- Button trigger modal -->
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#estimateModal">
+			Create Estimate
+		</button>
+		<!-- Modal -->
+		<div class="modal fade" id="estimateModal" tabindex="-1" aria-labelledby="estimateModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-scrollable">
+				<div class="modal-content">
+					<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">New Estimate</h1>
+					</div>
+					<div class="modal-body">
+						<div id="estimate-form" class="form-group m-2">
+
+											<div class="text-center">
+												<label for="customer-name">Insert Name of Customer</label>
+												<br>
+												<select class="form-select text-center" name="customer-select" id="customer-select">
+													{% for cust in customers %} 
+														<option value="{{cust.id}}">{{cust.full_name}}</option>
+													{% endfor %}
+												</select>
+													
+													
+												<br>
+												<label class="form-label" for="services-options">Select service to add to estimate:</label>
+												<select name="services" id="services-options" class="form-select text-center">
+													{% for service in services %}
+													<option value="{{service.id}}">{{service.description}}</option>
+													{% endfor %}
+												</select>
+												<br>
+												<br>
+												<a href="#" id="add-service-estimate" class="btn btn-sm btn-primary">Add Service</a>
+											</div>
+
+							
+										
+									</div>
+										<ol class="list-group list-group-numbered" id="estimate-list">
+					
+										</ol>
+										<ol class="list-group">
+											<li class="list-group-item">
+												<div class="ms-2 me-auto">
+													<div>
+														<b>Total</b>
+														<span id="estimate-total" class="badge bg-success float-end">0</span>
+													</div>
+													
+												</div>
+												
+											</li>
+										</ol>
+								</div>
+								<div class="modal-footer">
+								<a class="btn btn-outline-primary" aria-label="Close" data-bs-dismiss="modal">Close</a>
+								<a href='#' id="estimate-submit-btn" class="btn btn-primary" >Save Changes</a>
+								</div>
+							
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Invoice Table -->
 	<div class="row">
-		<!-- Invoice Table -->
-		<div class="col-md-8">
+		<div class="col">
+			<div class="table-responsive">
 			<table class="table table-sm table-hover table-bordered ">
 				<thead class="table-dark">
 					<tr>
@@ -36,7 +105,9 @@
 						</th>
 					</tr>
 				</thead>
-				<tbody class="table-light" id="invoice-table-body">
+				<tbody class="table-light" id="invoice-table-body" data-bs-toggle="modal" data-bs-target="#invoiceModal">
+					{% set total_cost = 0 %}
+            		{% set amount_paid = 0 %}
 					{% for invoice in invoices %}
 					<tr id="invoice-{{invoice.id}}-row">
 						<td>
@@ -78,103 +149,37 @@
 							</td>
 								
 							{% endif %}
-
+							{% set total_cost = total_cost + invoice.total_cost %}
+                			{% set amount_paid = amount_paid + (invoice.payments|sum(attribute='amount') if invoice.payments else 0) %}
 					</tr>
 					{% endfor %}
 				</tbody>
+				<tfoot>
+					<tr class="table-dark table-bordered fs-4">
+						<td colspan="2">Totals</td>
+						<td>{{ '%0.2f'| format(invoices|sum(attribute='total_cost')) }}</td>
+						<td>{% set amount_paid = [] %}
+							{% for invoice in invoices %}
+								{% for payment in invoice.payments %}
+									{% set _ = amount_paid.append(payment.amount) %}
+								{% endfor %}
+							{% endfor %}
+							{{ '%0.2f'| format(amount_paid|sum) }}
+						</td>
+						<td>{{ '%0.2f'| format(invoices|sum(attribute='total_cost') - amount_paid|sum) }}</td>
+						<td colspan="2"></td>
+					</tr>
+				</tfoot>
+				
+				
+				
 			</table>
-
-			
-			
-				{% for c in companies %}
-				<ul>
-					<li>
-						
-					</li>
-					<li>
-						{{c}}
-					</li>
-					<li>
-						{{c.invoices}}
-					</li>
-					<li>
-						
-						{{c.services}}
-					</li>
-					<li>
-						{{c.users}}
-					</li>
-				</ul>
-				{% endfor %}
-		</div>
-		<!-- Estimate Modal pop up -->
-		<div class="col-md-2" id="estimate-modal">
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-				Create Estimate
-			</button>
-			<!-- Modal -->
-			<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-dialog-scrollable">
-					<div class="modal-content">
-						<div class="modal-header">
-						<h1 class="modal-title fs-5" id="exampleModalLabel">New Estimate</h1>
-						</div>
-						<div class="modal-body">
-							<div id="estimate-form" class="form-group m-2">
-
-												<div class="text-center">
-													<label for="customer-name">Insert Name of Customer</label>
-													<br>
-													<select class="form-select text-center" name="customer-select" id="customer-select">
-														{% for cust in customers %} 
-															<option value="{{cust.id}}">{{cust.full_name}}</option>
-														{% endfor %}
-													</select>
-														
-														
-													<br>
-													<label class="form-label" for="services-options">Select service to add to estimate:</label>
-													<select name="services" id="services-options" class="form-select text-center">
-														{% for service in services %}
-														<option value="{{service.id}}">{{service.description}}</option>
-														{% endfor %}
-													</select>
-													<br>
-													<br>
-													<a href="#" id="add-service-estimate" class="btn btn-sm btn-primary">Add Service</a>
-												</div>
-
-								
-											
-										</div>
-											<ol class="list-group list-group-numbered" id="estimate-list">
-						
-											</ol>
-											<ol class="list-group">
-												<li class="list-group-item">
-													<div class="ms-2 me-auto">
-														<div>
-															<b>Total</b>
-															<span id="estimate-total" class="badge bg-success float-end">0</span>
-														</div>
-														
-													</div>
-													
-												</li>
-											</ol>
-									</div>
-									<div class="modal-footer">
-									<a class="btn btn-outline-primary" aria-label="Close" data-bs-dismiss="modal">Close</a>
-									<a href='#' id="estimate-submit-btn" class="btn btn-primary" >Save Changes</a>
-									</div>
-								
-					</div>
-				</div>
 			</div>
 		</div>
+		
 	</div>
 </div>
+		<!-- Yearly Revenue -->
 		<div class="col">
 			<div class="list-group">
                 <h4 class="list-group-item-heading text-center">
@@ -185,6 +190,55 @@
 				</div>
 			</div>
 		</div>
+		<div class="col">
+			<!-- Invoice Modal -->
+			<div class="modal modal-lg fade" id="invoiceModal" tabindex="-1" aria-labelledby="invoiceModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-header bg-info text-light">
+						<h1 class="modal-title fs-5" id="invoiceModalLabel">Invoice # <span id="invoice-modal-id"></span></h1>
+						</div>
+						<div class="modal-body mx-2">
+							<div class="row d-flex justify-content-center">
+								<table class="table table-info table-bordered border-primary">
+									<thead class="">
+										<h4 class="mt-3 text-center">Customer Info</h4>
+										<th>Name</th>
+										<th>Phone</th>
+										<th>Email</th>
+									</thead>
+									<tbody class="table-light fs-5 text-wrap">
+										<td id="invoice-modal-customer-name"></td>
+										<td id="invoice-modal-customer-phone"></td>
+										<td id="invoice-modal-customer-email"></td>
+									</tbody>
+								</table>
+									
+							</div>
+							<div class="row d-flex justify-content-center">
+								<table class="table table-primary disabled mt-3 table-bordered border-primary">
+									<h4 class="mt-3 text-center">Payment Log</h4>
+									<thead>
+										<th>Payment Date</th>
+										<th>Payment Amount</th>
+										<th>Reference #</th>
+									</thead>
+									<tbody id="invoice-modal-tbody" class="table-light">
+
+									</tbody>
+								</table>
+							</div>
+						</div>
+									<div class="modal-footer">
+									<a class="btn btn-outline-primary" aria-label="Close" data-bs-dismiss="modal">Close</a>
+									<a href='#' id="view-invoice-modal-btn" class="btn btn-primary" >View Invoice</a>
+									</div>
+								</div>
+								
+					</div>
+
+			</div>
+
 </div>
 
 {% endblock %}
