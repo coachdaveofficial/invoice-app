@@ -6,10 +6,28 @@ $(document).ready(function() {
     const $estimateList = $('#estimate-list');
     const $servicesOptions = $('#services-options');
     const serviceAPI = '/api/service/';
+
     const $addServiceBtn = $('#add-service-estimate');
     const $estimateForm = $('#estimate');
     const $estimateSubmitBtn = $('#estimate-submit-btn');
     const $estimateTotals = $('#estimate-total-cost');
+
+    function returnPaymentDataURL(invoiceId) {
+        return `/invoices/${invoiceId}/payment/data`
+    }
+
+    function createPaymentTableRow(paymentObject) {
+        const dateString = paymentObject.date;
+        const date = new Date(dateString);
+        const formattedDate = date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+
+
+        return `<tr>
+        <th id="invoice-${paymentObject.invoice_id}-modal-payment-date">${formattedDate}</th>
+        <td id="invoice-${paymentObject.invoice_id}-modal-payment-amount">$${paymentObject.amount}</td>
+        <td id="invoice-${paymentObject.invoice_id}-modal-reference-num">${paymentObject.ref_num}</td>
+        </tr>`
+    };
 
     // update # counter on HTML tables
     function updateListCounter(tableRowName) {
@@ -26,8 +44,37 @@ $(document).ready(function() {
     updateListCounter('customer');
     updateListCounter('estimate');
 
-    $(document).on('click', '#invoice-table-body td', function(e) {
-        console.log($(this).parent().attr('id'))
+    $(document).on('click', '#invoice-table-body td', async function(e) {
+        const invoiceModalLabel = $('#invoiceModalLabel');
+        const invoiceModalCustomerName = $("#invoice-modal-customer-name");
+        const invoiceModalCustomerPhone = $("#invoice-modal-customer-phone");
+        const invoiceModalCustomerEmail = $("#invoice-modal-customer-email");
+        const viewInvoiceModalBtn = $("#view-invoice-modal-btn");
+        const paymentInfoTableRow = $("#invoice-modal-tbody");
+
+        let invoiceId = $(this).parent().attr('id').split('-')[1];
+        let URL = returnPaymentDataURL(invoiceId);
+
+        await axios.get(URL).then(function(response) {
+            invoiceModalLabel.text(`Invoice # ${response.data.invoice_id}`);
+            invoiceModalCustomerName.text(response.data.customer_name);
+            invoiceModalCustomerPhone.text(response.data.customer_phone);
+            invoiceModalCustomerEmail.text(response.data.customer_email);
+            paymentInfoTableRow.html('');
+            for (let payment of response.data.payment_info) {
+                    noPaymentsForInvoice = false;
+                    let tableRow = createPaymentTableRow(payment);
+                    paymentInfoTableRow.append(tableRow);
+                };
+
+            if (response.data.payment_info.length == 0) {
+
+                paymentInfoTableRow.append('<tr><td>N/A</td><td>No Payments Yet</td><td>N/A</td></tr>');
+                }
+            viewInvoiceModalBtn.attr('href', `invoices/${response.data.invoice_id}`)
+        })
+
+
     })
 
     async function getService(id) {
