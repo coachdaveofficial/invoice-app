@@ -294,6 +294,24 @@ def display_invoice(invoice_id):
                             company=company,
                             customer=customer)
 
+@app.route('/invoices/<int:invoice_id>/payment/data')
+def get_invoice_data(invoice_id):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    invoice = InvoiceService.get_invoice_by_id(invoice_id)
+    if invoice.company_id != g.user.employer.company_id:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    return {
+            'customer_name': invoice.customer.full_name,
+            'customer_phone': invoice.customer.phone,
+            'customer_email': invoice.customer.email,
+            'invoice_id': invoice.id,
+            'total_cost': invoice.total_cost,
+            'payment_info': [{'ref_num': p.reference_num,'amount': p.amount,'date': p.created_date} for p in invoice.payments]
+            }
+
 @app.route('/estimates/<int:estimate_id>')
 def show_estimate_info(estimate_id):
     if not g.user:
@@ -321,6 +339,8 @@ def show_all_estimates():
 
     estimates = InvoiceService.get_company_estimates(g.user.employer.company_id)
     company = CompanyService.get_company_by_id(g.user.employer.company_id)
+    services = ServiceService.get_services_for_company(company.id)
+    customers = CustomerService.get_customers_for_company(company.id)
 
-    return render_template('invoices/list_estimates.html', estimates=estimates, company=company)
+    return render_template('invoices/list_estimates.html', estimates=estimates, company=company, services=services, customers=customers)
 
