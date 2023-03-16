@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 
-{% block body_class %}{% endblock %}
+{% block body_class %}bg-primary{% endblock %}
 
 {% block content %}
 
 
 <div class="container-fluid">		
-			<div class="mt-4 row justify-content-md-center">
-                <div class="form-group">
-                  <h2 class="join-message">Create Account</h2>
+			<div class="mt-4 row ">
+        <h2 class="text-light text-center">Create Account</h2>
+                <div class="form-group d-flex justify-content-center" >
+                  
                   <form method="POST" id="user_form">
                     {{ signup_form.hidden_tag() }}
               
@@ -16,19 +17,25 @@
                       {% for error in field.errors %}
                         <span class="text-danger">{{ error }}</span>
                       {% endfor %}
-                      {{ field(placeholder=field.label.text, class="form-control m-3") }}
+                      {{ field(placeholder=field.label.text, class="form-control mt-3 mb-3") }}
                     {% endfor %}
-              
-                    <button class="btn btn-primary btn-lg">Sign me up!</button>
+                    
+                    <div class="row">
+                      <div class="col">
+                        <button class="btn btn-secondary">Sign me up!</button>
+                      </div>
+                      <div class="col">
+                        <a href="/guest" class="btn btn-outline-info p-0">Login as Guest</a>
+                      </div>
+                    </div>
+
+                    
                   </form>
                 </div>
               </div>
-    <div class="mt-2 row justify-content-center">
-      <div class="col-md-6">
-        <a href="/guest" class="btn btn-primary">Login as Guest</a>
-      </div>
-      <div class="col-md-2">
-        <p>Already have an account? Login <a href="/login">here</a></p>
+    <div class="mt-5 row">
+      <div class="col d-flex justify-content-center">
+        <h3 class="text-light">Already have an account? Login <a class="text-info" href="/login">here</a></h3>
       </div>
     </div>
 		
