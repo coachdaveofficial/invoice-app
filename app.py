@@ -123,12 +123,12 @@ def guest_login():
 
 @app.route('/')
 def home_page():
-    company_id = g.user.employer.company_id
-    print(g.user)
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/signup")
+    
 
+    if not g.user:
+        flash("Access unauthorized. Please sign in.", "danger")
+        return redirect("/signup")
+    company_id = g.user.employer.company_id
     invoices = InvoiceService.get_company_invoices(company_id)
     print(invoices)
     services = ServiceService.get_services_for_company(company_id)
