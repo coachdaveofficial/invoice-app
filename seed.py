@@ -110,7 +110,7 @@ def seed_payments():
 
 
 def seed_service_rates():
-    for r in range(4):
+    for r in range(10):
         service_rate = ServiceRate(
             amount=round(random.uniform(5, 50), 2)
         )
@@ -203,7 +203,7 @@ def seed_demo_user():
     EmployeeService.set_employer(user_id=demo.id, company_id=c.id)
 
     rates = ServiceRate.query.all()
-    for i in range(3):
+    for i in range(10):
         customer = Customer(
                 full_name=fake.name(),
                 address=fake.address(),
@@ -248,7 +248,23 @@ def seed_demo_user():
             reference_num=fake.uuid4()
         )
         db.session.add(payment)
+        if random.random() < 0.5:
+            # create another payment for this invoice
+            amount_paid = random.uniform(0, invoice.total_cost - payment.amount)
+            payment = Payment(
+                invoice_id=invoice.id,
+                amount=round(amount_paid, 0),
+                payment_type=random.choice(['credit_card', 'check', 'venmo', 'paypal', 'cashapp']),
+                reference_num=fake.uuid4()
+            )
+            db.session.add(payment)
     db.session.commit()
+        
+
+        
+     
+
+
 
 
 def seed_all():
