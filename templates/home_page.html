@@ -157,16 +157,16 @@
 				<tfoot>
 					<tr class="table-dark table-bordered fs-4">
 						<td colspan="2">Totals</td>
-						<td>{{ '%0.2f'| format(invoices|sum(attribute='total_cost')) }}</td>
-						<td>{% set amount_paid = [] %}
+						<td class="bg-success">${{ '%0.2f'| format(invoices|sum(attribute='total_cost')) }}</td>
+						<td class="bg-info">{% set amount_paid = [] %}
 							{% for invoice in invoices %}
 								{% for payment in invoice.payments %}
 									{% set _ = amount_paid.append(payment.amount) %}
 								{% endfor %}
 							{% endfor %}
-							{{ '%0.2f'| format(amount_paid|sum) }}
+							${{ '%0.2f'| format(amount_paid|sum) }}
 						</td>
-						<td>{{ '%0.2f'| format(invoices|sum(attribute='total_cost') - amount_paid|sum) }}</td>
+						<td class="bg-danger">${{ '%0.2f'| format(invoices|sum(attribute='total_cost') - amount_paid|sum) }}</td>
 						<td colspan="2"></td>
 					</tr>
 				</tfoot>
