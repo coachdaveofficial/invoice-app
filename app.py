@@ -4,15 +4,14 @@ from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService, ServicesForCompanyService, ServiceRateService
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm, PaymentForm
+from functools import wraps
 import json
 
-from pdf_conversion import convertLinkToPDF
 
 app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ.get('DATABASE_URL', 'postgresql:///invoice-app'))
 
@@ -27,6 +26,24 @@ app.app_context().push()
 connect_db(app)
 # db.drop_all()
 db.create_all()
+
+def login_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(*args, **kwargs):
+        if g.user is None:
+            flash('Please log in to access this page.', 'danger')
+            return redirect(url_for('signup'))
+        return view_func(*args, **kwargs)
+    return wrapped_view
+
+def check_user_auth(view_func):
+    @wraps(view_func)
+    def wrapped_view(*args, **kwargs):
+        if g.user is None:
+            flash('Access unauthorized. Please sign in as the correct user.', 'danger')
+            return redirect(url_for('/'))
+        return view_func(*args, **kwargs)
+    return wrapped_view
 
 CURR_USER_KEY = "curr_user"
 
@@ -122,15 +139,12 @@ def guest_login():
     return redirect("/")
 
 @app.route('/')
+@login_required
 def home_page():
     
 
-    if not g.user:
-        flash("Access unauthorized. Please sign in.", "danger")
-        return redirect("/signup")
     company_id = g.user.employer.company_id
     invoices = InvoiceService.get_company_invoices(company_id)
-    print(invoices)
     services = ServiceService.get_services_for_company(company_id)
     customers = CustomerService.get_customers_for_company(company_id)
     payment_form = PaymentForm()
@@ -140,12 +154,10 @@ def home_page():
                             customers=customers,
                             payment_form=payment_form)
 
-
 @app.route('/customers/add', methods=["GET", "POST"])
+@check_user_auth
 def add_new_customer():
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     
     form = CustomerAddForm()
 
@@ -161,10 +173,9 @@ def add_new_customer():
     return redirect('/')
 
 @app.route('/customers', methods=["GET", "POST"])
+@check_user_auth
 def show_all_customers():
-    if not g.user:
-        flash("Access unauthorized", "danger")
-        return redirect('/')
+    
     form = CustomerAddForm()
     company_customers = CustomerService.get_customers_for_company(g.user.employer.company_id)
     company = CompanyService.get_company_by_id(g.user.employer.company_id)
@@ -176,21 +187,21 @@ def show_all_customers():
     return redirect('/customers')
 
 @app.route('/customers/<int:cust_id>/delete', methods=["POST"])
+@check_user_auth
 def delete_customer(cust_id):
     CustomerService.set_delete_date_for_customer_by_id(cust_id)
     return {}
 
 @app.route('/customers/<int:cust_id>/edit', methods=["POST"])
+@check_user_auth
 def edit_customer(cust_id):
     edit_form = json.loads(request.data)
     customer_info = CustomerService.edit_customer(cust_id=cust_id, form_data=edit_form)
     return customer_info
 @app.route('/services', methods=["GET", "POST"])
+@check_user_auth
 def services_menu():
     form = ServiceAddForm()
-    if not g.user:
-        flash("Access unauthorized", "danger")
-        return redirect('/')
     if not form.validate_on_submit():
         # services are alphabetized by default
         all_services = ServiceService.get_services_for_company(g.user.employer.company_id)
@@ -205,6 +216,7 @@ def services_menu():
     return redirect('/services')
 
 @app.route('/services/<int:service_id>/edit', methods=["POST"])
+@check_user_auth
 def edit_service(service_id):
     if not g.user:
         flash("Access unauthorized", "danger")
@@ -213,14 +225,14 @@ def edit_service(service_id):
     return service
 
 @app.route('/api/service/<int:service_id>')
+@check_user_auth
 def get_service_data(service_id):
     return ServiceService.get_service_data(service_id) 
 
 @app.route('/services/<int:service_id>/delete', methods=["POST"])
+@check_user_auth
 def delete_service(service_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     service = ServiceService.get_service_by_id(service_id)
     company_ids = [c.id for c in service.companies]
     if g.user.employer.company_id not in company_ids:
@@ -232,12 +244,10 @@ def delete_service(service_id):
     return {}
     
 @app.route('/invoices/', methods=["POST"])
+@check_user_auth
 def add_new_estimate():
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     cust_id = json.loads(request.data)['customerId']
-    print(cust_id)
     comp_id = g.user.employer.company_id  
     
     estimate = InvoiceService.create_estimate(cust_id=cust_id, comp_id=comp_id)
@@ -253,10 +263,9 @@ def add_new_estimate():
     return {'id': estimate.id}
 
 @app.route('/invoices/<int:estimate_id>/finalize', methods=["POST"])
+@check_user_auth
 def finalize_invoice(estimate_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     invoice = InvoiceService.get_invoice_by_id(estimate_id)
     if g.user.employer.company_id != invoice.company_id:
         flash("Access unauthorized.", "danger")
@@ -265,15 +274,13 @@ def finalize_invoice(estimate_id):
     invoice.due_date = due_date
     invoice.is_estimate = False
     db.session.commit()
-    convertLinkToPDF(f'https://falson.net/', "\\result.pdf")
     # JavaScript handles the redirect here
     return redirect(f'/estimates/{estimate_id}')
 
 @app.route('/invoices/<int:invoice_id>')
+@check_user_auth
 def display_invoice(invoice_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     invoice = InvoiceService.get_invoice_by_id(invoice_id)
     if g.user.employer.company_id != invoice.company_id:
         flash("Access unauthorized.", "danger")
@@ -293,10 +300,9 @@ def display_invoice(invoice_id):
                             customer=customer)
 
 @app.route('/invoices/<int:invoice_id>/payment/data')
+@check_user_auth
 def get_invoice_data(invoice_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     invoice = InvoiceService.get_invoice_by_id(invoice_id)
     if invoice.company_id != g.user.employer.company_id:
         flash("Access unauthorized.", "danger")
@@ -311,10 +317,9 @@ def get_invoice_data(invoice_id):
             }
 
 @app.route('/estimates/<int:estimate_id>')
+@check_user_auth
 def show_estimate_info(estimate_id):
-    if not g.user:
-        flash("Access unauthorized.", "danger")
-        return redirect("/")
+    
     estimate = InvoiceService.get_invoice_by_id(estimate_id)
     if estimate.company_id != g.user.employer.company_id:
         flash("Access unauthorized.", "danger")
@@ -330,10 +335,8 @@ def show_estimate_info(estimate_id):
                             customer=customer)
 
 @app.route('/estimates')
+@check_user_auth
 def show_all_estimates():
-    if not g.user:
-        flash("Access unauthorized", "danger")
-        return redirect('/')
 
     estimates = InvoiceService.get_company_estimates(g.user.employer.company_id)
     company = CompanyService.get_company_by_id(g.user.employer.company_id)
@@ -343,6 +346,7 @@ def show_all_estimates():
     return render_template('invoices/list_estimates.html', estimates=estimates, company=company, services=services, customers=customers)
 
 @app.route('/payments/<int:invoice_id>', methods=["POST"])
+@check_user_auth
 def add_payment(invoice_id):
     PaymentService.add_payment(invoice_id=invoice_id, form_data=request.form)
     return redirect('/')
