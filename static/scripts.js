@@ -43,7 +43,7 @@ $(document).ready(function() {
     updateListCounter('service');
     updateListCounter('customer');
     updateListCounter('estimate');
-
+    // show invoice info when invoice row is clicked 
     $(document).on('click', '#invoice-table-body td', async function(e) {
         const invoiceModalLabel = $('#invoiceModalLabel');
         const invoiceModalCustomerName = $("#invoice-modal-customer-name");
@@ -77,6 +77,11 @@ $(document).ready(function() {
 
     })
 
+    // redirect to estimate details when estimate TD is clicked
+    $(document).on('click', '.estimate-rows', function() {
+        let estimateId = $(this).attr('id').split('-')[1];
+        window.location.href = `/estimates/${estimateId}`;
+    })
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)
         if (service.data.id > 0) {
