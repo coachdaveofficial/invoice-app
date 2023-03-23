@@ -8,13 +8,11 @@ $(document).ready(function() {
     const serviceAPI = '/api/service/';
 
     const $addServiceBtn = $('#add-service-estimate');
-    const $estimateForm = $('#estimate');
     const $estimateSubmitBtn = $('#estimate-submit-btn');
-    const $estimateTotals = $('#estimate-total-cost');
 
     function returnPaymentDataURL(invoiceId) {
         return `/invoices/${invoiceId}/payment/data`
-    }
+    };
 
     function createPaymentTableRow(paymentObject) {
         const dateString = paymentObject.date;
@@ -40,48 +38,7 @@ $(document).ready(function() {
             $(this).find(`#${tableRowName}-index`).text(index + 1);
         });
     };
-    updateListCounter('service');
-    updateListCounter('customer');
-    updateListCounter('estimate');
-    // show invoice info when invoice row is clicked 
-    $(document).on('click', '#invoice-table-body td', async function(e) {
-        const invoiceModalLabel = $('#invoiceModalLabel');
-        const invoiceModalCustomerName = $("#invoice-modal-customer-name");
-        const invoiceModalCustomerPhone = $("#invoice-modal-customer-phone");
-        const invoiceModalCustomerEmail = $("#invoice-modal-customer-email");
-        const viewInvoiceModalBtn = $("#view-invoice-modal-btn");
-        const paymentInfoTableRow = $("#invoice-modal-tbody");
-
-        let invoiceId = $(this).parent().attr('id').split('-')[1];
-        let URL = returnPaymentDataURL(invoiceId);
-
-        await axios.get(URL).then(function(response) {
-            invoiceModalLabel.text(`Invoice # ${response.data.invoice_id}`);
-            invoiceModalCustomerName.text(response.data.customer_name);
-            invoiceModalCustomerPhone.text(response.data.customer_phone);
-            invoiceModalCustomerEmail.text(response.data.customer_email);
-            paymentInfoTableRow.html('');
-            for (let payment of response.data.payment_info) {
-                    noPaymentsForInvoice = false;
-                    let tableRow = createPaymentTableRow(payment);
-                    paymentInfoTableRow.append(tableRow);
-                };
-
-            if (response.data.payment_info.length == 0) {
-
-                paymentInfoTableRow.append('<tr><td>N/A</td><td>No Payments Yet</td><td>N/A</td></tr>');
-                }
-            viewInvoiceModalBtn.attr('href', `invoices/${response.data.invoice_id}`)
-        })
-
-
-    })
-
-    // redirect to estimate details when estimate TD is clicked
-    $(document).on('click', '.estimate-rows', function() {
-        let estimateId = $(this).attr('id').split('-')[1];
-        window.location.href = `/estimates/${estimateId}`;
-    })
+    // get data for a company's service
     async function getService(id) {
         let service = await axios.get(`${serviceAPI}/${id}`)
         if (service.data.id > 0) {
@@ -91,7 +48,7 @@ $(document).ready(function() {
     };
 
     function updateEstimateTotalHTML() {
-        var listItems = $(".cost");
+        let listItems = $(".cost");
         let cost = 0;
         listItems.each(function(idx, span) {
             let itemPrice = $(span).text();
@@ -143,6 +100,55 @@ $(document).ready(function() {
 							</td>
 						</tr>`
     };
+    updateListCounter('service');
+    updateListCounter('customer');
+    updateListCounter('estimate');
+
+    // show invoice info when invoice row is clicked 
+    $(document).on('click', '#invoice-table-body td', async function(e) {
+        const invoiceModalLabel = $('#invoiceModalLabel');
+        const invoiceModalCustomerName = $("#invoice-modal-customer-name");
+        const invoiceModalCustomerPhone = $("#invoice-modal-customer-phone");
+        const invoiceModalCustomerEmail = $("#invoice-modal-customer-email");
+        const viewInvoiceModalBtn = $("#view-invoice-modal-btn");
+        const paymentInfoTableRow = $("#invoice-modal-tbody");
+
+        let invoiceId = $(this).parent().attr('id').split('-')[1];
+        let URL = returnPaymentDataURL(invoiceId);
+
+        await axios.get(URL).then(function(response) {
+            invoiceModalLabel.text(`Invoice # ${response.data.invoice_id}`);
+            invoiceModalCustomerName.text(response.data.customer_name);
+            invoiceModalCustomerPhone.text(response.data.customer_phone);
+            invoiceModalCustomerEmail.text(response.data.customer_email);
+            paymentInfoTableRow.html('');
+            for (let payment of response.data.payment_info) {
+                    noPaymentsForInvoice = false;
+                    let tableRow = createPaymentTableRow(payment);
+                    paymentInfoTableRow.append(tableRow);
+                };
+
+            if (response.data.payment_info.length == 0) {
+
+                paymentInfoTableRow.append('<tr><td>N/A</td><td>No Payments Yet</td><td>N/A</td></tr>');
+                }
+            viewInvoiceModalBtn.attr('href', `invoices/${response.data.invoice_id}`)
+        })
+        // set form submit action to for payment add form
+        $("#payment-add").attr('action', `/payments/${invoiceId}`);
+
+    })
+    // hide add payment form when invoice modal is closed
+    $(document).on('click', '#close-invoice-modal', function() {
+        $('#accordionPaymentForm').attr('class', 'accordion-collapse collapse');
+    })
+
+    // redirect to estimate details when estimate TD is clicked
+    $(document).on('click', '.estimate-rows', function() {
+        let estimateId = $(this).attr('id').split('-')[1];
+        window.location.href = `/estimates/${estimateId}`;
+    })
+    
     // update total price when making changes on estimate modal
     $(document).on('change', 'input[id$="-estimate-quantity"]', async function(){
         let listId = this.id;
