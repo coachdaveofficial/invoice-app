@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g, 
 from flask_debugtoolbar import DebugToolbarExtension
 from models import connect_db, db, User, Company
 from services import ServiceService, UserService, CustomerService, InvoiceService, PaymentService, CompanyService, EmployeeService, ServiceRequestService, ServicesForCompanyService, ServiceRateService
-from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm
+from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm, PaymentForm
 import json
 
 from pdf_conversion import convertLinkToPDF
@@ -133,11 +133,12 @@ def home_page():
     print(invoices)
     services = ServiceService.get_services_for_company(company_id)
     customers = CustomerService.get_customers_for_company(company_id)
-    
+    payment_form = PaymentForm()
     return render_template('home_page.html',  
                             invoices=invoices,
                             services=services,
-                            customers=customers)
+                            customers=customers,
+                            payment_form=payment_form)
 
 
 @app.route('/customers/add', methods=["GET", "POST"])
@@ -211,8 +212,6 @@ def edit_service(service_id):
     service = ServiceService.update_service(service_id=service_id, form_data=(json.loads(request.data)))
     return service
 
-
-
 @app.route('/api/service/<int:service_id>')
 def get_service_data(service_id):
     return ServiceService.get_service_data(service_id) 
@@ -232,7 +231,6 @@ def delete_service(service_id):
     
     return {}
     
-
 @app.route('/invoices/', methods=["POST"])
 def add_new_estimate():
     if not g.user:
@@ -344,3 +342,7 @@ def show_all_estimates():
 
     return render_template('invoices/list_estimates.html', estimates=estimates, company=company, services=services, customers=customers)
 
+@app.route('/payments/<int:invoice_id>', methods=["POST"])
+def add_payment(invoice_id):
+    PaymentService.add_payment(invoice_id=invoice_id, form_data=request.form)
+    return redirect('/')
