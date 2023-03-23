@@ -1,4 +1,4 @@
-from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest, ServicesForCompany, ServiceRate
+from models import User, db, Customer, Service, Invoice, Payment, Company, Employee, ServiceRequest, ServicesForCompany, ServiceRate, enPaymentType
 from sqlalchemy.exc import IntegrityError
 from flask_bcrypt import Bcrypt
 from datetime import datetime
@@ -295,26 +295,17 @@ class InvoiceService:
         db.session.commit()
         return est
 class PaymentService:
-    def get_payment_history(self):
-        """Get payment history"""
-
-        payments = Payment.query.all()
-        payment_history = []
-        for payment in payments:
-            payment_history.append({
-                'id': payment.id,
-                'amount': payment.amount,
-                'ref_num': payment.reference_num,
-                'pay_type': payment.payment_type,
-                'date': payment.created_date
-            })
-
-    def get_yearly_revenue(year: str):
-        """Get revenue totals sorted by the year (yyyy) the payment was submitted"""
-        
-        payments = Payment.query.all()
-        yearly_total = sum([p.amount for p in payments if year in p.created_date.strftime("%Y")])
-        return yearly_total
+    @classmethod
+    def add_payment(self, invoice_id, form_data):
+        payment_type = form_data['payment_type']
+        payment = Payment(invoice_id=invoice_id, 
+                            amount=form_data.get('amount'), 
+                            payment_type=enPaymentType[payment_type], 
+                            reference_num=form_data.get('reference_num')
+                            )
+        db.session.add(payment)
+        db.session.commit()
+        return payment
 
 class CompanyService:
     def get_all_companies():
