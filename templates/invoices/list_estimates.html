@@ -25,6 +25,7 @@
                         </tr>
                     </thead>
                     <tbody class="table-light" id="estimates-for-company-{{company.id}}">
+                        
                         {% for estimate in estimates %}
                             {% if not estimate.deleted_date %}
                                 <tr class="estimate-rows" id="estimate-{{estimate.id}}-tr">

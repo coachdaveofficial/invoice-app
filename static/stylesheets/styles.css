@@ -155,3 +155,17 @@
 #invoice-table-body {
     cursor: pointer;
 }
+.estimate-rows {
+    cursor: pointer;
+}
+
+.blue {
+    background-color: rgb(31,155,207);
+}
+
+.vertical {
+    padding: 5px;
+    text-orientation: upright;
+    writing-mode: vertical-lr;
+    color: rgb(163, 163, 163);
+}

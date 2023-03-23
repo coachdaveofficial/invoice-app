@@ -24,10 +24,13 @@
     </div>
 
     <div class="container">
-        <div class="row gutters">
-            <div class="col-1 mb-2 no-print">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
+        <div class="row">
+            <div class="col mb-2 no-print">
+                <button class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#confirmInvoice">Create Invoice</button>
             </div>
+        </div>
+        <div class="row gutters">
+            
             
                 <div class="col-10">
                     <div class="card">
@@ -35,7 +38,7 @@
                             <div class="invoice-container">
                                 <div class="invoice-header">
                                     <!-- Row start -->
-                                    <div class="row gutters">
+                                    <div class="row gutters no-print">
                                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                             <div class="no-print custom-actions-btns mb-5">
                                                 <a href="#" class="btn btn-primary">
@@ -104,7 +107,7 @@
                                                 <table class="table custom-table m-0">
                                                 
                                                     <thead>
-                                                        <tr class="bg-info">
+                                                        <tr class="blue">
                                                             <th>Items</th>
                                                             <th>Product ID</th>
                                                             <th>Quantity</th>
@@ -182,7 +185,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-2 d-flex justify-content-center">
+                    <h1 class="mt-5 vertical">
+                        ESTIMATE FOR {{company.name}}
+                    </h1>
+                </div>
         </div>
+    </div>
 </div>        
 {% endblock %}
