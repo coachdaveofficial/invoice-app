@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, FloatField, ValidationError, SelectField, DateField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms import StringField, PasswordField, TextAreaField, FloatField, ValidationError, SelectField, DateField, IntegerField, DecimalField
+from wtforms.validators import DataRequired, Email, Length, NumberRange
 import phonenumbers
+from models import enPaymentType
 
 def check_if_valid_phone(form, field):
     if '-' in field.data:
@@ -56,3 +57,9 @@ class CustomerAddForm(FlaskForm):
     tax_id = StringField("Tax ID")
     phone = StringField("Phone", validators=[DataRequired(), validate_phone])
     email = StringField("Email", validators=[DataRequired()])
+
+class PaymentForm(FlaskForm):
+    """Form for adding payment to payment log"""
+    amount = DecimalField("Amount", validators=[DataRequired(), NumberRange(min=0.01)])
+    payment_type = SelectField('Payment Type', choices=[(str(p.name), p.name.title()) for p in enPaymentType], validators=[DataRequired()])
+    reference_num = StringField('Reference Number', validators=[DataRequired(), Length(max=50)])
