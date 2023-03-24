@@ -47,6 +47,8 @@ def check_user_auth(view_func):
 
 CURR_USER_KEY = "curr_user"
 
+
+
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
@@ -67,6 +69,12 @@ def do_logout():
 
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
@@ -234,6 +242,8 @@ def get_service_data(service_id):
 def delete_service(service_id):
     
     service = ServiceService.get_service_by_id(service_id)
+    if not service:
+        return render_template('404.html'), 404
     company_ids = [c.id for c in service.companies]
     if g.user.employer.company_id not in company_ids:
         flash("Access unauthorized.", "danger")
@@ -267,6 +277,8 @@ def add_new_estimate():
 def finalize_invoice(estimate_id):
     
     invoice = InvoiceService.get_invoice_by_id(estimate_id)
+    if not invoice:
+        return render_template('404.html'), 404
     if g.user.employer.company_id != invoice.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -282,6 +294,8 @@ def finalize_invoice(estimate_id):
 def display_invoice(invoice_id):
     
     invoice = InvoiceService.get_invoice_by_id(invoice_id)
+    if not invoice:
+        return render_template('404.html'), 404
     if g.user.employer.company_id != invoice.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -304,6 +318,8 @@ def display_invoice(invoice_id):
 def get_invoice_data(invoice_id):
     
     invoice = InvoiceService.get_invoice_by_id(invoice_id)
+    if not invoice:
+        return render_template('404.html'), 404
     if invoice.company_id != g.user.employer.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -321,6 +337,8 @@ def get_invoice_data(invoice_id):
 def show_estimate_info(estimate_id):
     
     estimate = InvoiceService.get_invoice_by_id(estimate_id)
+    if not estimate:
+        return render_template('404.html'), 404
     if estimate.company_id != g.user.employer.company_id:
         flash("Access unauthorized.", "danger")
         return redirect("/")
