@@ -85,6 +85,9 @@ class CustomerService:
     @classmethod
     def set_delete_date_for_customer_by_id(self, cust_id):
         customer = Customer.query.get(cust_id)
+        if not customer:
+            return None
+        
         customer.deleted_date = datetime.date(datetime.utcnow())
         db.session.commit()
 
@@ -108,34 +111,43 @@ class CustomerService:
     @classmethod
     def get_customers_for_company(self, comp_id):
         """Get all customers of a specific company using the company ID (c_id)"""
+
         customers = (Customer
-                    .query
-                    .order_by(Customer.full_name)
-                    .filter_by(company_id=comp_id)
-                    .all())
+                .query
+                .order_by(Customer.full_name)
+                .filter_by(company_id=comp_id)
+                .all())
+        if not customers:
+            return None
         return customers
     
     @classmethod
     def get_customer_by_id(self, cust_id):
-        return Customer.query.get(cust_id)
+            c = Customer.query.get(cust_id)
+            if not c:
+                return None
+            return c
 
     @classmethod
     def edit_customer(self, cust_id, form_data):
-        customer = Customer.query.get(cust_id)
-        customer.full_name = form_data.get('full_name') or customer.full_name
-        customer.address = form_data.get('address') or customer.address
-        customer.tax_id = form_data.get('tax_id') or customer.tax_id
-        customer.phone = form_data.get('phone') or customer.phone
-        customer.email = form_data.get('email') or customer.email
-        customer.updated_date = datetime.date(datetime.utcnow())
-        db.session.commit()
-        return {'full_name': customer.full_name,
-                'address': customer.address,
-                'tax_id': customer.tax_id,
-                'phone': customer.phone,
-                'email': customer.email,
-                'updated_date': customer.updated_date
-                }
+
+            customer = Customer.query.get(cust_id)
+            if not customer:
+                return None
+            customer.full_name = form_data.get('full_name') or customer.full_name
+            customer.address = form_data.get('address') or customer.address
+            customer.tax_id = form_data.get('tax_id') or customer.tax_id
+            customer.phone = form_data.get('phone') or customer.phone
+            customer.email = form_data.get('email') or customer.email
+            customer.updated_date = datetime.date(datetime.utcnow())
+            db.session.commit()
+            return {'full_name': customer.full_name,
+                    'address': customer.address,
+                    'tax_id': customer.tax_id,
+                    'phone': customer.phone,
+                    'email': customer.email,
+                    'updated_date': customer.updated_date
+                    }
 
 class ServiceService:
     @classmethod
@@ -153,11 +165,10 @@ class ServiceService:
             return None
     @classmethod
     def get_services_for_company(self, company_id):
-
-        services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).order_by(Service.description.asc()).all()
-
-            
-        return services
+            services = Service.query.join(ServicesForCompany).filter(ServicesForCompany.company_id == company_id).order_by(Service.description.asc()).all()
+            if not services:
+                return None
+            return services
     @classmethod
     def get_service_data(self, id):
         service = (Service.query.get(id))
@@ -172,10 +183,14 @@ class ServiceService:
     @classmethod
     def get_service_by_id(self, id):
         service = Service.query.get(id)
+        if not service:
+            return None
         return service
     @classmethod
     def get_services_for_invoice(self, invoice_id):
         invoice = InvoiceService.get_invoice_by_id(invoice_id)
+        if not invoice:
+            return None
         service_instances = Service.query.filter(Service.id.in_([sr.service_id for sr in invoice.service_requests])).all()
         service_by_service_id = {service.id: service for service in service_instances}
         services = []
@@ -191,6 +206,8 @@ class ServiceService:
     @classmethod
     def update_service(self, service_id, form_data):
         service = Service.query.get(service_id)
+        if not service:
+            return None
         if form_data.get('description') != service.description or form_data.get('unit') != service.unit.name:
             # Create a new Service instance if the description or unit has changed
             new_service = Service(description=form_data.get('description'), unit=form_data.get('unit'))
@@ -223,7 +240,10 @@ class InvoiceService:
 
     @classmethod
     def get_invoice_by_id(self, id):
-        return Invoice.query.get(id)
+        i = Invoice.query.get(id)
+        if not i:
+            return None
+        return i
 
 
     @classmethod
@@ -231,6 +251,8 @@ class InvoiceService:
         """Get all invoices for specific company"""
 
         invoices = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == False).all()
+        if not invoices:
+            return None
         return invoices
     
     @classmethod
@@ -238,6 +260,8 @@ class InvoiceService:
         """Get all estimates for specific company"""
 
         estimates = Invoice.query.filter(Invoice.company_id == company_id).filter(Invoice.is_estimate == True).all()
+        if not estimates:
+            return None
         return estimates
 
     @classmethod
@@ -245,9 +269,10 @@ class InvoiceService:
         """Get the payment info for all invoices"""
         invoice_payment_info = []
         invoices = Invoice.query.all()
-        payments = Payment.query.all()
+        if not invoices:
+            return None
         for invoice in invoices:
-            total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
+            total_payments = sum([p.amount for p in invoice.payments])
             amount_left = invoice.total_cost - total_payments
             invoice_payment_info.append(
                 {
@@ -260,8 +285,7 @@ class InvoiceService:
             )
         return invoice_payment_info
 
-    @classmethod
-    def get_five_oldest_outstanding(self):
+
         """Get 5 invoices with upcoming due dates that have not been paid in full."""
         invoice_payment_info = []
         invoices = (Invoice
@@ -289,23 +313,29 @@ class InvoiceService:
     
     @classmethod
     def create_estimate(self, cust_id, comp_id):
-        est = Invoice(cust_id=cust_id,
+        try:
+            est = Invoice(cust_id=cust_id,
                     company_id=comp_id)
-        db.session.add(est)
-        db.session.commit()
-        return est
+            db.session.add(est)
+            db.session.commit()
+            return est
+        except IntegrityError:
+            return None
 class PaymentService:
     @classmethod
     def add_payment(self, invoice_id, form_data):
         payment_type = form_data['payment_type']
-        payment = Payment(invoice_id=invoice_id, 
+        try:
+            payment = Payment(invoice_id=invoice_id, 
                             amount=form_data.get('amount'), 
                             payment_type=enPaymentType[payment_type], 
                             reference_num=form_data.get('reference_num')
                             )
-        db.session.add(payment)
-        db.session.commit()
-        return payment
+            db.session.add(payment)
+            db.session.commit()
+            return payment
+        except IntegrityError:
+            return None
 
 class CompanyService:
     def get_all_companies():
@@ -333,25 +363,34 @@ class CompanyService:
         db.session.commit()
     @classmethod
     def get_company_by_id(self, id):
-        return Company.query.get(id)
+        c = Company.query.get(id)
+        if not c:
+            return None
+        return c
 class EmployeeService:
     def get_all_employees(self):
         return Employee.query.all()
     
     @classmethod
     def set_employer(self, user_id, company_id):
-        e = Employee(user_id=user_id, company_id=company_id)
-        db.session.add(e)
-        db.session.commit()
+        try:
+            e = Employee(user_id=user_id, company_id=company_id)
+            db.session.add(e)
+            db.session.commit()
+        except:
+            return None
 
 class ServiceRequestService:
     @classmethod
     def add_service_request(self, service_id, invoice_id, quantity):
-        s_r = ServiceRequest(service_id=service_id,
+        try:
+            s_r = ServiceRequest(service_id=service_id,
                             invoice_id=invoice_id,
                             quantity=quantity)
-        db.session.add(s_r)
-        db.session.commit()
+            db.session.add(s_r)
+            db.session.commit()
+        except:
+            return None
 
 class ServicesForCompanyService:
 
@@ -362,19 +401,27 @@ class ServicesForCompanyService:
                                         .filter(ServicesForCompany.service_id == serv_id)
                                         .first()
                                         )
+        if not comp_serv:
+            return None
         db.session.delete(comp_serv)
         db.session.commit()
     @classmethod
     def add_service(self, comp_id, serv_id):
-        comp_serv = ServicesForCompany(company_id=comp_id, service_id=serv_id)
-        db.session.add(comp_serv)
-        db.session.commit()
-        return comp_serv
+        try:
+            comp_serv = ServicesForCompany(company_id=comp_id, service_id=serv_id)
+            db.session.add(comp_serv)
+            db.session.commit()
+            return comp_serv
+        except:
+            return None
 
 class ServiceRateService:
     @classmethod
     def add_rate(self,rate):
-        service_rate = ServiceRate(amount=rate)
-        db.session.add(service_rate)
-        db.session.commit()
-        return service_rate
+        try:
+            service_rate = ServiceRate(amount=rate)
+            db.session.add(service_rate)
+            db.session.commit()
+            return service_rate
+        except:
+            return None
