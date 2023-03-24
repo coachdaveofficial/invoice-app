@@ -30,7 +30,7 @@
 						<tbody class="table-light" id="services-for-company-{{company.id}}">
 							
 		
-							
+						{% if services %}
 							{% for service in services %}
 							<tr class="service-rows" id="service-{{service.id}}-tr">
 								<th id="service-index">
@@ -54,6 +54,7 @@
 								</td>
 							</tr>
 							{% endfor %}
+						{% endif %}
 						</tbody>
 					  </table>
 				</div>

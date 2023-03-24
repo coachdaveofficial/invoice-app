@@ -34,6 +34,7 @@
 							</tr>
 						</thead>
 						<tbody class="table-light fs-5" id="customers-for-company-{{company.id}}">	
+							{% if customers %}
 							{% for customer in customers %}
 							{% if not customer.deleted_date %}
 							<tr class="customer-rows" id="customer-{{customer.id}}-tr">
@@ -68,6 +69,7 @@
 							</tr>
 							{% endif %} 
 							{% endfor %}
+							{% endif %}
 						</tbody>
 					</table>
 				</div>

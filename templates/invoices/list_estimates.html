@@ -25,7 +25,7 @@
                         </tr>
                     </thead>
                     <tbody class="table-light" id="estimates-for-company-{{company.id}}">
-                        
+                        {% if estimates %}
                         {% for estimate in estimates %}
                             {% if not estimate.deleted_date %}
                                 <tr class="estimate-rows" id="estimate-{{estimate.id}}-tr">
@@ -49,6 +49,7 @@
                                 </tr>
                             {% endif %}
                         {% endfor %}
+                        {% endif %}
                     </tbody>
                 </table>
                 
@@ -88,18 +89,22 @@
                                                 <label for="customer-name">Insert Name of Customer</label>
                                                 <br>
                                                 <select class="form-select text-center" name="customer-select" id="customer-select">
+                                                {% if customers %}
                                                     {% for cust in customers %} 
                                                         <option value="{{cust.id}}">{{cust.full_name}}</option>
                                                     {% endfor %}
+                                                {% endif %}
                                                 </select>
                                                     
                                                     
                                                 <br>
                                                 <label class="form-label" for="services-options">Select service to add to estimate:</label>
                                                 <select name="services" id="services-options" class="form-select text-center">
+                                                    {% if services %}
                                                     {% for service in services %}
                                                     <option value="{{service.id}}">{{service.description}}</option>
                                                     {% endfor %}
+                                                    {% endif %}
                                                 </select>
                                                 <br>
                                                 <br>
@@ -190,18 +195,22 @@
                                                 <label for="customer-name">Insert Name of Customer</label>
                                                 <br>
                                                 <select class="form-select text-center" name="customer-select" id="customer-select">
+                                                {% if customers %}
                                                     {% for cust in customers %} 
                                                         <option value="{{cust.id}}">{{cust.full_name}}</option>
                                                     {% endfor %}
+                                                {% endif %}
                                                 </select>
                                                     
                                                     
                                                 <br>
                                                 <label class="form-label" for="services-options">Select service to add to estimate:</label>
                                                 <select name="services" id="services-options" class="form-select text-center">
+                                                {% if services %}
                                                     {% for service in services %}
                                                     <option value="{{service.id}}">{{service.description}}</option>
                                                     {% endfor %}
+                                                {% endif %}
                                                 </select>
                                                 <br>
                                                 <br>

@@ -28,18 +28,23 @@
 												<label for="customer-name">Insert Name of Customer</label>
 												<br>
 												<select class="form-select text-center" name="customer-select" id="customer-select">
-													{% for cust in customers %} 
-														<option value="{{cust.id}}">{{cust.full_name}}</option>
-													{% endfor %}
+													{% if customers %}
+														{% for cust in customers %} 
+															<option value="{{cust.id}}">{{cust.full_name}}</option>
+														{% endfor %}
+													{% endif %}
+														
 												</select>
 													
 													
 												<br>
 												<label class="form-label" for="services-options">Select service to add to estimate:</label>
 												<select name="services" id="services-options" class="form-select text-center">
-													{% for service in services %}
-													<option value="{{service.id}}">{{service.description}}</option>
-													{% endfor %}
+													{% if services %}
+														{% for service in services %}
+														<option value="{{service.id}}">{{service.description}}</option>
+														{% endfor %}
+													{% endif %}
 												</select>
 												<br>
 												<br>
@@ -108,67 +113,72 @@
 				<tbody class="table-light" id="invoice-table-body" data-bs-toggle="modal" data-bs-target="#invoiceModal">
 					{% set total_cost = 0 %}
             		{% set amount_paid = 0 %}
-					{% for invoice in invoices %}
-					<tr id="invoice-{{invoice.id}}-row">
-						<td>
-							{{loop.index}}
-						</td>
-						<td>
-							{{invoice.id}}
-						</td>
-						<td>
-							{{ '%0.2f'| format(invoice.total_cost) }}
-						</td>
-						<td>
-							{% if invoice.payments %}
-							{{invoice.payments|sum(attribute='amount')}}
-							{% else %} 
-							0
-							{% endif %}
-						</td>
-						<td>
-							{{ '%0.2f'| format((invoice.total_cost - invoice.payments|sum(attribute='amount'))|float) }}
-						</td>
-						<td>
-							{{invoice.due_date.strftime('%m-%d-%Y')}}
-						</td>
-						
-							{% if invoice.total_cost - invoice.payments|sum(attribute='amount') == 0 %}
-								<td class="bg-success">
-									Paid in full
-								</td>
-								
-							{% elif invoice.payments|sum(attribute='amount') == 0 %}
-								<td class="bg-danger">
-									Unpaid
-								</td>
-								
-							{% else %}
-							<td class="bg-info">
-								Partially paid
+					{% if invoices %}
+						{% for invoice in invoices %}
+						<tr id="invoice-{{invoice.id}}-row">
+							<td>
+								{{loop.index}}
 							</td>
-								
-							{% endif %}
-							{% set total_cost = total_cost + invoice.total_cost %}
-                			{% set amount_paid = amount_paid + (invoice.payments|sum(attribute='amount') if invoice.payments else 0) %}
-					</tr>
-					{% endfor %}
+							<td>
+								{{invoice.id}}
+							</td>
+							<td>
+								{{ '%0.2f'| format(invoice.total_cost) }}
+							</td>
+							<td>
+								{% if invoice.payments %}
+								{{invoice.payments|sum(attribute='amount')}}
+								{% else %} 
+								0
+								{% endif %}
+							</td>
+							<td>
+								{{ '%0.2f'| format((invoice.total_cost - invoice.payments|sum(attribute='amount'))|float) }}
+							</td>
+							<td>
+								{{invoice.due_date.strftime('%m-%d-%Y')}}
+							</td>
+							
+								{% if invoice.total_cost - invoice.payments|sum(attribute='amount') == 0 %}
+									<td class="bg-success">
+										Paid in full
+									</td>
+									
+								{% elif invoice.payments|sum(attribute='amount') == 0 %}
+									<td class="bg-danger">
+										Unpaid
+									</td>
+									
+								{% else %}
+								<td class="bg-info">
+									Partially paid
+								</td>
+									
+								{% endif %}
+								{% set total_cost = total_cost + invoice.total_cost %}
+								{% set amount_paid = amount_paid + (invoice.payments|sum(attribute='amount') if invoice.payments else 0) %}
+						</tr>
+						{% endfor %}
+					{% endif %}
 				</tbody>
 				<tfoot>
+					{% if invoices %}
 					<tr class="table-dark table-bordered fs-4">
 						<td colspan="2">Totals</td>
 						<td class="bg-success">${{ '%0.2f'| format(invoices|sum(attribute='total_cost')) }}</td>
 						<td class="bg-info">{% set amount_paid = [] %}
-							{% for invoice in invoices %}
-								{% for payment in invoice.payments %}
-									{% set _ = amount_paid.append(payment.amount) %}
+							
+								{% for invoice in invoices %}
+									{% for payment in invoice.payments %}
+										{% set _ = amount_paid.append(payment.amount) %}
+									{% endfor %}
 								{% endfor %}
-							{% endfor %}
 							${{ '%0.2f'| format(amount_paid|sum) }}
 						</td>
 						<td class="bg-danger">${{ '%0.2f'| format(invoices|sum(attribute='total_cost') - amount_paid|sum) }}</td>
 						<td colspan="2"></td>
 					</tr>
+					{% endif %}
 				</tfoot>
 				
 				
