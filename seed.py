@@ -1,4 +1,4 @@
-from application import app
+from app import app
 from faker import Faker
 from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, ServicesForCompany, enUnit
 from services import UserService, CompanyService, EmployeeService
