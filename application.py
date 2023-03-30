@@ -368,3 +368,6 @@ def show_all_estimates():
 def add_payment(invoice_id):
     PaymentService.add_payment(invoice_id=invoice_id, form_data=request.form)
     return redirect('/')
+
+if __name__ == "__main__":
+    app.run()
