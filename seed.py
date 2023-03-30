@@ -1,6 +1,6 @@
 from app import app
 from faker import Faker
-from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, ServicesForCompany, enUnit
+from models import db, connect_db, User, Customer, Invoice, Payment, Service, ServiceRequest, Discount, ServiceRequestInvoice, Company, Employee, ServiceRate, ServicesForCompany, enUnit, enPaymentType
 from services import UserService, CompanyService, EmployeeService
 import random
 from datetime import datetime, timedelta
@@ -14,12 +14,6 @@ fake = Faker()
 connect_db(app)
 
 
-class enPaymentType(enum.Enum):
-    credit_card = 1
-    check = 2
-    venmo = 3
-    paypal = 4
-    cashapp = 5
 
 def seed_companies():
     u = User.query.all()
