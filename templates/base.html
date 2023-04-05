@@ -57,12 +57,12 @@
 
       {% endif %}
       {% if not g.user %}
+      <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/about">About Invoyz</a></li>
       <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/signup">Sign up</a></li>
       <li><a class="mx-2 text-light badge badge-pill badge-primary" href="/login">Log in</a></li>
       {% else %}
       <li>
         <a href="/users/{{ g.user.id }}">
-          <!-- <img src="{{ g.user.image_url }}" alt="{{ g.user.username }}"> -->
         </a>
       </li>
       <li><a href="/logout" class="no-print text-light badge badge-pill badge-primary mx-2">Log out</a></li>

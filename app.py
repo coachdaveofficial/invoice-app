@@ -12,8 +12,11 @@ app = Flask(__name__)
 
 # Get DB_URI from environ variable (useful for production/testing) or,
 # if not set there, use development local db.
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://', 1) or 'postgresql:///invoice-app')
+if os.environ.get('DATABASE_URL'):
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        os.environ.get('DATABASE_URL').replace('postgres://', 'postgresql://', 1) or 'postgresql:///invoice-app')
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///invoice-app'
 
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -76,6 +79,10 @@ def do_logout():
 def page_not_found(e):
     return render_template('404.html'), 404
 
+
+@app.route('/about', methods=["GET"])
+def about_invoyz():
+    return render_template('about.html')
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
