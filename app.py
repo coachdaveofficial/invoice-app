@@ -50,6 +50,8 @@ def check_user_auth(view_func):
     return wrapped_view
 
 CURR_USER_KEY = "curr_user"
+session.pop(CURR_USER_KEY, None)
+
 
 
 
