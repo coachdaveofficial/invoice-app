@@ -50,7 +50,7 @@ def check_user_auth(view_func):
     return wrapped_view
 
 CURR_USER_KEY = "curr_user"
-session.clear()
+
 
 
 
