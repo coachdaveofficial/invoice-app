@@ -91,7 +91,7 @@
 							#
 						</th>
 						<th>
-							Invoice I.D.
+							Customer
 						</th>
 						<th>
 							Total Cost
@@ -120,7 +120,7 @@
 								{{loop.index}}
 							</td>
 							<td>
-								{{invoice.id}}
+								{{invoice.customer.full_name}}
 							</td>
 							<td>
 								{{ '%0.2f'| format(invoice.total_cost) }}
