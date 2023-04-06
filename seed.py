@@ -216,24 +216,38 @@ def seed_demo_user():
 
     db.session.commit()
 
-    services = Service.query.all()
-    for s in services:
-        comp_serv = ServicesForCompany(service_id=s.id, company_id=c.id)
-        db.session.add(comp_serv)
-    db.session.commit()
-
+    
+    
     for customer in c.customers:
         invoice = Invoice(
             due_date=fake.date_between(start_date='-30d', end_date='+30d'),
             cust_id=customer.id,
-            total_cost=round(random.uniform(50, 1000), 2),
             company_id=c.id,
             is_estimate=False
         )
         db.session.add(invoice)
     db.session.commit()
 
+    services_for_company = []
+    services = Service.query.all()
+    for s in services:
+        services_for_company.append({'service_id': s.id, 'company_id': c.id})
+    db.session.execute(ServicesForCompany.__table__.insert(), services_for_company)
+    db.session.commit()
+
     for invoice in c.invoices:
+        total_cost = 0
+        for i in range(random.randint(1, 2)):
+            service_request = ServiceRequest(
+                invoice_id=invoice.id,
+                service_id=random.choice(services_for_company)['service_id'],
+                quantity=random.randint(1, 4)
+            )
+            db.session.add(service_request)
+            service = Service.query.get(service_request.service_id)
+            total_cost += service.rate.amount * service_request.quantity
+
+        invoice.total_cost = total_cost
         amount_paid = random.uniform(0, invoice.total_cost)
         payment = Payment(
             invoice_id=invoice.id,

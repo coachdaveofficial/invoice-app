@@ -59,10 +59,6 @@ class User(db.Model):
         db.Text,
         nullable=False,
     )
-    # company_id = db.Column(
-    #     db.Integer,
-    #     db.ForeignKey('companies.id')
-    # )
     
     employer = db.relationship("Employee", backref="users", uselist=False)
 

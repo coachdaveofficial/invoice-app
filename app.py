@@ -314,12 +314,15 @@ def display_invoice(invoice_id):
     
     company = CompanyService.get_company_by_id(invoice.company_id)
     customer = CustomerService.get_customer_by_id(invoice.cust_id)
+    service_descriptions = ServiceService.get_services_for_invoice(invoice.id)
+
     
     
     return render_template('invoices/invoice.html', 
                             invoice=invoice,
                             company=company,
-                            customer=customer)
+                            customer=customer,
+                            services=service_descriptions)
 
 @app.route('/invoices/<int:invoice_id>/payment/data')
 @check_user_auth
