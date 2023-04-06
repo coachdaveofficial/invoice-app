@@ -263,18 +263,30 @@ def seed_demo_user():
 
 def seed_all():
     seed_service_rates()
+    print("seeded service rates")
     seed_users()
+    print("seeded users")
     seed_companies()
+    print("seeded companies")
     seed_employees()
+    print("seeded employees")
     seed_customers()
+    print("seeded customers")
     seed_invoices()
+    print("seeded invoices")
     seed_payments()
+    print("seeded payments")
     seed_services()
+    print("seeded services")
     seed_service_requests()
+    print("seeded service requests")
     seed_discounts()
+    print("seeded discouts")
     seed_company_services()
+    print("seeded company services")
     seed_demo_user()
-    # seed_service_request_invoices()
+    print("seeded demo user")
+
 
 
 if __name__ == '__main__':
