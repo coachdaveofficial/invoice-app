@@ -45,7 +45,7 @@ def check_user_auth(view_func):
     def wrapped_view(*args, **kwargs):
         if g.user is None:
             flash('Access unauthorized. Please sign in as the correct user.', 'danger')
-            return redirect(url_for('/'))
+            return redirect(url_for('home_page'))
         return view_func(*args, **kwargs)
     return wrapped_view
 
