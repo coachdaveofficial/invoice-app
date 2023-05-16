@@ -143,17 +143,19 @@
 								<td class="bg-success text-center">
 									Paid in full
 								</td>
+							
+							{% elif invoice.due_date < now.date() %}
+							<td class="bg-danger text-center">
+								<!-- This is to format the datetime to be an int -->
+								Overdue by {{ (invoice.due_date - now.date()).days|int|abs }} days
+							</td>
 								
 							{% elif invoice.payments|sum(attribute='amount') == 0 %}
 								<td class="bg-warning text-center">
 									Unpaid
 								</td>
 
-							{% elif invoice.due_date < now.date() %}
-								<td class="bg-danger text-center">
-									<!-- This is to format the datetime to be an int -->
-									Overdue by {{ (invoice.due_date - now.date()).days|int|abs }} days
-								</td>
+							
 								
 							{% else %}
 							<td class="bg-info text-center">
