@@ -22,7 +22,7 @@ $(document).ready(function() {
 
         return `<tr>
         <th id="invoice-${paymentObject.invoice_id}-modal-payment-date">${formattedDate}</th>
-        <td id="invoice-${paymentObject.invoice_id}-modal-payment-amount">$${paymentObject.amount}</td>
+        <td class="text-end" id="invoice-${paymentObject.invoice_id}-modal-payment-amount">$${paymentObject.amount}</td>
         <td id="invoice-${paymentObject.invoice_id}-modal-reference-num">${paymentObject.ref_num}</td>
         </tr>`
     };
@@ -112,7 +112,7 @@ $(document).ready(function() {
         const invoiceModalCustomerEmail = $("#invoice-modal-customer-email");
         const viewInvoiceModalBtn = $("#view-invoice-modal-btn");
         const paymentInfoTableRow = $("#invoice-modal-tbody");
-
+        // HTML element has an id like invoice-1-row where 1 is the id
         let invoiceId = $(this).parent().attr('id').split('-')[1];
         let URL = returnPaymentDataURL(invoiceId);
 

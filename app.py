@@ -6,6 +6,7 @@ from services import ServiceService, UserService, CustomerService, InvoiceServic
 from forms import UserAddForm, LoginForm, CustomerAddForm, ServiceAddForm, InvoiceAddForm, PaymentForm
 from functools import wraps
 import json
+import datetime
 
 
 app = Flask(__name__)
@@ -160,7 +161,7 @@ def guest_login():
 @login_required
 def home_page():
     
-
+    now = datetime.datetime.utcnow()
     company_id = g.user.employer.company_id
     invoices = InvoiceService.get_company_invoices(company_id)
     services = ServiceService.get_services_for_company(company_id)
@@ -170,7 +171,8 @@ def home_page():
                             invoices=invoices,
                             services=services,
                             customers=customers,
-                            payment_form=payment_form)
+                            payment_form=payment_form,
+                            now=now)
 
 @app.route('/customers/add', methods=["GET", "POST"])
 @check_user_auth
