@@ -83,6 +83,8 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
+# LOGIN AND SIGNUP ROUTES 
+# START ********************************
 @app.route('/about', methods=["GET"])
 def about_invoyz():
     return render_template('about.html')
@@ -174,6 +176,11 @@ def home_page():
                             payment_form=payment_form,
                             now=now)
 
+# END ********************************
+
+# CUSTOMERS ROUTES
+# START ********************************
+
 @app.route('/customers/add', methods=["GET", "POST"])
 @check_user_auth
 def add_new_customer():
@@ -218,6 +225,12 @@ def edit_customer(cust_id):
     edit_form = json.loads(request.data)
     customer_info = CustomerService.edit_customer(cust_id=cust_id, form_data=edit_form)
     return customer_info
+
+# END ********************************
+
+# SERVICES ROUTES
+# START ********************************
+
 @app.route('/services', methods=["GET", "POST"])
 @check_user_auth
 def services_menu():
@@ -264,7 +277,12 @@ def delete_service(service_id):
     ServicesForCompanyService.remove_company_service(serv_id=service_id, comp_id=g.user.employer.company_id)
     
     return {}
-    
+
+# END ********************************  
+
+# INVOICES ROUTES
+# START ********************************
+
 @app.route('/invoices/', methods=["POST"])
 @check_user_auth
 def add_new_estimate():
@@ -347,6 +365,11 @@ def get_invoice_data(invoice_id):
             'payment_info': [{'ref_num': p.reference_num,'amount': p.amount,'date': p.created_date} for p in invoice.payments]
             }
 
+# END ********************************
+
+# ESTIMATES ROUTES
+# START ********************************
+
 @app.route('/estimates/<int:estimate_id>')
 @check_user_auth
 def show_estimate_info(estimate_id):
@@ -378,11 +401,17 @@ def show_all_estimates():
 
     return render_template('invoices/list_estimates.html', estimates=estimates, company=company, services=services, customers=customers)
 
+# END ********************************
+
+# PAYMENTS ROUTES 
+# START ********************************
 @app.route('/payments/<int:invoice_id>', methods=["POST"])
 @check_user_auth
 def add_payment(invoice_id):
     PaymentService.add_payment(invoice_id=invoice_id, form_data=request.form)
     return redirect('/')
+
+# END ********************************
 
 if __name__ == "__main__":
     app.run()
