@@ -285,31 +285,6 @@ class InvoiceService:
             )
         return invoice_payment_info
 
-
-        """Get 5 invoices with upcoming due dates that have not been paid in full."""
-        invoice_payment_info = []
-        invoices = (Invoice
-                    .query
-                    .order_by(Invoice.due_date.asc())
-                    .all())
-
-        payments = Payment.query.all()
-
-        for invoice in invoices:
-            total_payments = sum([p.amount for p in payments if p.invoice_id == invoice.id])
-            amount_left = invoice.total_cost - total_payments
-            # get 5 invoices that have not yet been paid
-            if amount_left and len(invoice_payment_info) < 5:
-                invoice_payment_info.append({
-                    'invoice_id': invoice.id,
-                    'due_date': invoice.due_date,
-                    'curr_date': datetime.date(datetime.utcnow()),
-                    'total_cost': invoice.total_cost,
-                    'amount_left': amount_left,
-                    'customer_id': invoice.cust_id
-                }
-            )
-        return invoice_payment_info
     
     @classmethod
     def create_estimate(self, cust_id, comp_id):

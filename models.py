@@ -85,7 +85,6 @@ class Company(db.Model):
     employees = db.relationship("Employee", backref="companies")
     customers = db.relationship("Customer", backref="companies")
     invoices = db.relationship("Invoice", backref="companies")
-    # services = db.relationship("Service", secondary="company_services", backref="companies")
 
     
 class Employee(db.Model):
